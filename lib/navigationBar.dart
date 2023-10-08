@@ -1,7 +1,11 @@
+import 'package:camera/camera.dart';
+import 'package:consciousconsumer/Scanner.dart';
 import 'package:flutter/material.dart';
 
 class ConsciousConsumer extends StatefulWidget{
   const ConsciousConsumer({super.key});
+
+
 
   @override
   State<ConsciousConsumer> createState()=>
@@ -16,6 +20,7 @@ List<Widget> _widgets = [
   Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
   Text("Excluded", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
   Text("Account", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.green ),),
+
 
 ];
 
