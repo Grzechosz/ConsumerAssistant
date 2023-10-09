@@ -6,16 +6,18 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final cameras = await availableCameras();
   final firstCamera = cameras.first;
-  runApp(const ConsciousConsumerApp());
+  runApp(ConsciousConsumerApp(firstCamera: firstCamera));
 }
 
 class ConsciousConsumerApp extends StatelessWidget {
-  const ConsciousConsumerApp({super.key});
+
+  final CameraDescription firstCamera;
+  const ConsciousConsumerApp({super.key, required this.firstCamera});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home:ConsciousConsumer(),
+    return  MaterialApp(
+      home:ConsciousConsumer(camera: firstCamera),
       debugShowCheckedModeBanner: false,
     );
   }
