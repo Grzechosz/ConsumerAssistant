@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../databases/ingredients.dart';
 import '../models/ingredient.dart';
+import '../widgets/ingredientItem.dart';
 
 class IngredientsScreen extends Column{
 
@@ -12,10 +12,10 @@ class IngredientsScreen extends Column{
   static int selectedSortOption = 0;
   static List<DropdownMenuItem<int>> get sortItems{
     List<DropdownMenuItem<int>> items = [
-      DropdownMenuItem(child: Text('Nazwa A-Z'), value: 0),
-      DropdownMenuItem(child: Text('Nazwa Z-A'), value: 1),
-      DropdownMenuItem(child: Text('Szkodliwość'), value: 2),
-      DropdownMenuItem(child: Text('Kategoria'), value: 3)
+      const DropdownMenuItem(value: 0, child: Text('Nazwa A-Z')),
+      const DropdownMenuItem(value: 1, child: Text('Nazwa Z-A')),
+      const DropdownMenuItem(value: 2, child: Text('Szkodliwość')),
+      const DropdownMenuItem(value: 3, child: Text('Kategoria'))
     ];
     return items;
   }
@@ -24,7 +24,7 @@ class IngredientsScreen extends Column{
     ingredientsList = ingredientProvider.fetchAll();
   }
 
-  IngredientsScreen() : super(children: [
+  IngredientsScreen({super.key}) : super(children: [
     _buildSearchBox(),
     _buildSortBy(),
     _buildIngredientsList()]){
@@ -34,14 +34,14 @@ class IngredientsScreen extends Column{
   static Widget _buildSearchBox(){
     return
       Container(
-        margin: EdgeInsets.only(top: 35, left: 15, right: 15, bottom: 5),
+        margin: const EdgeInsets.only(top: 35, left: 15, right: 15, bottom: 5),
         decoration: BoxDecoration(
             border: Border.all(),
             borderRadius: BorderRadius.circular(25),
             color: Colors.white70),
 
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        child: TextField(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: const TextField(
             decoration: InputDecoration(
                 icon: Icon(
                   Icons.search,
@@ -61,14 +61,14 @@ class IngredientsScreen extends Column{
   static Widget _buildSortBy(){
     return
       Container(
-        margin: EdgeInsets.only(top: 5),
+        margin: const EdgeInsets.only(top: 5),
         height: 40,
         decoration: BoxDecoration(
             border: Border.all(),
             borderRadius: BorderRadius.circular(15),
             color: Colors.white70),
 
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: DropdownButton(
           value: selectedSortOption,
           items: sortItems,
@@ -81,15 +81,16 @@ class IngredientsScreen extends Column{
   }
 
   static Expanded _buildIngredientsList(){
-    // print(ingredientsList.last == null ?? "XD");
+    initIngredientsList();
     return Expanded(
       child: FutureBuilder<List<Ingredient>>(
         future: ingredientsList,
-        builder: (BuildContext context, AsyncSnapshot<List<Ingredient>> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else {
             final ingredients = snapshot.data!;
+
             return ingredients.isEmpty ?
               const Center(
                 child: Text("Brak składników"),
@@ -97,31 +98,13 @@ class IngredientsScreen extends Column{
               ListView.separated(
                   itemBuilder: (context, index){
                     final ingredient = ingredients[index];
+                    return ListTile(
+                      title: IngredientItem(ingredient)
+                    );
                   },
                   separatorBuilder: (context, index) =>
                   const SizedBox(height: 12),
                   itemCount: ingredients.length);
-              //   (
-              //   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-              //   children: [
-              //     IngredientItem(Ingredient(id: 1,
-              //         name: 'XD',
-              //         description: 'xdd',
-              //         harmfulness: Harmfulness.bad,
-              //         category: IngredientCategory.preservative)),
-              //     IngredientItem(Ingredient(id: 2,
-              //         name: 'XDD',
-              //         description: 'xdd',
-              //         harmfulness: Harmfulness.bad,
-              //         category: IngredientCategory.preservative)),
-              //     IngredientItem(Ingredient(id: 3,
-              //         name: 'XDDD',
-              //         description: 'xdd',
-              //         harmfulness: Harmfulness.good,
-              //         category: IngredientCategory.preservative)),
-              //   ],
-              // );
-
 
           }
         }

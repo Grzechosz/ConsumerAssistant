@@ -15,10 +15,10 @@ class IngredientItem extends StatelessWidget{
           // description
         },
         trailing: Text(item.category.name,
-        style: TextStyle(
+        style: const TextStyle(
             color: Colors.black38
         ),),
-        shape: Border(
+        shape: const Border(
           bottom: BorderSide(
             color: Colors.black26
           )

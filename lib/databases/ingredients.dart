@@ -2,7 +2,6 @@ import 'package:consciousconsumer/enums.dart';
 import 'package:consciousconsumer/models/ingredient.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
 
 class IngredientProvider {
   final _databaseName = "ingredients.db";
@@ -10,13 +9,13 @@ class IngredientProvider {
 
   final tableName = 'ingredients';
 
-  static final columnId = 'ingredient_id';
-  static final columnName = 'name';
-  static final columnDescription = 'description';
-  static final columnHarmfulness = 'harmfulness';
-  static final columnCategory = 'category';
-  static final columnCreatedAt = 'created';
-  static final columnUpdatedAt = 'updated';
+  static const columnId = 'ingredient_id';
+  static const columnName = 'name';
+  static const columnDescription = 'description';
+  static const columnHarmfulness = 'harmfulness';
+  static const columnCategory = 'category';
+  static const columnCreatedAt = 'created';
+  static const columnUpdatedAt = 'updated';
 
   Database? _ingredientsDatabase;
 
@@ -65,20 +64,23 @@ class IngredientProvider {
     required Harmfulness harmfulness,
     required String description,
     required IngredientCategory category}) async{
-    return await _ingredientsDatabase!.rawInsert(
+    final ingredientsDatabase = await database;
+    return await ingredientsDatabase.rawInsert(
       ''' INSERT INTO $tableName ($columnName, $columnHarmfulness, $columnDescription, $columnCategory) VALUES (?,?,?,?)''',
       [name, harmfulness.name, description, category.name]
     );
   }
 
   Future<List<Ingredient>> fetchAll() async{
-    final ingredients = await _ingredientsDatabase!.rawQuery(
+    final ingredientsDatabase = await database;
+    final ingredients = await ingredientsDatabase.rawQuery(
       ''' SELECT * FROM $tableName ''');
     return ingredients.map((ingredient) => Ingredient.fromSqfliteDatabase(ingredient)).toList();
  }
 
  Future<Ingredient> fetchById(int id) async {
-    final ingredient = await _ingredientsDatabase!.rawQuery(
+   final ingredientsDatabase = await database;
+    final ingredient = await ingredientsDatabase.rawQuery(
       '''SELECT * FROM $tableName WHERE id = ?''', [id]
     );
     return Ingredient.fromSqfliteDatabase(ingredient.first);

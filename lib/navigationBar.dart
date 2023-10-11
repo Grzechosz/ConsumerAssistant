@@ -1,8 +1,4 @@
-import 'package:consciousconsumer/databases/ingredients.dart';
-import 'package:consciousconsumer/enums.dart';
-import 'package:consciousconsumer/models/ingredient.dart';
 import 'package:consciousconsumer/screens/ingredientsScreen.dart';
-import 'package:consciousconsumer/widgets/ingredientItem.dart';
 import 'package:flutter/material.dart';
 
 class ConsciousConsumer extends StatefulWidget{
@@ -16,12 +12,12 @@ class ConsciousConsumer extends StatefulWidget{
 class _ConsciousConsumerState extends State<ConsciousConsumer> {
   int _selectedIndex = 0;
 
-  List<Widget> _widgets = [
-    Text("Last", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.amber),),
+  final List<Widget> _widgets = [
+    const Text("Last", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.amber),),
     IngredientsScreen(),
-    Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
-    Text("Excluded", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
-    Text("Account", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.green ),),
+    const Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
+    const Text("Excluded", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
+    const Text("Account", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.green ),),
   ];
 
 
@@ -45,10 +41,8 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
       // appBar: AppBar(
       //   title: const Text("Conscious Consumer"),
       // ),
-      body: Container(
-        child: Center(
-          child: _widgets[_selectedIndex],
-        ),
+      body: Center(
+        child: _widgets[_selectedIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
