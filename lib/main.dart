@@ -1,17 +1,23 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:consciousconsumer/navigationBar.dart';
 
 Future<void> main() async {
-  runApp(const ConsciousConsumerApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  final cameras = await availableCameras();
+  final firstCamera = cameras.first;
+  runApp(ConsciousConsumerApp(firstCamera: firstCamera));
 }
 
 class ConsciousConsumerApp extends StatelessWidget {
-  const ConsciousConsumerApp({super.key});
+
+  final CameraDescription firstCamera;
+  const ConsciousConsumerApp({super.key, required this.firstCamera});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home:ConsciousConsumer(),
+    return  MaterialApp(
+      home:ConsciousConsumer(camera: firstCamera),
       debugShowCheckedModeBanner: false,
     );
   }

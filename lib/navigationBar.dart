@@ -1,8 +1,14 @@
 import 'package:consciousconsumer/screens/ingredientsScreen.dart';
+import 'package:camera/camera.dart';
+import 'package:consciousconsumer/Scanner.dart';
 import 'package:flutter/material.dart';
 
 class ConsciousConsumer extends StatefulWidget{
-  const ConsciousConsumer({super.key});
+  final CameraDescription camera;
+
+  const ConsciousConsumer({super.key, required this.camera});
+
+
 
   @override
   State<ConsciousConsumer> createState()=>
@@ -18,9 +24,8 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
     const Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
     const Text("Excluded", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
     const Text("Account", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.green ),),
-  ];
-
-
+];
+  
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -38,11 +43,12 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text("Conscious Consumer"),
-      // ),
-      body: Center(
-        child: _widgets[_selectedIndex],
+
+      body: Container(
+        child: Center(
+          child: _selectedIndex == 2
+          ? ScannerScreen(camera: widget.camera) : _widgets[_selectedIndex],//_widgets[_selectedIndex],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
