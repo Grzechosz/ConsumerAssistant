@@ -83,4 +83,28 @@ class IngredientProvider {
     );
     return Ingredient.fromSqfliteDatabase(ingredient.first);
  }
+
+ static void createDatabase(){
+    IngredientProvider provider = IngredientProvider();
+    provider.create(name: "Cukier",
+        harmfulness: Harmfulness.bad,
+        description: "Cukier to nic fajnego",
+        category: IngredientCategory.preservative);
+    provider.create(name: "Cukier1",
+        harmfulness: Harmfulness.bad,
+        description: "Cukier to nic fajnego1",
+        category: IngredientCategory.preservative);
+    provider.create(name: "Cukier11",
+        harmfulness: Harmfulness.bad,
+        description: "Cukier to nic fajnego11",
+        category: IngredientCategory.preservative);
+    provider.create(name: "Cukier111",
+        harmfulness: Harmfulness.bad,
+        description: "Cukier to nic fajnego111",
+        category: IngredientCategory.preservative);
+    provider.create(name: "Cukier1111",
+        harmfulness: Harmfulness.bad,
+        description: "Cukier to nic fajnego1111",
+        category: IngredientCategory.preservative);
+ }
 }
