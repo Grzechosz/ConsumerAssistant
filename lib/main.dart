@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:consciousconsumer/screens/navigation_bar.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -18,7 +19,10 @@ Future<void> main() async {
   );
   final cameras = await availableCameras();
   final firstCamera = cameras.first;
-  runApp(ConsciousConsumerApp(firstCamera: firstCamera));
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(ConsciousConsumerApp(firstCamera: firstCamera)));
 }
 
 class ConsciousConsumerApp extends StatelessWidget {
