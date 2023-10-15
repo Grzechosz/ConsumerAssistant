@@ -24,11 +24,27 @@ class AuthenticationService{
     }
   }
 
-  Future signOut() async{
+  Future logOut() async{
     return await _auth.signOut();
   }
 
-  signIn() {}
+  Future register(String email, String password) async {
+    try{
+      UserCredential userCredentials = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      User? user = userCredentials.user;
+      return _userFromFirebase(user!);
+    }catch(e){
+      return AppUser.emptyUser;
+    }
+  }
 
-  logIn() {}
+  Future logIn(String email, String password) async{
+    try{
+      UserCredential userCredentials = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      User? user = userCredentials.user;
+      return _userFromFirebase(user!);
+    }catch(e){
+      return AppUser.emptyUser;
+    }
+  }
 }

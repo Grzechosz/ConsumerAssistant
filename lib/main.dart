@@ -33,6 +33,7 @@ class ConsciousConsumerApp extends StatelessWidget {
       value: AuthenticationService().user,
       initialData: AppUser.emptyUser,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Wrapper(firstCamera: firstCamera),
       ),
     );

@@ -21,7 +21,7 @@ class AccountScreen extends StatelessWidget{
       child: Container(
         child: ElevatedButton(
           onPressed: () async{
-            await _authService.signOut();
+            await _authService.logOut();
           },
           child: const Text("Wyloguj",
           style: TextStyle(

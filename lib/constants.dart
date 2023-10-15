@@ -6,5 +6,5 @@ class Constants{
 
   static const WITHOUT_LOG_IN = 'Bez logowania';
   static const LOG_IN = 'Zaloguj się';
-  static const SIGN_IN = 'Zarejestruj się';
+  static const REGISTER = 'Zarejestruj się';
 }
