@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../databases/Ingredient_provider.dart';
 import '../../models/ingredient.dart';
 
 class IngredientsScreen extends StatelessWidget{

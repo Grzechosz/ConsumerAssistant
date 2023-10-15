@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/models/app_user.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 import 'authentication/authentication.dart';

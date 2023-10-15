@@ -1,10 +1,7 @@
 import 'package:camera/camera.dart';
-import 'package:consciousconsumer/screens/authentication/authentication.dart';
 import 'package:consciousconsumer/screens/wrapper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:consciousconsumer/screens/navigation_bar.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
