@@ -1,8 +1,10 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/TesseractTextRecognizer.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({
@@ -20,6 +22,7 @@ class ScannerScreenState extends State<ScannerScreen> {
   late CameraController _controller;
   late TesseractTextRecognizer _tesseractTextRecognizer;
   late Future<void> _initializeControllerFuture;
+  CroppedFile? _croppedFile;
 
   @override
   void initState() {
@@ -48,7 +51,6 @@ class ScannerScreenState extends State<ScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Take a picture')),
       // You must wait until the controller is initialized before displaying the
       // camera preview. Use a FutureBuilder to display a loading spinner until the
       // controller has finished initializing.
@@ -64,6 +66,7 @@ class ScannerScreenState extends State<ScannerScreen> {
           }
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         // Provide an onPressed callback.
         onPressed: () async {
@@ -75,7 +78,43 @@ class ScannerScreenState extends State<ScannerScreen> {
 
             // Attempt to take a picture and get the file `image`
             // where it was saved.
+
+
+            // await _controller.setFocusMode(FocusMode.locked);
+            // await _controller.setExposureMode(ExposureMode.locked);
+            await _controller.setFocusMode(FocusMode.auto);
+            await _controller.setExposureMode(ExposureMode.auto);
             final image = await _controller.takePicture();
+
+
+
+            if (image != null) {
+              final croppedFile = await ImageCropper().cropImage(
+                sourcePath: image!.path,
+                compressFormat: ImageCompressFormat.jpg,
+                compressQuality: 100,
+                uiSettings: [
+                  AndroidUiSettings(
+                      toolbarTitle: 'Cropper',
+                      toolbarColor: Colors.blueAccent,
+                      toolbarWidgetColor: Colors.white,
+                      initAspectRatio: CropAspectRatioPreset.original,
+                      hideBottomControls: true,
+                      lockAspectRatio: false),
+                ],
+              );
+              if (croppedFile != null) {
+                setState(() {
+                  _croppedFile = croppedFile;
+                });
+              }
+            }
+
+            Uint8List? bytes = await _croppedFile?.readAsBytes();
+            img.Image? imagee = img.decodeImage(bytes!);
+            img.grayscale(imagee!);
+            img.luminanceThreshold(imagee);
+            img.encodeImageFile(image.path, imagee);
             final stringDesc = await _tesseractTextRecognizer.processImage(image.path);
 
             if (!mounted) return;
@@ -106,18 +145,19 @@ class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
   final String image_discription;
 
-  const DisplayPictureScreen({super.key, required this.imagePath, required this.image_discription});
+  const DisplayPictureScreen(
+      {super.key, required this.imagePath, required this.image_discription});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Display the Picture')),
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
-      body: Container(
-        child: Column(
-          children: [Image.file(File(imagePath)), Text(image_discription)],
-        ),
+      body: Column( mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.file(File(imagePath)),
+        SingleChildScrollView(child: Text(image_discription))
+        ],
       ),
     );
   }
