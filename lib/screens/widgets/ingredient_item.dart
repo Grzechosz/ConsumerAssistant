@@ -5,7 +5,7 @@ class IngredientItem extends StatelessWidget{
 
   final Ingredient item;
 
-  const IngredientItem(this.item);
+  const IngredientItem(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class IngredientItem extends StatelessWidget{
             color: Colors.black26
           )
         ),
-        title: Text("none"),
+        title: const Text("none"),
       ),
     );
   }
