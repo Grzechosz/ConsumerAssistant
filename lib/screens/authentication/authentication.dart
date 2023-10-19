@@ -14,14 +14,43 @@ class _AuthenticationState extends State<Authentication>{
   bool isRegisterPageVisible = false;
 
   void changeRegisterView(){
-    setState(() => isRegisterPageVisible = !isRegisterPageVisible);
+      setState(() => isRegisterPageVisible = !isRegisterPageVisible);
+      if(isRegisterPageVisible) {
+        Navigator.push(context,
+          PageRouteBuilder(pageBuilder: (q,w,e) => Register(
+              changeRegisterView: changeRegisterView),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                  SlideTransition(
+                    position: Tween(
+                      begin: const Offset(-1.0, 0.0),
+                      end: const Offset(0.0, 0.0),)
+                        .animate(animation),
+                    child: child,
+                  ))
+      );
+      }else{
+        Navigator.pop(context);
+      }
+
+    // else{
+    //   Navigator.push(context,
+    //       PageRouteBuilder(pageBuilder: (q,w,e) => LogIn(
+    //           changeRegisterView: changeRegisterView),
+    //           transitionDuration: const Duration(milliseconds: 400),
+    //           transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+    //               SlideTransition(
+    //                 position: Tween(
+    //                   begin: const Offset(1.0, 0.0),
+    //                   end: const Offset(0.0, 0.0),)
+    //                     .animate(animation),
+    //                 child: child,
+    //               ))
+    //   );
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    if(isRegisterPageVisible){
-      return Register(changeRegisterView: changeRegisterView);
-    }
     return LogIn(changeRegisterView: changeRegisterView);
   }
 }

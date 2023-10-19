@@ -271,7 +271,7 @@ import 'package:consciousconsumer/screens/widgets/menu_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/log_in_widgets.dart';
+import '../widgets/sign_screen_widgets.dart';
 
 class Register extends StatefulWidget {
   final Function changeRegisterView;
@@ -285,17 +285,19 @@ class Register extends StatefulWidget {
 
 class RegisterState extends State<Register> {
   final AuthenticationService _authentication = AuthenticationService();
-  late LogInButton logInButton = LogInButton(function: () async {
-    if(_formKeyEmail.currentState!.validate() && _formKeyPasswd.currentState!.validate()){
-      dynamic result = await _authentication.logIn(emailFieldContainer.email,
-          passwordFieldContainer.password);
-      if(result == AppUser.emptyUser){
-        setState(() {
-          error = "Nieprawidłowe dane";
-        });
-      }
-    }
-  });
+  late FirstButton registerButton = FirstButton(function: () async {
+          if(_formKeyEmail.currentState!.validate() && _formKeyPasswd.currentState!.validate()){
+            dynamic result = await _authentication.register(emailFieldContainer.email, passwordFieldContainer.password);
+            if(result == AppUser.emptyUser){
+              setState(() {
+                error = "Nieprawidłowe dane";
+                });
+              }else{
+              Navigator.pop(context);
+            }
+          }
+  },
+  text: Constants.SIGN_UP,);
 
   late EmailFieldContainer emailFieldContainer = EmailFieldContainer(formKeyEmail: _formKeyEmail,);
   late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(formKeyPasswd: _formKeyPasswd,);
@@ -310,6 +312,7 @@ class RegisterState extends State<Register> {
     return Scaffold(
       body:
       MenuBackgroundWidget(
+        screenName: "Rejestracja",
           child: _builtScreenElements()),
     );
   }
@@ -318,35 +321,33 @@ class RegisterState extends State<Register> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          margin: EdgeInsets.only(top: MediaQuery.of(context).size.height/3) ,
+        SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.04),
+                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.04, top: MediaQuery.of(context).size.height/20),
                 child: const Text("Wprowadź email i hasło",
                   style: TextStyle(
                       fontSize: 22,
-                      color: Constants.darkGreen,
+                      color: Constants.darker80,
                       fontWeight: FontWeight.bold
                   ),
                 ),
               ),
               emailFieldContainer,
               passwordFieldContainer,
-              Container(
-                margin: const EdgeInsets.only(top: 5),
-                child: Text(error,
-                  style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.red
-                  ),
+              Text(error,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.red
                 ),
               ),
               RemindPasswordButton(function: widget.changeRegisterView),
-              logInButton,
-              RegisterButton(function: widget.changeRegisterView),
+              registerButton,
+              SecondButton(function: widget.changeRegisterView, text: Constants.SIGN_IN,),
             ],
           ),
         )

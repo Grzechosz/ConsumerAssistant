@@ -1,3 +1,4 @@
+import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/models/ingredient.dart';
 import 'package:flutter/material.dart';
 
@@ -16,11 +17,11 @@ class IngredientItem extends StatelessWidget{
         },
         trailing: Text(item.category.name,
         style: const TextStyle(
-            color: Colors.black38
+            color: Constants.dark50
         ),),
         shape: const Border(
           bottom: BorderSide(
-            color: Colors.black26
+            color: Constants.dark50
           )
         ),
         title: const Text("none"),

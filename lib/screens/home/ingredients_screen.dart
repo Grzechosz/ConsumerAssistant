@@ -1,3 +1,4 @@
+import 'package:consciousconsumer/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/ingredient.dart';
@@ -40,7 +41,7 @@ class IngredientsScreen extends StatelessWidget{
         decoration: BoxDecoration(
             border: Border.all(),
             borderRadius: BorderRadius.circular(25),
-            color: Colors.white70),
+            color: Colors.white),
 
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: const TextField(
@@ -48,9 +49,9 @@ class IngredientsScreen extends StatelessWidget{
                 icon: Icon(
                   Icons.search,
                   size: 30,
-                  color: Colors.black26,),
+                  color: Constants.dark50,),
                 hintStyle: TextStyle(
-                    color: Colors.black26,
+                    color: Constants.dark50,
                     fontSize: 20
                 ),
                 hintText: 'Search',

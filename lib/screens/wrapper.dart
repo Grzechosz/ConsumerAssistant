@@ -20,4 +20,5 @@ class Wrapper extends StatelessWidget {
     }
     return ConsciousConsumer(camera: firstCamera);
   }
+
 }

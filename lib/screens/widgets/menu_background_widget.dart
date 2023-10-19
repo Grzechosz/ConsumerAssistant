@@ -6,19 +6,20 @@ import 'package:flutter/material.dart';
 
 class MenuBackgroundWidget extends StatelessWidget{
   final Widget child;
-  const MenuBackgroundWidget({super.key, required this.child});
+  final String screenName;
+  const MenuBackgroundWidget({super.key, required this.child, required this.screenName});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
         children: [
-          Container(color: Constants.lightGreen),
+          Container(color: Constants.light),
           ClipPath(
-              clipper: ClipperPathBorder(),
-              child: Container(color: Constants.darkGreen)
+              clipper: ClipperPathBorder(MediaQuery.of(context).size),
+              child: Container(color: Constants.darker)
           ),
             ClipPath(
-              clipper: MyClipperPath(),
+              clipper: MyClipperPath(MediaQuery.of(context).size),
                 child: Stack(
                   children: [
                     _buildBackgroundImage(),
@@ -27,11 +28,29 @@ class MenuBackgroundWidget extends StatelessWidget{
               )
             ),
             Positioned.fill(child: _builtAppName(context)),
+            Positioned.fill(child: _builtScreenName(context)),
           child
         ]
     );
   }
 
+  Container _builtScreenName(BuildContext context){
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Container(
+        margin: EdgeInsets.only(top: screenHeight/4,),
+        child: Text(screenName,
+                  style: const TextStyle(
+                      fontSize: 28,
+                      color: Constants.light,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1,
+
+                      ),
+                  textAlign: TextAlign.center
+        )
+    );
+  }
   Image _buildBackgroundImage(){
     return Image.asset(Constants.ASSETS_IMAGE + Constants.BACKGROUND_IMAGE,
       fit: BoxFit.contain,
@@ -48,7 +67,7 @@ class MenuBackgroundWidget extends StatelessWidget{
           sigmaY: 0.5
       ),
       child: Container(
-        decoration: const BoxDecoration(color: Constants.darkestGreen80),
+        decoration: const BoxDecoration(color: Constants.darker70),
       ),
     );
   }
@@ -66,7 +85,7 @@ class MenuBackgroundWidget extends StatelessWidget{
               fontWeight: FontWeight.w900,
               fontSize: 40,
               letterSpacing: 2,
-              color: Colors.white
+              color: Constants.light
           ),
           overflow: TextOverflow.visible,
           textAlign: TextAlign.center,
@@ -77,18 +96,19 @@ class MenuBackgroundWidget extends StatelessWidget{
 }
 
 class MyClipperPath extends CustomClipper<Path> {
-  MyClipperPath();
+  final constSize;
+  MyClipperPath(Size this.constSize);
 
 
   @override
   Path getClip(Size size) {
     Path path = Path();
     path.moveTo(0,0);
-    path.lineTo(size.width,0);
-    path.lineTo(size.width,size.height/4);
-    path.lineTo(size.width/2,3*size.height/10);
-    path.lineTo(0,size.height/4);
-    path.lineTo(0,size.height);
+    path.lineTo(constSize.width,0);
+    path.lineTo(constSize.width,28*constSize.height/100);
+    path.lineTo(constSize.width/2,constSize.height/3);
+    path.lineTo(0,28*constSize.height/100);
+    path.lineTo(0,constSize.height);
     path.close();
     return path;
   }
@@ -100,17 +120,19 @@ class MyClipperPath extends CustomClipper<Path> {
 }
 
 class ClipperPathBorder extends CustomClipper<Path> {
-  ClipperPathBorder();
+  final constSize;
+  ClipperPathBorder(Size this.constSize);
   final int borderSize = 2;
+
   @override
   Path getClip(Size size) {
     Path path = Path();
     path.moveTo(0,0);
-    path.lineTo(size.width,0);
-    path.lineTo(size.width,size.height/4+borderSize);
-    path.lineTo(size.width/2,3*size.height/10+borderSize);
-    path.lineTo(0,size.height/4+borderSize);
-    path.lineTo(0,size.height);
+    path.lineTo(constSize.width,0);
+    path.lineTo(constSize.width,28*constSize.height/100+borderSize);
+    path.lineTo(constSize.width/2,constSize.height/3+borderSize);
+    path.lineTo(0,28*constSize.height/100+borderSize);
+    path.lineTo(0,constSize.height);
     path.close();
     return path;
   }

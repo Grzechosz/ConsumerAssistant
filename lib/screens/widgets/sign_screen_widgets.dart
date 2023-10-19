@@ -1,11 +1,13 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 
-class LogInButton extends StatelessWidget{
+class FirstButton extends StatelessWidget{
   final Function function;
-  const LogInButton({super.key, required this.function});
+  final String text;
+  const FirstButton({super.key, required this.function, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +22,12 @@ class LogInButton extends StatelessWidget{
             fontSize: 25,
             letterSpacing: 0.5
           ),
-          backgroundColor: Constants.darkGreen,
-          foregroundColor: Colors.white,
+          backgroundColor: Constants.sea,
+          foregroundColor: Constants.light,
           minimumSize: Size(width*0.8,
               height*0.075),
       ),
-      child: const Text(Constants.LOG_IN),
+      child: Text(text),
       onPressed: () {
         function();
       },
@@ -33,9 +35,10 @@ class LogInButton extends StatelessWidget{
   }
 }
 
-class RegisterButton extends StatelessWidget{
+class SecondButton extends StatelessWidget{
   final Function function;
-  const RegisterButton({super.key, required this.function});
+  final String text;
+  SecondButton({super.key, required this.function, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +46,9 @@ class RegisterButton extends StatelessWidget{
     double height = MediaQuery.of(context).size.height;
 
     return Container(
+      color: Constants.dark,
+      width: width*0.8,
+      height: height*0.075,
       margin: EdgeInsets.only(top: height*0.02),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
@@ -52,12 +58,11 @@ class RegisterButton extends StatelessWidget{
               fontSize: 25,
               letterSpacing: 0.5
           ),
-          backgroundColor: Constants.darkestGreen,
           foregroundColor: Colors.white,
           minimumSize: Size(width*0.8,
               height*0.075),
         ),
-        child: const Text(Constants.REGISTER),
+        child: Text(text),
         onPressed: () {
           function();
         },
@@ -76,10 +81,10 @@ class RemindPasswordButton extends StatelessWidget{
     double height = MediaQuery.of(context).size.height;
 
     return Container(
-      margin: EdgeInsets.only(bottom: height*0.02),
+      margin: EdgeInsets.only(bottom: height*0.01),
       child: TextButton(
         style: TextButton.styleFrom(
-          foregroundColor: Constants.darkGreen
+          foregroundColor: Constants.dark
         ),
         child: const Text("Nie pamiętasz hasła?",
         style: TextStyle(
@@ -110,7 +115,7 @@ class EmailFieldContainer extends StatelessWidget{
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
-                color: Constants.darkGreen50,
+                color: Constants.dark50,
                 width: 2
             ),
             color: Colors.white
@@ -130,9 +135,9 @@ class EmailFieldContainer extends StatelessWidget{
                   icon: Icon(
                     Icons.email,
                     size: 30,
-                    color: Constants.darkGreen50,),
+                    color: Constants.dark50,),
                   hintStyle: TextStyle(
-                      color: Constants.darkGreen50,
+                      color: Constants.dark50,
                       fontSize: 20
                   ),
                   hintText: 'Email',
@@ -162,7 +167,7 @@ class PasswordFieldContainer extends StatelessWidget{
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
-                color: Constants.darkGreen50,
+                color: Constants.dark50,
                 width: 2
             ),
             color: Colors.white
@@ -184,9 +189,9 @@ class PasswordFieldContainer extends StatelessWidget{
                   icon: Icon(
                     Icons.lock,
                     size: 30,
-                    color: Constants.darkGreen50,),
+                    color: Constants.dark50,),
                   hintStyle: TextStyle(
-                      color: Constants.darkGreen50,
+                      color: Constants.dark50,
                       fontSize: 20
                   ),
                   hintText: 'Password',
