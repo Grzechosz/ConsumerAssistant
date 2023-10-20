@@ -266,6 +266,7 @@
 import 'dart:ui';
 
 import 'package:consciousconsumer/constants.dart';
+import 'package:consciousconsumer/loading.dart';
 import 'package:consciousconsumer/models/app_user.dart';
 import 'package:consciousconsumer/screens/widgets/menu_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
@@ -284,14 +285,17 @@ class Register extends StatefulWidget {
 }
 
 class RegisterState extends State<Register> {
+  bool loading = false;
   final AuthenticationService _authentication = AuthenticationService();
   late FirstButton registerButton = FirstButton(function: () async {
           if(_formKeyEmail.currentState!.validate() && _formKeyPasswd.currentState!.validate()){
+            loading = true;
             dynamic result = await _authentication.register(emailFieldContainer.email, passwordFieldContainer.password);
             if(result == AppUser.emptyUser){
               setState(() {
                 error = "Nieprawidłowe dane";
                 });
+              loading = false;
               }else{
               Navigator.pop(context);
             }
@@ -308,8 +312,8 @@ class RegisterState extends State<Register> {
       _formKeyPasswd = GlobalKey<FormState>();
 
   @override
-  Scaffold build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) {
+    return loading ? const Loading() : Scaffold(
       body:
       MenuBackgroundWidget(
         screenName: "Rejestracja",

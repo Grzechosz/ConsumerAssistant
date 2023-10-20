@@ -10,22 +10,20 @@ class IngredientItem extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListTile(
-        onTap: (){
-          // description
-        },
-        trailing: Text(item.category.name,
-        style: const TextStyle(
-            color: Constants.dark50
-        ),),
-        shape: const Border(
-          bottom: BorderSide(
-            color: Constants.dark50
-          )
-        ),
-        title: const Text("none"),
+    return ListTile(
+      onTap: (){
+        // description
+      },
+      trailing: Text(item.category.name,
+      style: const TextStyle(
+          color: Constants.dark50
+      ),),
+      shape: const Border(
+        bottom: BorderSide(
+          color: Constants.dark50
+        )
       ),
+      title: Text(item.names[0])
     );
   }
 

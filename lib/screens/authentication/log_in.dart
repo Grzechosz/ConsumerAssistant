@@ -6,6 +6,7 @@ import 'package:consciousconsumer/screens/widgets/menu_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
+import '../../loading.dart';
 import '../widgets/sign_screen_widgets.dart';
 
 class LogIn extends StatefulWidget {
@@ -19,15 +20,20 @@ class LogIn extends StatefulWidget {
 }
 
 class LogInState extends State<LogIn>{
+  bool loading = false;
   
   final AuthenticationService _authentication = AuthenticationService();
   late FirstButton logInButton = FirstButton(function: () async {
         if(_formKeyEmail.currentState!.validate() && _formKeyPasswd.currentState!.validate()){
+          setState(() {
+            loading = true;
+          });
           dynamic result = await _authentication.logIn(emailFieldContainer.email,
               passwordFieldContainer.password);
           if(result == AppUser.emptyUser){
             setState(() {
               error = "Nieprawidłowe dane";
+              loading = false;
             });
           }
         }
@@ -43,12 +49,12 @@ class LogInState extends State<LogIn>{
       _formKeyPasswd = GlobalKey<FormState>();
 
   @override
-  Scaffold build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) {
+    return loading ? const Loading() : Scaffold(
         body:
           MenuBackgroundWidget(
-            child: _builtScreenElements(),
-            screenName: "Logowanie",),
+            screenName: "Logowanie",
+            child: _builtScreenElements(),),
     );
   }
 
@@ -57,7 +63,7 @@ class LogInState extends State<LogIn>{
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

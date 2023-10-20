@@ -1,13 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consciousconsumer/constants.dart';
+import 'package:consciousconsumer/screens/widgets/ingredients_list.dart';
+import 'package:consciousconsumer/services/database_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/ingredient.dart';
+import '../widgets/ingredient_item.dart';
 
 class IngredientsScreen extends StatelessWidget{
 
   late Container ingredientsListContainer;
-  // static final IngredientProvider ingredientProvider = IngredientProvider();
-  static Future<List<Ingredient>>? ingredientsList;
   static int selectedSortOption = 0;
 
   IngredientsScreen({super.key});
@@ -83,40 +86,13 @@ class IngredientsScreen extends StatelessWidget{
       );
   }
 
-  // static Expanded _buildIngredientsList(){
-
-  Text _buildIngredientsList(){
-    return const Text("dupa");
-
-    // initIngredientsList();
-    // return Expanded(
-    //   child: FutureBuilder<List<Ingredient>>(
-    //     future: ingredientsList,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return const Center(child: CircularProgressIndicator());
-    //       } else {
-    //         final ingredients = snapshot.data!;
-    //
-    //         return ingredients.isEmpty ?
-    //           const Center(
-    //             child: Text("Brak składników"),
-    //           ) :
-    //           ListView.separated(
-    //               itemBuilder: (context, index){
-    //                 final ingredient = ingredients[index];
-    //                 return ListTile(
-    //                   // title: IngredientItem(ingredient)
-    //                 );
-    //               },
-    //               separatorBuilder: (context, index) =>
-    //               const SizedBox(height: 12),
-    //               itemCount: ingredients.length);
-    //
-    //       }
-    //     }
-    //   )
-    //
-    // );
+  StreamProvider _buildIngredientsList(){
+    return StreamProvider<List<Ingredient>>.value(
+      value: DatabaseService().ingredients,
+      initialData: const [],
+      child: const Expanded(
+        child: IngredientsList(),
+      )
+    );
   }
 }
