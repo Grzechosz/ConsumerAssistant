@@ -1,12 +1,25 @@
 import 'package:camera/camera.dart';
+import 'package:consciousconsumer/screens/wrapper.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:consciousconsumer/navigationBar.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+import 'firebase_options.dart';
+import 'models/app_user.dart';
+import 'services/authentication_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final cameras = await availableCameras();
   final firstCamera = cameras.first;
-  runApp(ConsciousConsumerApp(firstCamera: firstCamera));
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(ConsciousConsumerApp(firstCamera: firstCamera)));
 }
 
 class ConsciousConsumerApp extends StatelessWidget {
@@ -16,9 +29,13 @@ class ConsciousConsumerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      home:ConsciousConsumer(camera: firstCamera),
-      debugShowCheckedModeBanner: false,
+    return StreamProvider<AppUser>.value(
+      value: AuthenticationService().user,
+      initialData: AppUser.emptyUser,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Wrapper(firstCamera: firstCamera),
+      ),
     );
   }
 

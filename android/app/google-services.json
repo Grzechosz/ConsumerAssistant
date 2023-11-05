@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "668190819021",
+    "project_id": "consumer-assistance",
+    "storage_bucket": "consumer-assistance.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668190819021:android:650958040a053046d99f84",
+        "android_client_info": {
+          "package_name": "com.example.consciousconsumer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "668190819021-o91so72p8ievkk25enj9shoddprhsq02.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVrNY-TDanbrzHKUdzV5ArKfP0nbtRMpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "668190819021-o91so72p8ievkk25enj9shoddprhsq02.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
