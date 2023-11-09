@@ -5,6 +5,8 @@ import 'package:camera/camera.dart';
 import 'package:consciousconsumer/TesseractTextRecognizer.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
+import 'package:opencv_4/factory/pathfrom.dart';
+import 'package:opencv_4/opencv_4.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({
@@ -33,7 +35,7 @@ class ScannerScreenState extends State<ScannerScreen> {
       // Get a specific camera from the list of available cameras.
       widget.camera,
       // Define the resolution to use.
-      ResolutionPreset.high,
+      ResolutionPreset.max,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -79,14 +81,11 @@ class ScannerScreenState extends State<ScannerScreen> {
             // Attempt to take a picture and get the file `image`
             // where it was saved.
 
-
             // await _controller.setFocusMode(FocusMode.locked);
             // await _controller.setExposureMode(ExposureMode.locked);
             await _controller.setFocusMode(FocusMode.auto);
             await _controller.setExposureMode(ExposureMode.auto);
             final image = await _controller.takePicture();
-
-
 
             if (image != null) {
               final croppedFile = await ImageCropper().cropImage(
@@ -110,12 +109,41 @@ class ScannerScreenState extends State<ScannerScreen> {
               }
             }
 
-            Uint8List? bytes = await _croppedFile?.readAsBytes();
-            img.Image? imagee = img.decodeImage(bytes!);
-            img.grayscale(imagee!);
-            img.luminanceThreshold(imagee);
-            img.encodeImageFile(image.path, imagee);
-            final stringDesc = await _tesseractTextRecognizer.processImage(image.path);
+            await Cv2.medianBlur(
+              pathFrom: CVPathFrom.GALLERY_CAMERA,
+              pathString: _croppedFile!.path,
+              kernelSize: 5,
+            ).then((byte2) async {
+              img.Image? imageee = img.decodeImage(byte2!);
+              await img
+                  .encodeImageFile(image.path, imageee!)
+                  .then((result) async {
+                if (result) {
+                  await Cv2.adaptiveThreshold(
+                    pathFrom: CVPathFrom.GALLERY_CAMERA,
+                    pathString: image.path,
+                    maxValue: 255,
+                    adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                    thresholdType: Cv2.THRESH_BINARY,
+                    blockSize: 39,
+                    constantValue:15,
+                  ).then((byte) {
+                    img.Image? imagee = img.decodeImage(byte);
+                    img.encodeImageFile(image.path, imagee!);
+                  });
+                }
+              });
+            });
+
+            // Uint8List? bytes = await image.readAsBytes();
+            // img.Image? imagee = img.decodeImage(_byte);
+            // // img.grayscale(imagee!);
+            // // img.luminanceThreshold(imagee);
+            // img.encodeImageFile(image.path, imagee!);
+            // }
+
+            final stringDesc =
+                await _tesseractTextRecognizer.processImage(image.path);
 
             if (!mounted) return;
 
@@ -139,6 +167,15 @@ class ScannerScreenState extends State<ScannerScreen> {
       ),
     );
   }
+
+  Future<Uint8List> blurImage(String path) async {
+    Future<Uint8List> _byte2 = (await Cv2.medianBlur(
+      pathFrom: CVPathFrom.GALLERY_CAMERA,
+      pathString: path,
+      kernelSize: 5,
+    )) as Future<Uint8List>;
+    return _byte2;
+  }
 }
 
 class DisplayPictureScreen extends StatelessWidget {
@@ -153,10 +190,11 @@ class DisplayPictureScreen extends StatelessWidget {
     return Scaffold(
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
-      body: Column( mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.file(File(imagePath)),
-        SingleChildScrollView(child: Text(image_discription))
+          SingleChildScrollView(child: Text(image_discription))
         ],
       ),
     );
