@@ -27,15 +27,6 @@ class IngredientsScreenState extends State<IngredientsScreen>{
     Size screenSize = MediaQuery.of(context).size;
     return Container(
       color: Constants.sea80,
-      // decoration: const BoxDecoration(
-      //   gradient: LinearGradient(
-      //     begin: Alignment.topLeft,
-      //     end: Alignment.bottomRight,
-      //     colors: [Constants.sea,
-      //       Constants.dark50,
-      //       Constants.sea]
-      //   )
-      // ),
       child: Column(children: [
         _buildSearchBox(screenSize),
         _buildSortBy(screenSize),
@@ -97,7 +88,9 @@ class IngredientsScreenState extends State<IngredientsScreen>{
         value: selectedSortOption,
         items: sortItems,
         onChanged: (int? value) {
-          selectedSortOption = value!;
+          setState(() {
+            selectedSortOption = value!;
+          });
         },
       ),
     );
@@ -107,15 +100,16 @@ class IngredientsScreenState extends State<IngredientsScreen>{
     return StreamProvider<List<Ingredient>>.value(
         value: DatabaseService().ingredients,
         initialData: const [],
-        builder: ,
-        child: Expanded(
-          child: _buildIngredientsList(),
-        )
+        builder: (context, child) {
+          return Expanded(
+            child: _buildIngredientsList(context),
+          );
+        },
     );
   }
 
-  Widget _buildIngredientsList(){
-    allIngredients = Provider.of<List<Ingredient>>();
+  Widget _buildIngredientsList(BuildContext context){
+    allIngredients = Provider.of<List<Ingredient>>(context);
     if(DatabaseService.isLoaded){
       ingredients = allIngredients.where((element) {
         if(searchText==""){
@@ -127,6 +121,28 @@ class IngredientsScreenState extends State<IngredientsScreen>{
         });
         return check;
       }).toList();
+      switch(selectedSortOption){
+        case 0:
+          ingredients.sort((ing1, ing2){
+            return ing1.names[1].compareTo(ing2.names[1]);
+          });
+          break;
+        case 1:
+          ingredients.sort((ing1, ing2){
+            return ing1.names[0].compareTo(ing2.names[0]);
+          });
+          break;
+        case 2:
+          ingredients.sort((ing1, ing2){
+            return ing1.harmfulness.toString().compareTo(ing2.harmfulness.toString());
+          });
+          break;
+        case 3:
+          ingredients.sort((ing1, ing2){
+            return ing1.category.toString().compareTo(ing2.category.toString());
+          });
+          break;
+      }
       return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,

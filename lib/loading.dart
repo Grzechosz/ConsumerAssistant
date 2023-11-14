@@ -8,10 +8,9 @@ class Loading extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Constants.light,
       child: Center(
         child: SpinKitChasingDots(
-          color: Constants.sea,
+          color: Constants.light,
           size: MediaQuery.of(context).size.width/5,
         ),
       ),

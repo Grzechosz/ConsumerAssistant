@@ -50,11 +50,14 @@ class LogInState extends State<LogIn>{
 
   @override
   Widget build(BuildContext context) {
-    return loading ? const Loading() : Scaffold(
+    return Container(
+      color: Constants.sea,
+      child: loading ? const Loading() : Scaffold(
         body:
-          MenuBackgroundWidget(
-            screenName: "Logowanie",
-            child: _builtScreenElements(),),
+        MenuBackgroundWidget(
+          screenName: "Logowanie",
+          child: _builtScreenElements(),),
+      ),
     );
   }
 

@@ -24,6 +24,8 @@ class Constants{
   static const Color dark = Color(0xFF393E46);
   static const Color darker = Color(0xFF222831);
 
+  static const Color sea20 = Color(0x3300ADB5);
+
   static const Color sea50 = Color(0x7F00ADB5);
   static const Color light50 = Color(0x7FEEEEEE);
   static const Color dark50 = Color(0x7F393E46);
