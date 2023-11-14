@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
+import '../../../constants.dart';
 
 class FirstButton extends StatelessWidget{
   final Function function;

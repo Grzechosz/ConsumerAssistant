@@ -2,12 +2,12 @@ import 'dart:ui';
 
 import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/models/app_user.dart';
-import 'package:consciousconsumer/screens/widgets/menu_background_widget.dart';
+import 'package:consciousconsumer/screens/widgets/authentication/menu_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
 import '../../loading.dart';
-import '../widgets/sign_screen_widgets.dart';
+import '../widgets/authentication/sign_screen_widgets.dart';
 
 class LogIn extends StatefulWidget {
   final Function changeRegisterView;

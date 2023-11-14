@@ -2,8 +2,14 @@ import 'dart:ui';
 
 class Constants{
   static const ASSETS_IMAGE = 'assets/images/';
+  static const ASSETS_HARMFULNESS_ICONS = 'assets/images/harmfulness/';
   static const BACKGROUND_IMAGE = 'background.jpg';
   static const LOGO_IMAGE = 'full_logo.png';
+  static const GOOD_ICON = "good.png";
+  static const HARMFUL_ICON = "harmful.png";
+  static const DANGEROUS_ICON = "dangerous.png";
+  static const UNCHARTED_ICON = "uncharted.png";
+
   static const APP_NAME = "Asystent Konsumenta";
 
   static const WITHOUT_LOG_IN = 'Bez logowania';
