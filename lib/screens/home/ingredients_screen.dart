@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consciousconsumer/constants.dart';
+import 'package:consciousconsumer/screens/sorting_and_filtering.dart';
 import 'package:consciousconsumer/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -111,38 +112,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
   Widget _buildIngredientsList(BuildContext context){
     allIngredients = Provider.of<List<Ingredient>>(context);
     if(DatabaseService.isLoaded){
-      ingredients = allIngredients.where((element) {
-        if(searchText==""){
-          return true;
-        }
-        bool check = false;
-        element.names.forEach((name) {
-          check = name.toLowerCase().contains(RegExp(searchText!.toLowerCase()));
-        });
-        return check;
-      }).toList();
-      switch(selectedSortOption){
-        case 0:
-          ingredients.sort((ing1, ing2){
-            return ing1.names[1].compareTo(ing2.names[1]);
-          });
-          break;
-        case 1:
-          ingredients.sort((ing1, ing2){
-            return ing1.names[0].compareTo(ing2.names[0]);
-          });
-          break;
-        case 2:
-          ingredients.sort((ing1, ing2){
-            return ing1.harmfulness.toString().compareTo(ing2.harmfulness.toString());
-          });
-          break;
-        case 3:
-          ingredients.sort((ing1, ing2){
-            return ing1.category.toString().compareTo(ing2.category.toString());
-          });
-          break;
-      }
+      ingredients = SortingAndFiltering.filter(searchText, allIngredients).toList();
+      SortingAndFiltering.sort(selectedSortOption, ingredients);
       return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
