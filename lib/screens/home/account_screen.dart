@@ -17,16 +17,14 @@ class AccountScreen extends StatelessWidget{
 
 
   static Widget _buildLogOutButton() {
-    return Container(
-      child: ElevatedButton(
-        onPressed: () async{
-          await _authService.logOut();
-        },
-        child: const Text("Wyloguj",
-        style: TextStyle(
-          height: 5
-        ),),
-      ),
+    return ElevatedButton(
+      onPressed: () async{
+        await _authService.logOut();
+      },
+      child: const Text("Wyloguj",
+      style: TextStyle(
+        height: 5
+      ),),
     );
   }
 

@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/models/app_user.dart';
@@ -52,7 +51,7 @@ class LogInState extends State<LogIn>{
   Widget build(BuildContext context) {
     return Container(
       color: Constants.sea,
-      child: loading ? const Loading() : Scaffold(
+      child: loading ? const Loading(isReversedColor: false,) : Scaffold(
         body:
         MenuBackgroundWidget(
           screenName: "Logowanie",

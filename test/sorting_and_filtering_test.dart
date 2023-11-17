@@ -26,7 +26,7 @@ void main() {
           description: 'blabla',
           category: Category.enhancers),
     ];
-    List resultsList = SortingAndFiltering.filter('wit', list).toList();
+    List resultsList = SortingAndFiltering.ingredientsFilter('wit', list).toList();
     expect(resultsList.length==3, true);
   });
 }

@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/loading.dart';
@@ -49,7 +48,7 @@ class RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return loading ? const Loading() : Scaffold(
+    return loading ? const Loading(isReversedColor: false,) : Scaffold(
       body:
       MenuBackgroundWidget(
         screenName: "Rejestracja",
@@ -62,7 +61,7 @@ class RegisterState extends State<Register> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

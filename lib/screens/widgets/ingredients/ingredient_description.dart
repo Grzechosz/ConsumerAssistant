@@ -1,5 +1,4 @@
 import 'package:consciousconsumer/models/ingredient.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../authentication/menu_background_widget.dart';

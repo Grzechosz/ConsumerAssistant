@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
@@ -38,7 +37,7 @@ class FirstButton extends StatelessWidget{
 class SecondButton extends StatelessWidget{
   final Function function;
   final String text;
-  SecondButton({super.key, required this.function, required this.text});
+  const SecondButton({super.key, required this.function, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +76,6 @@ class RemindPasswordButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
     return Container(

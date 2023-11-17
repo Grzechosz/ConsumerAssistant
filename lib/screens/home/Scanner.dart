@@ -87,26 +87,24 @@ class ScannerScreenState extends State<ScannerScreen> {
             await _controller.setExposureMode(ExposureMode.auto);
             final image = await _controller.takePicture();
 
-            if (image != null) {
-              final croppedFile = await ImageCropper().cropImage(
-                sourcePath: image!.path,
-                compressFormat: ImageCompressFormat.jpg,
-                compressQuality: 100,
-                uiSettings: [
-                  AndroidUiSettings(
-                      toolbarTitle: 'Cropper',
-                      toolbarColor: Colors.blueAccent,
-                      toolbarWidgetColor: Colors.white,
-                      initAspectRatio: CropAspectRatioPreset.original,
-                      hideBottomControls: true,
-                      lockAspectRatio: false),
-                ],
-              );
-              if (croppedFile != null) {
-                setState(() {
-                  _croppedFile = croppedFile;
-                });
-              }
+            final croppedFile = await ImageCropper().cropImage(
+              sourcePath: image!.path,
+              compressFormat: ImageCompressFormat.jpg,
+              compressQuality: 100,
+              uiSettings: [
+                AndroidUiSettings(
+                    toolbarTitle: 'Cropper',
+                    toolbarColor: Colors.blueAccent,
+                    toolbarWidgetColor: Colors.white,
+                    initAspectRatio: CropAspectRatioPreset.original,
+                    hideBottomControls: true,
+                    lockAspectRatio: false),
+              ],
+            );
+            if (croppedFile != null) {
+              setState(() {
+                _croppedFile = croppedFile;
+              });
             }
 
             await Cv2.medianBlur(

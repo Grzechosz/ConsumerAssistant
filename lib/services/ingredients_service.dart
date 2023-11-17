@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/ingredient.dart';
 
-class DatabaseService{
+class IngredientsService{
   final CollectionReference ingredientCollection = FirebaseFirestore
       .instance.collection('ingredients');
   static bool isLoaded = false;
@@ -22,7 +22,15 @@ class DatabaseService{
             int.parse(e.id))
     ).toList();
     isLoaded = true;
-
     return items;
+  }
+
+  Future<Ingredient> getIngredientById(String id) async{
+    DocumentSnapshot<Map<String, dynamic>> map = await FirebaseFirestore.instance.doc('ingredients/$id')
+        // .snapshots().map((e) => Ingredient.fromFirebase(
+        // e.data() as Map<String, dynamic>,
+        // int.parse(e.id)));
+    .get();
+    return Ingredient.fromFirebase(map.data()!, int.parse(id));
   }
 }

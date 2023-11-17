@@ -1,9 +1,9 @@
 import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/models/ingredient.dart';
-import 'package:consciousconsumer/screens/widgets/ingredients_screen/ingredient_description.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/enums.dart';
+import 'ingredient_description.dart';
 
 class IngredientItem extends StatelessWidget{
 
@@ -27,7 +27,7 @@ class IngredientItem extends StatelessWidget{
         shape: const Border(
             bottom: BorderSide(
                 color: Constants.dark50
-            )
+            ),
         ),
         title: Text(_getNameToDisplay()),
         subtitle: Text(_getTrailing(),
@@ -106,6 +106,6 @@ class IngredientItem extends StatelessWidget{
 
 extension StringExtension on String {
   String firstLetterUpper() {
-    return "${this[0].toUpperCase()}${this.substring(1)}";
+    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }

@@ -1,13 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/screens/sorting_and_filtering.dart';
-import 'package:consciousconsumer/services/database_service.dart';
+import 'package:consciousconsumer/services/ingredients_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../loading.dart';
 import '../../models/ingredient.dart';
-import '../widgets/ingredients_screen/ingredient_item.dart';
+import '../widgets/ingredients/ingredient_item.dart';
 
 class IngredientsScreen extends StatefulWidget{
   const IngredientsScreen({super.key});
@@ -16,9 +15,9 @@ class IngredientsScreen extends StatefulWidget{
 }
 
 class IngredientsScreenState extends State<IngredientsScreen>{
-  late Container ingredientsListContainer;
   static int selectedSortOption = 0;
   String searchText = "";
+  bool isDownwardArrow=true;
 
   late List allIngredients;
   late List ingredients;
@@ -30,7 +29,13 @@ class IngredientsScreenState extends State<IngredientsScreen>{
       color: Constants.sea80,
       child: Column(children: [
         _buildSearchBox(screenSize),
-        _buildSortBy(screenSize),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildSortBy(screenSize),
+            _buildSortDirection(screenSize),
+          ],
+        ),
         _buildIngredients()
       ]),
     );
@@ -68,7 +73,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
                   color: Constants.dark50,
                   fontSize: 20
               ),
-              hintText: 'Search',
+              hintText: Constants.SEARCH_TEXT,
               border: InputBorder.none
           )
       ),
@@ -77,7 +82,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   Widget _buildSortBy(Size screenSize){
     return Container(
-      margin: EdgeInsets.only(top: screenSize.height/100),
+      margin: EdgeInsets.only(top: screenSize.height/100,
+          bottom: screenSize.height/100),
       height: screenSize.width/10,
       decoration: BoxDecoration(
           border: Border.all(),
@@ -97,9 +103,35 @@ class IngredientsScreenState extends State<IngredientsScreen>{
     );
   }
 
+  Widget _buildSortDirection(Size screenSize){
+    return Container(
+      margin: EdgeInsets.only(top: screenSize.height/100,
+          bottom: screenSize.height/100),
+      height: screenSize.width/10,
+      width: screenSize.width/10,
+      decoration: BoxDecoration(
+          border: Border.all(),
+          borderRadius: BorderRadius.circular(15),
+          color: Colors.white),
+
+      child: IconButton(
+        onPressed: () {
+          setState(() {
+            isDownwardArrow=!isDownwardArrow;
+          });
+        },
+        icon: isDownwardArrow ? const Icon(
+          Icons.arrow_downward,
+          size: 20,) : const Icon(
+          Icons.arrow_upward,
+          size: 20,),
+      ),
+    );
+  }
+
   StreamProvider _buildIngredients(){
     return StreamProvider<List<Ingredient>>.value(
-        value: DatabaseService().ingredients,
+        value: IngredientsService().ingredients,
         initialData: const [],
         builder: (context, child) {
           return Expanded(
@@ -111,10 +143,11 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   Widget _buildIngredientsList(BuildContext context){
     allIngredients = Provider.of<List<Ingredient>>(context);
-    if(DatabaseService.isLoaded){
-      ingredients = SortingAndFiltering.filter(searchText, allIngredients).toList();
-      SortingAndFiltering.sort(selectedSortOption, ingredients);
+    if(IngredientsService.isLoaded){
+      ingredients = SortingAndFiltering.ingredientsFilter(searchText, allIngredients).toList();
+      SortingAndFiltering.sort(selectedSortOption, ingredients, isDownwardArrow);
       return ListView.builder(
+        padding: const EdgeInsets.only(top: 0),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: ingredients.length,
@@ -127,7 +160,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
         },
       );
     }else{
-      return const Loading();
+      return const Loading(isReversedColor:false);
     }
   }
 }
