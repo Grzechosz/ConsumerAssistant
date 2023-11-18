@@ -31,7 +31,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
     const ProductsScreen(),
     const IngredientsScreen(),
     const Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
-    const Text("Excluded", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
+    const Text("Alergeny", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
     const AccountScreen(),
 ];
 

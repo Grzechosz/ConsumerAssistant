@@ -93,7 +93,7 @@ class ProductsScreenState extends State<ProductsScreen>{
         },
       );
     }else{
-      return const Loading(isReversedColor: true,);
+      return const Loading(isReversedColor: false,);
     }
   }
 }

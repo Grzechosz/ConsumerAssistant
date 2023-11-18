@@ -1,5 +1,9 @@
+import 'package:consciousconsumer/screens/widgets/account/account_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
+
+import '../../constants.dart';
+import '../widgets/authentication/menu_background_widget.dart';
 
 class AccountScreen extends StatelessWidget{
 
@@ -10,21 +14,35 @@ class AccountScreen extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [_buildLogOutButton()],
+    return Stack(
+      children:[
+        const AccountBackgroundWidget(),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: _buildLogOutButton(),
+        )
+      ]
     );
   }
 
 
   static Widget _buildLogOutButton() {
-    return ElevatedButton(
-      onPressed: () async{
-        await _authService.logOut();
-      },
-      child: const Text("Wyloguj",
-      style: TextStyle(
-        height: 5
-      ),),
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 20, right: 20),
+      color: Constants.light,
+      child: TextButton(
+        onPressed: () async{
+          await _authService.logOut();
+        },
+        child: const Text(
+            "Wyloguj",
+          style: TextStyle(
+            fontSize: 25,
+            color: Colors.red
+          ),
+        ),
+      ),
     );
   }
 

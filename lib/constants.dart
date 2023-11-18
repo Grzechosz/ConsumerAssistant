@@ -54,5 +54,8 @@ class Constants{
   static const String deleteText = "Usuń";
   static const String cancelText = "Anuluj";
   static const String editText = "Edytuj";
+
+  //account
+  static const String accountDetails = "Szczegóły konta";
 }
 
