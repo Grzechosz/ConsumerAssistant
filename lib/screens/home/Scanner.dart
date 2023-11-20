@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:consciousconsumer/screens/create_%20ingredients.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/TesseractTextRecognizer.dart';
@@ -7,6 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:opencv_4/factory/pathfrom.dart';
 import 'package:opencv_4/opencv_4.dart';
+import 'package:provider/provider.dart';
+import '../../loading.dart';
+import '../../models/ingredient.dart';
+import '../../services/ingredients_service.dart';
+import '../widgets/ingredients/ingredient_item.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({
@@ -85,6 +92,7 @@ class ScannerScreenState extends State<ScannerScreen> {
             // await _controller.setExposureMode(ExposureMode.locked);
             await _controller.setFocusMode(FocusMode.auto);
             await _controller.setExposureMode(ExposureMode.auto);
+            await _controller.setFlashMode(FlashMode.off);
             final image = await _controller.takePicture();
 
             final croppedFile = await ImageCropper().cropImage(
@@ -107,41 +115,49 @@ class ScannerScreenState extends State<ScannerScreen> {
               });
             }
 
-            await Cv2.medianBlur(
-              pathFrom: CVPathFrom.GALLERY_CAMERA,
-              pathString: _croppedFile!.path,
-              kernelSize: 5,
-            ).then((byte2) async {
-              img.Image? imageee = img.decodeImage(byte2!);
+            await _loadImage(_croppedFile!.path).then((value) async {
+              // img.Image? imageee = img.decodeJpg(value!);
               await img
-                  .encodeImageFile(image.path, imageee!)
+                  .encodeImageFile(image.path, value!)
                   .then((result) async {
-                if (result) {
-                  await Cv2.adaptiveThreshold(
-                    pathFrom: CVPathFrom.GALLERY_CAMERA,
-                    pathString: image.path,
-                    maxValue: 255,
-                    adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                    thresholdType: Cv2.THRESH_BINARY,
-                    blockSize: 39,
-                    constantValue:15,
-                  ).then((byte) {
-                    img.Image? imagee = img.decodeImage(byte);
-                    img.encodeImageFile(image.path, imagee!);
+                await Cv2.medianBlur(
+                  pathFrom: CVPathFrom.GALLERY_CAMERA,
+                  pathString: image!.path,
+                  kernelSize: 5,
+                ).then((byte2) async {
+                  img.Image? imageee = img.decodeJpg(byte2!);
+
+                  // await invertColors(imageee!).then((value) async{
+                  await img
+                      .encodeImageFile(image.path, imageee!)
+                      .then((result) async {
+                    if (result) {
+                      await Cv2.adaptiveThreshold(
+                        pathFrom: CVPathFrom.GALLERY_CAMERA,
+                        pathString: image.path,
+                        maxValue: 255,
+                        adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                        thresholdType: Cv2.THRESH_BINARY,
+                        blockSize: 29,
+                        constantValue: 12,
+                      ).then((byte) {
+                        img.Image? imagee = img.decodeJpg(byte);
+                        img.encodeImageFile(image.path, imagee!);
+                      });
+                    }
                   });
-                }
+                });
               });
             });
 
-            // Uint8List? bytes = await image.readAsBytes();
-            // img.Image? imagee = img.decodeImage(_byte);
-            // // img.grayscale(imagee!);
-            // // img.luminanceThreshold(imagee);
-            // img.encodeImageFile(image.path, imagee!);
-            // }
-
-            final stringDesc =
+            String stringDesc =
                 await _tesseractTextRecognizer.processImage(image.path);
+
+            List<String> ingriedients = splitDescription(stringDesc);
+            // stringDesc = "";
+            // for (String ingriedient in ingriedients) {
+            //   stringDesc += "$ingriedient\n";
+            // }
 
             if (!mounted) return;
 
@@ -153,6 +169,7 @@ class ScannerScreenState extends State<ScannerScreen> {
                   // the DisplayPictureScreen widget.
                   imagePath: image.path,
                   image_discription: stringDesc,
+                  ingredientsList: ingriedients,
                 ),
               ),
             );
@@ -166,22 +183,84 @@ class ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
-  Future<Uint8List> blurImage(String path) async {
-    Future<Uint8List> _byte2 = (await Cv2.medianBlur(
-      pathFrom: CVPathFrom.GALLERY_CAMERA,
-      pathString: path,
-      kernelSize: 5,
-    )) as Future<Uint8List>;
-    return _byte2;
+  List<String> splitDescription(String desc) {
+    RegExp pattern = RegExp(r'\d+,\d+%');
+    RegExp pattern2 = RegExp(r'.*?\(');
+    RegExp pattern3 = RegExp(r'\)');
+    RegExp pattern4 = RegExp(r'Sk?ładniki?:');
+    RegExp pattern5 = RegExp(r'\n');
+    int startIndex = desc.indexOf(pattern4);
+    int endIndex = 0;
+
+    for (int i = 0; i < desc.length; i++) {
+      var char = desc[i];
+      if (char == "." && endIndex == 0) {
+        endIndex = i;
+      }
+    }
+
+    desc = desc.substring(startIndex + 10, endIndex);
+    desc = desc.replaceAll(pattern, '');
+    desc = desc.replaceAll(pattern5, '');
+
+    List<String> result = desc.split(",");
+
+    for (var element in result) {
+      element = element.replaceAll(pattern2, '');
+      element = element.replaceAll(pattern3, '');
+    }
+    return result;
+  }
+
+  Future<img.Image> _loadImage(String localPath) async {
+    File file = File(localPath);
+    List<int> bytes = await file.readAsBytes();
+    // List<int> bytes = data.buffer.asUint8List();
+
+    img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
+
+    // Invert the colors
+    return Future.value(invertColors(image));
+  }
+
+  img.Image invertColors(img.Image image) {
+    for (int y = 0; y < image.height; y++) {
+      for (int x = 0; x < image.width; x++) {
+        img.Pixel pixel = image.getPixel(x, y);
+        img.Pixel invertedPixel = _invertColor(pixel);
+        image.setPixel(x, y, invertedPixel);
+      }
+    }
+    return image;
+  }
+
+  img.Pixel _invertColor(img.Pixel pixel) {
+    pixel.r = 255 - pixel.r;
+    pixel.g = 255 - pixel.g;
+    pixel.b = 255 - pixel.b;
+    return pixel;
   }
 }
 
-class DisplayPictureScreen extends StatelessWidget {
+class DisplayPictureScreen extends StatefulWidget {
+  const DisplayPictureScreen(
+      {super.key,
+      required this.imagePath,
+      required this.image_discription,
+      required this.ingredientsList});
+  @override
+  State<StatefulWidget> createState() => DisplayPictureScreenState();
+
   final String imagePath;
   final String image_discription;
+  final List<String> ingredientsList;
+}
 
-  const DisplayPictureScreen(
-      {super.key, required this.imagePath, required this.image_discription});
+class DisplayPictureScreenState extends State<DisplayPictureScreen> {
+  late List allIngredients;
+  late List ingredients;
+  // const DisplayPictureScreen(
+  //     {super.key, required this.imagePath, required this.image_discription});
 
   @override
   Widget build(BuildContext context) {
@@ -191,10 +270,50 @@ class DisplayPictureScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.file(File(imagePath)),
-          SingleChildScrollView(child: Text(image_discription))
+          Image.file(File(widget.imagePath)),
+          // SingleChildScrollView(child: Text(widget.image_discription)),
+          _buildIngredients()
         ],
       ),
     );
+  }
+
+  StreamProvider _buildIngredients() {
+    return StreamProvider<List<Ingredient>>.value(
+      value: IngredientsService().ingredients,
+      initialData: const [],
+      builder: (context, child) {
+        return Expanded(
+          child: _buildIngredientsList(context),
+        );
+      },
+    );
+  }
+
+  Widget _buildIngredientsList(BuildContext context) {
+    allIngredients = Provider.of<List<Ingredient>>(context);
+    // List<String> ingred = ["witamina C", "witamina E"];
+    if (IngredientsService.isLoaded) {
+      ingredients = CreateProductIngredientsList.ingredientsFilter(
+              widget.ingredientsList, allIngredients)
+          .toList();
+      // ingredients = SortingAndFiltering.ingredientsFilter(searchText, allIngredients).toList();
+      // SortingAndFiltering.sort(selectedSortOption, ingredients, isDownwardArrow);
+      return ListView.builder(
+        padding: const EdgeInsets.only(top: 0),
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: ingredients.length,
+        itemBuilder: (context, index) {
+          return (ingredients.isEmpty
+              ? const Center(
+                  child: Text("Brak składników"),
+                )
+              : ListTile(title: IngredientItem(ingredients[index])));
+        },
+      );
+    } else {
+      return const Loading(isReversedColor: false);
+    }
   }
 }
