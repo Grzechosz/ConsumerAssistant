@@ -15,10 +15,10 @@ class ProductsService{
     isLoaded = false;
     return productCollection
         .snapshots()
-        .map(_productsFromSnapchot);
+        .map(_productsFromSnapshot);
   }
 
-  List<Product> _productsFromSnapchot(QuerySnapshot snapshot){
+  List<Product> _productsFromSnapshot(QuerySnapshot snapshot){
     List<Product> items = snapshot.docs.map(
             (e) => Product.fromFirebase(
             e.data() as Map<String, dynamic>,

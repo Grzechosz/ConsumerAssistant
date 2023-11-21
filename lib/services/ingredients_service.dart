@@ -12,10 +12,10 @@ class IngredientsService{
     return ingredientCollection
         .orderBy('names')
         .snapshots()
-    .map(_ingredientsFromSnapchot);
+    .map(_ingredientsFromSnapshot);
   }
 
-  List<Ingredient> _ingredientsFromSnapchot(QuerySnapshot snapshot){
+  List<Ingredient> _ingredientsFromSnapshot(QuerySnapshot snapshot){
     List<Ingredient> items = snapshot.docs.map(
             (e) => Ingredient.fromFirebase(
             e.data() as Map<String, dynamic>,
@@ -26,11 +26,9 @@ class IngredientsService{
   }
 
   Future<Ingredient> getIngredientById(String id) async{
-    DocumentSnapshot<Map<String, dynamic>> map = await FirebaseFirestore.instance.doc('ingredients/$id')
-        // .snapshots().map((e) => Ingredient.fromFirebase(
-        // e.data() as Map<String, dynamic>,
-        // int.parse(e.id)));
-    .get();
+    DocumentSnapshot<Map<String, dynamic>> map =
+      await FirebaseFirestore.instance.doc('ingredients/$id')
+      .get();
     return Ingredient.fromFirebase(map.data()!, int.parse(id));
   }
 }

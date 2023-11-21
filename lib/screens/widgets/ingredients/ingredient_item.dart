@@ -41,7 +41,8 @@ class IngredientItem extends StatelessWidget{
 
   String _getNameToDisplay(){
     String name = "";
-    bool flag = false;
+    bool eIngredient = item.names[0].substring(0, 1) == 'E' ? false : true;
+    bool flag = eIngredient;
     for (var element in item.names) {
       if(flag) {
         name = "$name$element, ";
@@ -49,7 +50,7 @@ class IngredientItem extends StatelessWidget{
       flag = true;
     }
     name = name.substring(0, name.length-2);
-    name = "$name (${item.names[0]})";
+    name = eIngredient ?  name : "$name (${item.names[0]})";
     name = name.firstLetterUpper();
     return name;
   }
@@ -98,6 +99,36 @@ class IngredientItem extends StatelessWidget{
         break;
       case Category.others:
         visibleCategory = "stabilizatory, konserwanty, zagęstniki i inne";
+        break;
+      case Category.fruits:
+        visibleCategory = "owoce";
+        break;
+      case Category.vegetables:
+        visibleCategory = "warzywa";
+        break;
+      case Category.nuts:
+        visibleCategory = "orzechy";
+        break;
+      case Category.sugars:
+        visibleCategory = "cukry";
+        break;
+      case Category.loose:
+        visibleCategory = "produkty sypkie";
+        break;
+      case Category.dairy:
+        visibleCategory = "nabiał";
+        break;
+      case Category.meats:
+        visibleCategory = "mięso";
+        break;
+      case Category.herbsAndSpices:
+        visibleCategory = "zioła i przyprawy";
+        break;
+      case Category.fishesAndSeafood:
+        visibleCategory = "ryby i owoce morza";
+        break;
+      case Category.intermediates:
+        visibleCategory = "półprodukty";
         break;
     }
     return visibleCategory;

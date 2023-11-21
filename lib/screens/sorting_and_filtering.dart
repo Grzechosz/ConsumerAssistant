@@ -1,6 +1,4 @@
-
 import 'dart:core';
-
 
 class SortingAndFiltering{
   static Iterable ingredientsFilter(String pattern, List<dynamic> all){
@@ -30,11 +28,16 @@ class SortingAndFiltering{
       });
   }
 
-  static void sort(int sortOption, List ingredients, bool downerSort){
+  static void sort(int sortOption, List ingredients, bool sortDown){
     switch(sortOption){
       case 0:
         ingredients.sort((ing1, ing2){
-          return downerSort ? ing1.names[1].compareTo(ing2.names[1]) : ing2.names[1].compareTo(ing1.names[1]);
+          String name01 = ing1.names[0], name02 = ing2.names[0];
+          if(name01.substring(0,1)=='E' && name02.substring(0,1)=='E'){
+            return sortDown ? ing1.names[1].compareTo(ing2.names[1]) : ing2.names[1].compareTo(ing1.names[1]);
+          }else{
+            return 1;
+          }
         });
         break;
       case 1:
@@ -53,17 +56,17 @@ class SortingAndFiltering{
           }
           return ing1Int==ing2Int ?
           (nameE1.substring(nameE1.length-1).compareTo(nameE2.substring(nameE2.length-1))) :
-          (ing1Int>ing2Int ? (downerSort?1:-1) : (downerSort?-1:1));
+          (ing1Int>ing2Int ? (sortDown?1:-1) : (sortDown?-1:1));
         });
         break;
       case 2:
         ingredients.sort((ing1, ing2){
-          return ing1.harmfulness.id > ing2.harmfulness.id ? (downerSort?1:-1) : (downerSort?-1:1);
+          return ing1.harmfulness.id > ing2.harmfulness.id ? (sortDown?1:-1) : (sortDown?-1:1);
         });
         break;
       case 3:
         ingredients.sort((ing1, ing2){
-          return ing1.category.id > ing2.category.id ? (downerSort?1:-1) : (downerSort?-1:1);
+          return ing1.category.id > ing2.category.id ? (sortDown?1:-1) : (sortDown?-1:1);
         });
         break;
     }
