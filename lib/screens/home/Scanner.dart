@@ -115,14 +115,14 @@ class ScannerScreenState extends State<ScannerScreen> {
               });
             }
 
-            await _loadImage(_croppedFile!.path).then((value) async {
-              // img.Image? imageee = img.decodeJpg(value!);
-              await img
-                  .encodeImageFile(image.path, value!)
-                  .then((result) async {
+            // await _loadImage(_croppedFile!.path).then((value) async {
+            //   // img.Image? imageee = img.decodeJpg(value!);
+            //   await img
+            //       .encodeImageFile(image.path, value!)
+            //       .then((result) async {
                 await Cv2.medianBlur(
                   pathFrom: CVPathFrom.GALLERY_CAMERA,
-                  pathString: image!.path,
+                  pathString: _croppedFile!.path,
                   kernelSize: 5,
                 ).then((byte2) async {
                   img.Image? imageee = img.decodeJpg(byte2!);
@@ -147,17 +147,16 @@ class ScannerScreenState extends State<ScannerScreen> {
                     }
                   });
                 });
-              });
-            });
+            //   });
+            // });
+            List<String> ingriedients = [];
+            String stringDesc = "";
+                await _tesseractTextRecognizer.processImage(image.path).then((value) async{
+                  ingriedients = splitDescription(value);
+                  stringDesc = value;
+                });
 
-            String stringDesc =
-                await _tesseractTextRecognizer.processImage(image.path);
 
-            List<String> ingriedients = splitDescription(stringDesc);
-            // stringDesc = "";
-            // for (String ingriedient in ingriedients) {
-            //   stringDesc += "$ingriedient\n";
-            // }
 
             if (!mounted) return;
 
@@ -191,20 +190,16 @@ class ScannerScreenState extends State<ScannerScreen> {
     RegExp pattern5 = RegExp(r'\n');
     int startIndex = desc.indexOf(pattern4);
     int endIndex = 0;
-
     for (int i = 0; i < desc.length; i++) {
       var char = desc[i];
       if (char == "." && endIndex == 0) {
         endIndex = i;
       }
     }
-
     desc = desc.substring(startIndex + 10, endIndex);
     desc = desc.replaceAll(pattern, '');
     desc = desc.replaceAll(pattern5, '');
-
     List<String> result = desc.split(",");
-
     for (var element in result) {
       element = element.replaceAll(pattern2, '');
       element = element.replaceAll(pattern3, '');
@@ -215,14 +210,9 @@ class ScannerScreenState extends State<ScannerScreen> {
   Future<img.Image> _loadImage(String localPath) async {
     File file = File(localPath);
     List<int> bytes = await file.readAsBytes();
-    // List<int> bytes = data.buffer.asUint8List();
-
     img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
-
-    // Invert the colors
     return Future.value(invertColors(image));
   }
-
   img.Image invertColors(img.Image image) {
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
@@ -233,7 +223,6 @@ class ScannerScreenState extends State<ScannerScreen> {
     }
     return image;
   }
-
   img.Pixel _invertColor(img.Pixel pixel) {
     pixel.r = 255 - pixel.r;
     pixel.g = 255 - pixel.g;
@@ -259,17 +248,14 @@ class DisplayPictureScreen extends StatefulWidget {
 class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   late List allIngredients;
   late List ingredients;
-  // const DisplayPictureScreen(
-  //     {super.key, required this.imagePath, required this.image_discription});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // The image is stored as a file on the device. Use the `Image.file`
-      // constructor with the given path to display the image.
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Spacer(flex: 1),
           Image.file(File(widget.imagePath)),
           // SingleChildScrollView(child: Text(widget.image_discription)),
           _buildIngredients()
@@ -292,13 +278,10 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
   Widget _buildIngredientsList(BuildContext context) {
     allIngredients = Provider.of<List<Ingredient>>(context);
-    // List<String> ingred = ["witamina C", "witamina E"];
     if (IngredientsService.isLoaded) {
       ingredients = CreateProductIngredientsList.ingredientsFilter(
               widget.ingredientsList, allIngredients)
           .toList();
-      // ingredients = SortingAndFiltering.ingredientsFilter(searchText, allIngredients).toList();
-      // SortingAndFiltering.sort(selectedSortOption, ingredients, isDownwardArrow);
       return ListView.builder(
         padding: const EdgeInsets.only(top: 0),
         scrollDirection: Axis.vertical,
