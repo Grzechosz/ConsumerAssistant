@@ -1,8 +1,8 @@
-import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/models/ingredient.dart';
 import 'package:flutter/material.dart';
 
-import '../../../models/enums.dart';
+import '../../config/constants.dart';
+import '../../models/enums.dart';
 import 'ingredient_description.dart';
 
 class IngredientItem extends StatelessWidget{
@@ -59,16 +59,16 @@ class IngredientItem extends StatelessWidget{
     String icon;
     switch(item.harmfulness){
       case Harmfulness.good:
-        icon = Constants.ASSETS_HARMFULNESS_ICONS + Constants.GOOD_ICON;
+        icon = Constants.assetsHarmfulnessIcons + Constants.goodIcon;
         break;
       case Harmfulness.harmful:
-        icon = Constants.ASSETS_HARMFULNESS_ICONS + Constants.HARMFUL_ICON;
+        icon = Constants.assetsHarmfulnessIcons + Constants.harmfulIcon;
         break;
       case Harmfulness.dangerous:
-        icon = Constants.ASSETS_HARMFULNESS_ICONS + Constants.DANGEROUS_ICON;
+        icon = Constants.assetsHarmfulnessIcons + Constants.dangerousIcon;
         break;
       case Harmfulness.uncharted:
-        icon = Constants.ASSETS_HARMFULNESS_ICONS + Constants.UNCHARTED_ICON;
+        icon = Constants.assetsHarmfulnessIcons + Constants.unchartedIcon;
         break;
     }
     return Image.asset(icon, height: screenSize.height/20,);

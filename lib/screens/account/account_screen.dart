@@ -1,9 +1,8 @@
-import 'package:consciousconsumer/screens/widgets/account/account_background_widget.dart';
+import 'package:consciousconsumer/screens/account/account_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
-import '../widgets/authentication/menu_background_widget.dart';
+import '../../config/constants.dart';
 
 class AccountScreen extends StatelessWidget{
 

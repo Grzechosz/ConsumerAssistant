@@ -1,11 +1,11 @@
-import 'package:consciousconsumer/screens/home/account_screen.dart';
-import 'package:consciousconsumer/screens/home/ingredients_screen.dart';
+import 'package:consciousconsumer/screens/account/account_screen.dart';
+import 'package:consciousconsumer/screens/ingredients/ingredients_screen.dart';
 import 'package:camera/camera.dart';
-import 'package:consciousconsumer/screens/home/products_screen.dart';
+import 'package:consciousconsumer/screens/last/products_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
-import 'home/scanner.dart';
+import '../config/constants.dart';
+import 'scan/scanner.dart';
 
 class ConsciousConsumer extends StatefulWidget{
   final CameraDescription camera;
@@ -51,23 +51,23 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-            label: Constants.NAVIGATION_BAR_LAST_ICON,
+            label: Constants.navigationBarLastIcon,
             icon: icons[0],
           ),
           BottomNavigationBarItem(
-            label: Constants.NAVIGATION_BAR_LIST_ICON,
+            label: Constants.navigationBarListIcon,
             icon: icons[1],
           ),
           BottomNavigationBarItem(
-            label: Constants.NAVIGATION_BAR_SCAN_ICON,
+            label: Constants.navigationBarScanIcon,
             icon: icons[2],
           ),
           BottomNavigationBarItem(
-            label: Constants.NAVIGATION_BAR_ALLERGENS_ICON,
+            label: Constants.navigationBarAllergensIcon,
             icon: icons[3],
           ),
           BottomNavigationBarItem(
-            label: Constants.NAVIGATION_BAR_ACCOUNT_ICON,
+            label: Constants.navigationBarAccountIcon,
             icon: icons[4],
           )
         ],

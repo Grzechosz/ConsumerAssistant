@@ -3,8 +3,8 @@ import 'package:consciousconsumer/models/app_user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'authentication/authentication.dart';
-import 'navigation_bar.dart';
+import 'authentication.dart';
+import '../navigation_bar.dart';
 
 class Wrapper extends StatelessWidget {
 

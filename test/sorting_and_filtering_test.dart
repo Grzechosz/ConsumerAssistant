@@ -1,6 +1,6 @@
 import 'package:consciousconsumer/models/enums.dart';
 import 'package:consciousconsumer/models/ingredient.dart';
-import 'package:consciousconsumer/screens/sorting_and_filtering.dart';
+import 'package:consciousconsumer/screens/ingredients/sorting_and_filtering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

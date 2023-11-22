@@ -1,8 +1,9 @@
 import 'dart:ui';
 
-import 'package:consciousconsumer/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../config/constants.dart';
 
 class AccountBackgroundWidget extends StatelessWidget{
   const AccountBackgroundWidget({super.key});
@@ -26,7 +27,7 @@ class AccountBackgroundWidget extends StatelessWidget{
   }
 
   Image _buildBackgroundImage(){
-    return Image.asset(Constants.ASSETS_IMAGE + Constants.BACKGROUND_IMAGE,
+    return Image.asset(Constants.assetsImage + Constants.backgroundImage,
       fit: BoxFit.contain,
       height: double.infinity,
       width: double.infinity,

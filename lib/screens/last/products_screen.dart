@@ -1,13 +1,13 @@
-import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/services/products_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../loading.dart';
+import '../../config/constants.dart';
+import '../loading.dart';
 import '../../models/product.dart';
-import '../sorting_and_filtering.dart';
-import '../widgets/products/product_item.dart';
+import '../ingredients/sorting_and_filtering.dart';
+import 'product_item.dart';
 
 class ProductsScreen extends StatefulWidget{
   const ProductsScreen({super.key});
@@ -56,7 +56,7 @@ class ProductsScreenState extends State<ProductsScreen>{
                   color: Constants.dark50,
                   fontSize: 20
               ),
-              hintText: Constants.SEARCH_TEXT,
+              hintText: Constants.searchText,
               border: InputBorder.none
           )
       ),

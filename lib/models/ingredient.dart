@@ -41,6 +41,6 @@ class Ingredient {
         names: names,
         harmfulness: harmfulness,
         description: description,
-        category: category != null ? category : Category.fishesAndSeafood);
+        category: category);
   }
 }

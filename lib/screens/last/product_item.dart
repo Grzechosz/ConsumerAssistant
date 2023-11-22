@@ -1,12 +1,11 @@
 
-import 'package:consciousconsumer/constants.dart';
-import 'package:consciousconsumer/loading.dart';
+import 'package:consciousconsumer/screens/loading.dart';
 import 'package:consciousconsumer/models/product.dart';
-import 'package:consciousconsumer/services/ingredients_service.dart';
 import 'package:consciousconsumer/services/storage_service.dart';
 import 'package:flutter/material.dart';
 
-import '../../../models/ingredient.dart';
+import '../../config/constants.dart';
+import '../../models/ingredient.dart';
 import '../ingredients/ingredient_item.dart';
 
 class ProductItem extends StatefulWidget{
@@ -162,11 +161,11 @@ class _ProductItemState extends State<ProductItem> {
   Widget _getIconImage(Size screenSize) {
     String icon;
     if(widget.item.rating<0.33){
-      icon = Constants.ASSETS_HARMFULNESS_ICONS + Constants.DANGEROUS_ICON;
+      icon = Constants.assetsHarmfulnessIcons + Constants.dangerousIcon;
     }else if(widget.item.rating<0.66){
-      icon = Constants.ASSETS_HARMFULNESS_ICONS + Constants.HARMFUL_ICON;
+      icon = Constants.assetsHarmfulnessIcons + Constants.harmfulIcon;
     }else{
-      icon = Constants.ASSETS_HARMFULNESS_ICONS + Constants.GOOD_ICON;
+      icon = Constants.assetsHarmfulnessIcons + Constants.goodIcon;
     }
     return Expanded(child: Image.asset(icon, scale: 5));
   }

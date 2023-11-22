@@ -1,20 +1,19 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:consciousconsumer/screens/create_%20ingredients.dart';
+import 'package:consciousconsumer/screens/scan/create_%20ingredients.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
-import 'package:consciousconsumer/tesseract_text_recognizer.dart';
+import 'package:consciousconsumer/screens/scan/tesseract_text_recognizer.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:opencv_4/factory/pathfrom.dart';
 import 'package:opencv_4/opencv_4.dart';
 import 'package:provider/provider.dart';
-import '../../constants.dart';
-import '../../loading.dart';
+import '../loading.dart';
 import '../../models/ingredient.dart';
 import '../../services/ingredients_service.dart';
-import '../widgets/ingredients/ingredient_item.dart';
+import '../ingredients/ingredient_item.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({
@@ -33,27 +32,21 @@ class ScannerScreenState extends State<ScannerScreen> {
   late TesseractTextRecognizer _tesseractTextRecognizer;
   late Future<void> _initializeControllerFuture;
   late CroppedFile _croppedFile;
+  XFile? image;
 
   @override
   void initState() {
     super.initState();
-    // To display the current output from the Camera,
-    // create a CameraController.
     _controller = CameraController(
-      // Get a specific camera from the list of available cameras.
       widget.camera,
-      // Define the resolution to use.
       ResolutionPreset.max,
     );
-
-    // Next, initialize the controller. This returns a Future.
     _initializeControllerFuture = _controller.initialize();
     _tesseractTextRecognizer = TesseractTextRecognizer();
   }
 
   @override
   void dispose() {
-    // Dispose of the controller when the widget is disposed.
     _controller.dispose();
     super.dispose();
   }
@@ -61,76 +54,90 @@ class ScannerScreenState extends State<ScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // You must wait until the controller is initialized before displaying the
-      // camera preview. Use a FutureBuilder to display a loading spinner until the
-      // controller has finished initializing.
       body: FutureBuilder<void>(
           future: _initializeControllerFuture,
           builder: (context, snapshot) {
-            return snapshot.connectionState == ConnectionState.done
+            return (snapshot.connectionState == ConnectionState.done
                 ? CameraPreview(_controller)
-                : const Loading(isReversedColor: true);
+                : const Loading(isReversedColor: true));
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        // Provide an onPressed callback.
         onPressed: _takePicture,
-        backgroundColor: Constants.sea,
         child: const Icon(Icons.camera_alt),
       ),
     );
   }
 
-  _takePicture() async {
-    // Take the Picture in a try / catch block. If anything goes wrong,
-    // catch the error.
-    try {
-      // Ensure that the camera is initialized.
+  void _takePicture() async {
+    {
       await _initializeControllerFuture;
-      // Attempt to take a picture and get the file `image`
-      // where it was saved.
-      // await _controller.setFocusMode(FocusMode.locked);
-      // await _controller.setExposureMode(ExposureMode.locked);
       await _controller.setFocusMode(FocusMode.auto);
       await _controller.setExposureMode(ExposureMode.auto);
       await _controller.setFlashMode(FlashMode.off);
-      await _controller.takePicture().then((value) async {
-        _cropImage(value);
-      }).then((obj) {
-        _imageTransformations().then((image) async {
-          List<String> ingredients = [];
-          String stringDesc = "";
-          await _tesseractTextRecognizer
-              .processImage(image!.path)
-              .then((value) async {
-            ingredients = splitDescription(value);
-            stringDesc = value;
-          }).then((value) async {
-            await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(
-                  // Pass the automatically generated path to
-                  // the DisplayPictureScreen widget.
-                  imagePath: image!.path,
-                  image_discription: stringDesc,
-                  ingredientsList: ingredients,
-                ),
-              ),
-            );
-          });
-        });
+      final image = await _controller.takePicture();
+      await _cropImage(image);
+      await _processImage(image);
+
+      List<String> ingredients = [];
+      String stringDesc = "";
+      await _tesseractTextRecognizer
+          .processImage(_croppedFile.path)
+          .then((value) async {
+        ingredients = splitDescription(value);
+        stringDesc = value;
       });
 
-      if (!mounted) return;
-      // If the picture was taken, display it on a new screen.
-    } catch (e) {
-      print(e);
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => DisplayPictureScreen(
+            imagePath: _croppedFile.path,
+            image_discription: stringDesc,
+            ingredientsList: ingredients,
+          ),
+        ),
+      );
     }
+  }
+
+  Future _processImage(XFile image) async {
+    // await _loadImage(_croppedFile!.path).then((value) async {
+    //   // img.Image? imageee = img.decodeJpg(value!);
+    //   await img
+    //       .encodeImageFile(image.path, value!)
+    //       .then((result) async {
+    await Cv2.medianBlur(
+      pathFrom: CVPathFrom.GALLERY_CAMERA,
+      pathString: _croppedFile.path,
+      kernelSize: 5,
+    ).then((byte2) async {
+      img.Image? imageee = img.decodeJpg(byte2!);
+
+      // await invertColors(imageee!).then((value) async{
+      await img.encodeImageFile(_croppedFile.path, imageee!).then((result) async {
+        if (result) {
+          await Cv2.adaptiveThreshold(
+            pathFrom: CVPathFrom.GALLERY_CAMERA,
+            pathString: _croppedFile.path,
+            maxValue: 255,
+            adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            thresholdType: Cv2.THRESH_BINARY,
+            blockSize: 29,
+            constantValue: 12,
+          ).then((byte) {
+            img.Image? imagee = img.decodeJpg(byte);
+            img.encodeImageFile(_croppedFile.path, imagee!);
+          });
+        }
+      });
+    });
+    //   });
+    // });
   }
 
   Future<CroppedFile> _cropImage(XFile image) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: image!.path,
+      sourcePath: image.path,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 100,
       uiSettings: [
@@ -143,31 +150,31 @@ class ScannerScreenState extends State<ScannerScreen> {
             lockAspectRatio: false),
       ],
     );
-    setState(() {
-      _croppedFile = croppedFile!;
-    });
+    if (croppedFile != null) {
+      setState(() {
+        _croppedFile = croppedFile;
+      });
+    }
     return croppedFile!;
   }
 
-  _imageTransformations()  {
+  _imageTransformations() {
     // await _loadImage(_croppedFile!.path).then((value) async {
     //   // img.Image? imageee = img.decodeJpg(value!);
     //   await img
     //       .encodeImageFile(image.path, value!)
     //       .then((result) async {
-     Cv2.medianBlur(
+    Cv2.medianBlur(
       pathFrom: CVPathFrom.GALLERY_CAMERA,
-      pathString: _croppedFile!.path,
+      pathString: _croppedFile.path,
       kernelSize: 5,
-    ).then((byte2)  {
+    ).then((byte2) {
       img.Image? imageee = img.decodeJpg(byte2!);
 
       // await invertColors(imageee!).then((value) async{
-       img
-          .encodeImageFile(_croppedFile.path, imageee!)
-          .then((result)  {
+      img.encodeImageFile(_croppedFile.path, imageee!).then((result) {
         if (result) {
-           Cv2.adaptiveThreshold(
+          Cv2.adaptiveThreshold(
             pathFrom: CVPathFrom.GALLERY_CAMERA,
             pathString: _croppedFile.path,
             maxValue: 255,
@@ -203,7 +210,7 @@ class ScannerScreenState extends State<ScannerScreen> {
         endIndex = i;
       }
     }
-    desc = desc.substring(startIndex + 10, endIndex);
+    desc = desc.substring(startIndex + 10, endIndex);     /// XDDDDDDDDDDDDDDDDDDDDDDDDDDDD A JEŚLI MA MNIEJ NIŻ 10 ZNAKÓW???
     desc = desc.replaceAll(pattern, '');
     desc = desc.replaceAll(pattern5, '');
     List<String> result = desc.split(",");

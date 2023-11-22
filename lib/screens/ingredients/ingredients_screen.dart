@@ -1,12 +1,12 @@
-import 'package:consciousconsumer/constants.dart';
-import 'package:consciousconsumer/screens/sorting_and_filtering.dart';
+import 'package:consciousconsumer/screens/ingredients/sorting_and_filtering.dart';
 import 'package:consciousconsumer/services/ingredients_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../loading.dart';
+import '../../config/constants.dart';
+import '../loading.dart';
 import '../../models/ingredient.dart';
-import '../widgets/ingredients/ingredient_item.dart';
+import 'ingredient_item.dart';
 
 class IngredientsScreen extends StatefulWidget{
   const IngredientsScreen({super.key});
@@ -73,7 +73,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
                   color: Constants.dark50,
                   fontSize: 20
               ),
-              hintText: Constants.SEARCH_TEXT,
+              hintText: Constants.searchText,
               border: InputBorder.none
           )
       ),

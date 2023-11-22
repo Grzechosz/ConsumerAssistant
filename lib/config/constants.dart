@@ -1,37 +1,36 @@
 import 'dart:ui';
 
-class Constants{
-
+class Constants {
   //ASSETS
-  static const ASSETS_IMAGE = 'assets/images/';
-  static const ASSETS_HARMFULNESS_ICONS = 'assets/images/harmfulness/';
-  static const BACKGROUND_IMAGE = 'background.jpg';
-  static const LOGO_IMAGE = 'full_logo.png';
-  static const GOOD_ICON = "good.png";
-  static const HARMFUL_ICON = "harmful.png";
-  static const DANGEROUS_ICON = "dangerous.png";
-  static const UNCHARTED_ICON = "uncharted.png";
-  static const NO_IMAGE = 'full_logo.png';
+  static const assetsImage = 'assets/images/';
+  static const assetsHarmfulnessIcons = 'assets/images/harmfulness/';
+  static const backgroundImage = 'background.jpg';
+  static const logoImage = 'full_logo.png';
+  static const goodIcon = "good.png";
+  static const harmfulIcon = "harmful.png";
+  static const dangerousIcon = "dangerous.png";
+  static const unchartedIcon = "uncharted.png";
+  static const noImage = 'full_logo.png';
 
   //APP NAME
-  static const APP_NAME = "Asystent Konsumenta";
+  static const appName = "Asystent Konsumenta";
 
   //SIGN SCREEN
-  static const WITHOUT_LOG_IN = 'Bez logowania';
-  static const LOG_IN = 'Zaloguj się';
-  static const REGISTER = 'Rejestracja';
-  static const SIGN_IN = 'Logowanie';
-  static const SIGN_UP = 'Zarejestruj się';
+  static const withoutLogIn = 'Bez logowania';
+  static const logIn = 'Zaloguj się';
+  static const register = 'Rejestracja';
+  static const signIn = 'Logowanie';
+  static const signUp = 'Zarejestruj się';
 
   //navigation bar
-  static const NAVIGATION_BAR_LAST_ICON = "Ostatnie";
-  static const NAVIGATION_BAR_LIST_ICON = "Składniki";
-  static const NAVIGATION_BAR_SCAN_ICON = "Skanuj";
-  static const NAVIGATION_BAR_ALLERGENS_ICON = "Alergeny";
-  static const NAVIGATION_BAR_ACCOUNT_ICON = "Konto";
+  static const navigationBarLastIcon = "Ostatnie";
+  static const navigationBarListIcon = "Składniki";
+  static const navigationBarScanIcon = "Skanuj";
+  static const navigationBarAllergensIcon = "Alergeny";
+  static const navigationBarAccountIcon = "Konto";
 
   //ingredients screen
-  static const SEARCH_TEXT = "Szukaj";
+  static const searchText = "Szukaj";
 
   //SCHEME COLORS
   static const Color sea = Color(0xFF00ADB5);
@@ -58,4 +57,3 @@ class Constants{
   //account
   static const String accountDetails = "Szczegóły konta";
 }
-

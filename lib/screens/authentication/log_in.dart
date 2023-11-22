@@ -1,12 +1,12 @@
 
-import 'package:consciousconsumer/constants.dart';
 import 'package:consciousconsumer/models/app_user.dart';
-import 'package:consciousconsumer/screens/widgets/authentication/menu_background_widget.dart';
+import 'package:consciousconsumer/screens/authentication/menu_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
-import '../../loading.dart';
-import '../widgets/authentication/sign_screen_widgets.dart';
+import '../../config/constants.dart';
+import '../loading.dart';
+import 'sign_screen_widgets.dart';
 
 class LogIn extends StatefulWidget {
   final Function changeRegisterView;
@@ -37,7 +37,7 @@ class LogInState extends State<LogIn>{
           }
         }
       },
-  text: Constants.LOG_IN,);
+  text: Constants.logIn,);
 
   late EmailFieldContainer emailFieldContainer = EmailFieldContainer(formKeyEmail: _formKeyEmail,);
   late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(formKeyPasswd: _formKeyPasswd,);
@@ -90,7 +90,7 @@ class LogInState extends State<LogIn>{
               ),
               RemindPasswordButton(function: widget.changeRegisterView),
               logInButton,
-              SecondButton(function: widget.changeRegisterView, text: Constants.REGISTER,),
+              SecondButton(function: widget.changeRegisterView, text: Constants.register,),
             ],
           ),
         )

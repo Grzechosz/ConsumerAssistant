@@ -1,6 +1,7 @@
-import 'package:consciousconsumer/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import '../config/constants.dart';
 
 class Loading extends StatelessWidget{
   final bool isReversedColor;

@@ -1,8 +1,9 @@
 import 'dart:ui';
 
-import 'package:consciousconsumer/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../config/constants.dart';
 
 class MenuBackgroundWidget extends StatelessWidget{
   final Widget child;
@@ -51,7 +52,7 @@ class MenuBackgroundWidget extends StatelessWidget{
     );
   }
   Image _buildBackgroundImage(){
-    return Image.asset(Constants.ASSETS_IMAGE + Constants.BACKGROUND_IMAGE,
+    return Image.asset(Constants.assetsImage + Constants.backgroundImage,
       fit: BoxFit.contain,
       height: double.infinity,
       width: double.infinity,
@@ -79,7 +80,7 @@ class MenuBackgroundWidget extends StatelessWidget{
         margin: EdgeInsets.only(top: screenHeight/13),
         child:
         const Text(
-          Constants.APP_NAME,
+          Constants.appName,
           style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 40,
