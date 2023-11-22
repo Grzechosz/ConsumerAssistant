@@ -5,7 +5,7 @@ import 'package:consciousconsumer/screens/home/products_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
-import 'home/Scanner.dart';
+import 'home/scanner.dart';
 
 class ConsciousConsumer extends StatefulWidget{
   final CameraDescription camera;

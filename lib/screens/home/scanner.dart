@@ -4,12 +4,13 @@ import 'package:consciousconsumer/screens/create_%20ingredients.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
-import 'package:consciousconsumer/TesseractTextRecognizer.dart';
+import 'package:consciousconsumer/tesseract_text_recognizer.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:opencv_4/factory/pathfrom.dart';
 import 'package:opencv_4/opencv_4.dart';
 import 'package:provider/provider.dart';
+import '../../constants.dart';
 import '../../loading.dart';
 import '../../models/ingredient.dart';
 import '../../services/ingredients_service.dart';
@@ -31,7 +32,7 @@ class ScannerScreenState extends State<ScannerScreen> {
   late CameraController _controller;
   late TesseractTextRecognizer _tesseractTextRecognizer;
   late Future<void> _initializeControllerFuture;
-  CroppedFile? _croppedFile;
+  late CroppedFile _croppedFile;
 
   @override
   void initState() {
@@ -64,122 +65,128 @@ class ScannerScreenState extends State<ScannerScreen> {
       // camera preview. Use a FutureBuilder to display a loading spinner until the
       // controller has finished initializing.
       body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If the Future is complete, display the preview.
-            return CameraPreview(_controller);
-          } else {
-            // Otherwise, display a loading indicator.
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+          future: _initializeControllerFuture,
+          builder: (context, snapshot) {
+            return snapshot.connectionState == ConnectionState.done
+                ? CameraPreview(_controller)
+                : const Loading(isReversedColor: true);
+          }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         // Provide an onPressed callback.
-        onPressed: () async {
-          // Take the Picture in a try / catch block. If anything goes wrong,
-          // catch the error.
-          try {
-            // Ensure that the camera is initialized.
-            await _initializeControllerFuture;
+        onPressed: _takePicture,
+        backgroundColor: Constants.sea,
+        child: const Icon(Icons.camera_alt),
+      ),
+    );
+  }
 
-            // Attempt to take a picture and get the file `image`
-            // where it was saved.
-
-            // await _controller.setFocusMode(FocusMode.locked);
-            // await _controller.setExposureMode(ExposureMode.locked);
-            await _controller.setFocusMode(FocusMode.auto);
-            await _controller.setExposureMode(ExposureMode.auto);
-            await _controller.setFlashMode(FlashMode.off);
-            final image = await _controller.takePicture();
-
-            final croppedFile = await ImageCropper().cropImage(
-              sourcePath: image!.path,
-              compressFormat: ImageCompressFormat.jpg,
-              compressQuality: 100,
-              uiSettings: [
-                AndroidUiSettings(
-                    toolbarTitle: 'Cropper',
-                    toolbarColor: Colors.blueAccent,
-                    toolbarWidgetColor: Colors.white,
-                    initAspectRatio: CropAspectRatioPreset.original,
-                    hideBottomControls: true,
-                    lockAspectRatio: false),
-              ],
-            );
-            if (croppedFile != null) {
-              setState(() {
-                _croppedFile = croppedFile;
-              });
-            }
-
-            // await _loadImage(_croppedFile!.path).then((value) async {
-            //   // img.Image? imageee = img.decodeJpg(value!);
-            //   await img
-            //       .encodeImageFile(image.path, value!)
-            //       .then((result) async {
-                await Cv2.medianBlur(
-                  pathFrom: CVPathFrom.GALLERY_CAMERA,
-                  pathString: _croppedFile!.path,
-                  kernelSize: 5,
-                ).then((byte2) async {
-                  img.Image? imageee = img.decodeJpg(byte2!);
-
-                  // await invertColors(imageee!).then((value) async{
-                  await img
-                      .encodeImageFile(image.path, imageee!)
-                      .then((result) async {
-                    if (result) {
-                      await Cv2.adaptiveThreshold(
-                        pathFrom: CVPathFrom.GALLERY_CAMERA,
-                        pathString: image.path,
-                        maxValue: 255,
-                        adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                        thresholdType: Cv2.THRESH_BINARY,
-                        blockSize: 29,
-                        constantValue: 12,
-                      ).then((byte) {
-                        img.Image? imagee = img.decodeJpg(byte);
-                        img.encodeImageFile(image.path, imagee!);
-                      });
-                    }
-                  });
-                });
-            //   });
-            // });
-            List<String> ingriedients = [];
-            String stringDesc = "";
-                await _tesseractTextRecognizer.processImage(image.path).then((value) async{
-                  ingriedients = splitDescription(value);
-                  stringDesc = value;
-                });
-
-
-
-            if (!mounted) return;
-
-            // If the picture was taken, display it on a new screen.
+  _takePicture() async {
+    // Take the Picture in a try / catch block. If anything goes wrong,
+    // catch the error.
+    try {
+      // Ensure that the camera is initialized.
+      await _initializeControllerFuture;
+      // Attempt to take a picture and get the file `image`
+      // where it was saved.
+      // await _controller.setFocusMode(FocusMode.locked);
+      // await _controller.setExposureMode(ExposureMode.locked);
+      await _controller.setFocusMode(FocusMode.auto);
+      await _controller.setExposureMode(ExposureMode.auto);
+      await _controller.setFlashMode(FlashMode.off);
+      await _controller.takePicture().then((value) async {
+        _cropImage(value);
+      }).then((obj) {
+        _imageTransformations().then((image) async {
+          List<String> ingredients = [];
+          String stringDesc = "";
+          await _tesseractTextRecognizer
+              .processImage(image!.path)
+              .then((value) async {
+            ingredients = splitDescription(value);
+            stringDesc = value;
+          }).then((value) async {
             await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DisplayPictureScreen(
                   // Pass the automatically generated path to
                   // the DisplayPictureScreen widget.
-                  imagePath: image.path,
+                  imagePath: image!.path,
                   image_discription: stringDesc,
-                  ingredientsList: ingriedients,
+                  ingredientsList: ingredients,
                 ),
               ),
             );
-          } catch (e) {
-            // If an error occurs, log the error to the console.
-            print(e);
-          }
-        },
-        child: const Icon(Icons.camera_alt),
-      ),
+          });
+        });
+      });
+
+      if (!mounted) return;
+      // If the picture was taken, display it on a new screen.
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<CroppedFile> _cropImage(XFile image) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: image!.path,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 100,
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.blueAccent,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            hideBottomControls: true,
+            lockAspectRatio: false),
+      ],
     );
+    setState(() {
+      _croppedFile = croppedFile!;
+    });
+    return croppedFile!;
+  }
+
+  _imageTransformations()  {
+    // await _loadImage(_croppedFile!.path).then((value) async {
+    //   // img.Image? imageee = img.decodeJpg(value!);
+    //   await img
+    //       .encodeImageFile(image.path, value!)
+    //       .then((result) async {
+     Cv2.medianBlur(
+      pathFrom: CVPathFrom.GALLERY_CAMERA,
+      pathString: _croppedFile!.path,
+      kernelSize: 5,
+    ).then((byte2)  {
+      img.Image? imageee = img.decodeJpg(byte2!);
+
+      // await invertColors(imageee!).then((value) async{
+       img
+          .encodeImageFile(_croppedFile.path, imageee!)
+          .then((result)  {
+        if (result) {
+           Cv2.adaptiveThreshold(
+            pathFrom: CVPathFrom.GALLERY_CAMERA,
+            pathString: _croppedFile.path,
+            maxValue: 255,
+            adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            thresholdType: Cv2.THRESH_BINARY,
+            blockSize: 29,
+            constantValue: 12,
+          ).then((byte) {
+            img.Image? imagee = img.decodeJpg(byte);
+            setState(() {
+              img.encodeImageFile(_croppedFile.path, imagee!);
+            });
+          });
+        }
+      });
+    });
+    //   });
+    // });
+    return _croppedFile;
   }
 
   List<String> splitDescription(String desc) {
@@ -213,6 +220,7 @@ class ScannerScreenState extends State<ScannerScreen> {
     img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
     return Future.value(invertColors(image));
   }
+
   img.Image invertColors(img.Image image) {
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
@@ -223,6 +231,7 @@ class ScannerScreenState extends State<ScannerScreen> {
     }
     return image;
   }
+
   img.Pixel _invertColor(img.Pixel pixel) {
     pixel.r = 255 - pixel.r;
     pixel.g = 255 - pixel.g;
