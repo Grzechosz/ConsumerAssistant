@@ -77,6 +77,7 @@ class ScannerScreenState extends State<ScannerScreen> {
       await _controller.setFlashMode(FlashMode.off);
       final image = await _controller.takePicture();
       await _cropImage(image);
+      await _invertIfNeeded(image);
       await _processImage(image);
 
       List<String> ingredients = [];
@@ -84,7 +85,7 @@ class ScannerScreenState extends State<ScannerScreen> {
       await _tesseractTextRecognizer
           .processImage(_croppedFile.path)
           .then((value) async {
-        ingredients = splitDescription(value);
+        ingredients = splitDescription(value);// ["sól"]; //
         stringDesc = value;
       });
 
@@ -101,20 +102,15 @@ class ScannerScreenState extends State<ScannerScreen> {
   }
 
   Future _processImage(XFile image) async {
-    // await _loadImage(_croppedFile!.path).then((value) async {
-    //   // img.Image? imageee = img.decodeJpg(value!);
-    //   await img
-    //       .encodeImageFile(image.path, value!)
-    //       .then((result) async {
     await Cv2.medianBlur(
       pathFrom: CVPathFrom.GALLERY_CAMERA,
       pathString: _croppedFile.path,
       kernelSize: 5,
     ).then((byte2) async {
       img.Image? imageee = img.decodeJpg(byte2!);
-
-      // await invertColors(imageee!).then((value) async{
-      await img.encodeImageFile(_croppedFile.path, imageee!).then((result) async {
+      await img
+          .encodeImageFile(_croppedFile.path, imageee!)
+          .then((result) async {
         if (result) {
           await Cv2.adaptiveThreshold(
             pathFrom: CVPathFrom.GALLERY_CAMERA,
@@ -131,8 +127,35 @@ class ScannerScreenState extends State<ScannerScreen> {
         }
       });
     });
-    //   });
-    // });
+  }
+
+  Future _invertIfNeeded(XFile file) async {
+    File file = File(_croppedFile.path);
+    // List<int> bytes =
+    await file.readAsBytes().then((bytes) async {
+      img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
+
+      image = img.luminanceThreshold(image);
+
+      List<int> histogram = List.filled(256, 0, growable: false);
+      for (int y = 0; y < image.height; y++) {
+        for (int x = 0; x < image.width; x++) {
+          img.Pixel pixel = image.getPixel(x, y);
+          histogram[pixel.b.toInt()]++;
+        }
+      }
+
+      img.Image image2 = img.decodeImage(Uint8List.fromList(bytes))!;
+
+      if (histogram[0] > histogram[255]) {
+        await invertColors(image2).then((value) => image2);
+        print("needed");
+      } else {
+        print("not needed");
+      }
+
+     await img.encodeImageFile(_croppedFile.path, image2);
+    });
   }
 
   Future<CroppedFile> _cropImage(XFile image) async {
@@ -204,13 +227,20 @@ class ScannerScreenState extends State<ScannerScreen> {
     RegExp pattern5 = RegExp(r'\n');
     int startIndex = desc.indexOf(pattern4);
     int endIndex = 0;
-    for (int i = 0; i < desc.length; i++) {
-      var char = desc[i];
-      if (char == "." && endIndex == 0) {
-        endIndex = i;
+    if (startIndex >= 0) {
+      for (int i = startIndex; i < desc.length; i++) {
+        var char = desc[i];
+        if (char == "." && endIndex == 0) {
+          endIndex = i;
+        }
       }
+    } else {
+      print("oops");
     }
-    desc = desc.substring(startIndex + 10, endIndex);     /// XDDDDDDDDDDDDDDDDDDDDDDDDDDDD A JEŚLI MA MNIEJ NIŻ 10 ZNAKÓW???
+
+    desc = desc.substring(startIndex + 10, endIndex);
+
+    /// XDDDDDDDDDDDDDDDDDDDDDDDDDDDD A JEŚLI MA MNIEJ NIŻ 10 ZNAKÓW???
     desc = desc.replaceAll(pattern, '');
     desc = desc.replaceAll(pattern5, '');
     List<String> result = desc.split(",");
@@ -228,7 +258,7 @@ class ScannerScreenState extends State<ScannerScreen> {
     return Future.value(invertColors(image));
   }
 
-  img.Image invertColors(img.Image image) {
+  Future<img.Image> invertColors(img.Image image) async {
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
         img.Pixel pixel = image.getPixel(x, y);
@@ -236,7 +266,7 @@ class ScannerScreenState extends State<ScannerScreen> {
         image.setPixel(x, y, invertedPixel);
       }
     }
-    return image;
+    return Future.value(image);
   }
 
   img.Pixel _invertColor(img.Pixel pixel) {
