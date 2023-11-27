@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:consciousconsumer/models/product.dart';
 import 'package:consciousconsumer/screens/scan/create_%20ingredients.dart';
+import 'package:consciousconsumer/services/products_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
@@ -32,6 +35,7 @@ class ScannerScreenState extends State<ScannerScreen> {
   late TesseractTextRecognizer _tesseractTextRecognizer;
   late Future<void> _initializeControllerFuture;
   late CroppedFile _croppedFile;
+  late List productIngredients;
   XFile? image;
 
   @override
@@ -53,6 +57,43 @@ class ScannerScreenState extends State<ScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _buildIngredients()
+    // Scaffold(
+    // body: FutureBuilder<void>(
+    //     future: _initializeControllerFuture,
+    //     builder: (context, snapshot) {
+    //       return (snapshot.connectionState == ConnectionState.done
+    //           ? CameraPreview(_controller)
+    //           : const Loading(isReversedColor: true));
+    //     }),
+    // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    // floatingActionButton: FloatingActionButton(
+    // onPressed: _takePicture,
+    // child: const Icon(Icons.camera_alt),
+    // ),
+    // )
+      ],
+    );
+
+    // return
+  }
+
+  StreamProvider _buildIngredients() {
+    return StreamProvider<List<Ingredient>>.value(
+      value: IngredientsService().ingredients,
+      initialData: const [],
+      builder: (context, child) {
+        return Expanded(
+          child: _buildPreviewScreen(context),
+        );
+      },
+    );
+  }
+
+  Widget _buildPreviewScreen(BuildContext context){
+
     return Scaffold(
       body: FutureBuilder<void>(
           future: _initializeControllerFuture,
@@ -77,7 +118,7 @@ class ScannerScreenState extends State<ScannerScreen> {
       await _controller.setFlashMode(FlashMode.off);
       final image = await _controller.takePicture();
       await _cropImage(image);
-      await _invertIfNeeded(image);
+      // await _invertIfNeeded(image);
       await _processImage(image);
 
       List<String> ingredients = [];
@@ -85,19 +126,49 @@ class ScannerScreenState extends State<ScannerScreen> {
       await _tesseractTextRecognizer
           .processImage(_croppedFile.path)
           .then((value) async {
-        ingredients = splitDescription(value);// ["sól"]; //
+        ingredients =  splitDescription(value);//["sól"]; //
         stringDesc = value;
+      }).then((value) async{
+        List<Future<Ingredient>> ingredientsList = [];
+        IngredientsService service = IngredientsService();
+        for(String name in ingredients){
+          name = name.replaceAll(RegExp(r'.*?\('), '');
+          name = name.trim();
+          name = name.replaceAll(RegExp(r'\)'), '');
+
+            Ingredient? futureIngredient = await service
+                .getIngredientByName(name.toLowerCase());
+            if(futureIngredient!=null) {
+              ingredientsList.add(Future
+                  .value(futureIngredient));
+            }
+        }
+
+        if (IngredientsService.isLoaded) {
+          productIngredients = CreateProductIngredientsList.ingredientsFilter(
+              ingredients, ingredientsList)
+              .toList();
+        }
+        DateTime now = DateTime.now();
+        String productId = now.toString()+ FirebaseAuth.instance
+            .currentUser!.uid;
+        Product scannedProduct = Product("test product", 4, image.name, ingredientsList, now, "none", productId);
+
+        ProductsService(userId: FirebaseAuth.instance
+            .currentUser!.uid).uploadProduct(scannedProduct, image);
       });
 
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => DisplayPictureScreen(
-            imagePath: _croppedFile.path,
-            image_discription: stringDesc,
-            ingredientsList: ingredients,
-          ),
-        ),
-      );
+
+
+      // await Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => DisplayPictureScreen(
+      //       imagePath: _croppedFile.path,
+      //       image_discription: stringDesc,
+      //       ingredientsList: ingredients,
+      //     ),
+      //   ),
+      // );
     }
   }
 
@@ -157,6 +228,7 @@ class ScannerScreenState extends State<ScannerScreen> {
      await img.encodeImageFile(_croppedFile.path, image2);
     });
   }
+
 
   Future<CroppedFile> _cropImage(XFile image) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
@@ -239,8 +311,6 @@ class ScannerScreenState extends State<ScannerScreen> {
     }
 
     desc = desc.substring(startIndex + 10, endIndex);
-
-    /// XDDDDDDDDDDDDDDDDDDDDDDDDDDDD A JEŚLI MA MNIEJ NIŻ 10 ZNAKÓW???
     desc = desc.replaceAll(pattern, '');
     desc = desc.replaceAll(pattern5, '');
     List<String> result = desc.split(",");

@@ -1,5 +1,5 @@
 enum Harmfulness{
-  good(1), harmful(2), dangerous(3), uncharted(4);
+  good(1), harmful(2), dangerous(3), uncharted(4); //its only for sorting
   const Harmfulness(this.id);
   final int id;
 }

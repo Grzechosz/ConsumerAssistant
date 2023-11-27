@@ -32,13 +32,13 @@ class ProductsService{
 
   // upload product to firebase
   Future uploadProduct(Product product, XFile image) async {
-    final storageService = StorageService();
-    storageService.uploadProductImage(image);
     productCollection!
         .doc(product.id.toString())
         .set(await product.toFirebase())
         .onError((error, stackTrace) =>
             print("Error writing document: $error"));
+    final storageService = StorageService();
+    storageService.uploadProductImage(image);
   }
 
   // delete product from firebase

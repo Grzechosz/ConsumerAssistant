@@ -21,7 +21,7 @@ class Product{
     final String productImageUrl;
     final String remarks;
     final List<Future<Ingredient>> ingredients = [];
-    final double rating;
+    final double rating;  // value from range 0-1
     DateTime createdDate;
 
     id=uid;
