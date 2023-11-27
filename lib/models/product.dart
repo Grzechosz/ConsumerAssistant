@@ -4,7 +4,7 @@ import 'package:consciousconsumer/services/ingredients_service.dart';
 import 'ingredient.dart';
 
 class Product{
-  final int id;
+  final String id;
   final double rating;
   final String productName;
   final String productImageUrl;
@@ -14,9 +14,9 @@ class Product{
 
   Product(this.productName, this.rating, this.productImageUrl, this.ingredients, this.createdDate, this.remarks, this.id);
 
-  factory Product.fromFirebase(Map<String, dynamic> map, int uid) {
+  factory Product.fromFirebase(Map<String, dynamic> map, String uid) {
     IngredientsService service = IngredientsService();
-    final int id;
+    final String id;
     final String productName;
     final String productImageUrl;
     final String remarks;
@@ -35,5 +35,21 @@ class Product{
     createdDate = (map['createdDate'] as Timestamp).toDate();
 
     return Product(productName, rating, productImageUrl, ingredients, createdDate, remarks, id);
+  }
+
+  Future<Map<String, dynamic>> toFirebase() async{
+    List<String> list = [];
+    for(Future<Ingredient> future in ingredients){
+      list.add((await future).id.toString());
+    }
+    Map<String, dynamic> map = {
+      'ingredients': list,
+      'rating': rating,
+      'productName': productName,
+      'productImageUrl': productImageUrl,
+      'createdDate': Timestamp.now(),
+      'remarks': remarks
+    };
+    return map;
   }
 }
