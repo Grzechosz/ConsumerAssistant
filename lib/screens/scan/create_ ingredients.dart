@@ -10,7 +10,7 @@ class CreateProductIngredientsList {
         ingredient = ingredient.replaceAll(RegExp(r'.*?\('), '');
         ingredient = ingredient.trim();
         ingredient = ingredient.replaceAll(RegExp(r'\)'), '');
-        for (String name in element.names) {
+        for (String name in element. names) {
          name.toLowerCase().compareTo(ingredient.toLowerCase()) == 0 ? check=true : check = false;
           if (check) {
             return true;
