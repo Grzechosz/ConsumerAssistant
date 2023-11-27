@@ -65,7 +65,8 @@ class ProductsScreenState extends State<ProductsScreen>{
 
   StreamProvider _buildProducts(){
     return StreamProvider<List<Product>>.value(
-      value: ProductsService(userId: FirebaseAuth.instance.currentUser!.uid).products,
+      value: ProductsService(userId: FirebaseAuth.instance
+          .currentUser!.uid).products,
       initialData: const [],
       builder: (context, child) {
         return Expanded(
@@ -77,7 +78,9 @@ class ProductsScreenState extends State<ProductsScreen>{
 
   Widget _buildProductsList(BuildContext context){
     allProducts = Provider.of<List<Product>>(context);
-    products = SortingAndFiltering.productsFilter(searchText, allProducts).toList();
+    products = SortingAndFiltering
+        .productsFilter(searchText, allProducts)
+        .toList();
 
     if(ProductsService.isLoaded){
       return ListView.builder(

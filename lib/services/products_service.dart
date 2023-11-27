@@ -1,19 +1,21 @@
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:consciousconsumer/services/storage_service.dart';
 
 import '../models/product.dart';
 
 class ProductsService{
-  Query<Map<String, dynamic>> productCollection = FirebaseFirestore
-      .instance.collection('products');
+  CollectionReference? productCollection;
   static bool isLoaded = false;
 
   ProductsService({required userId}){
-    productCollection = productCollection.where('userId', isEqualTo: userId);
+    productCollection = productCollection = FirebaseFirestore
+        .instance.collection(userId);
   }
 
   Stream<List<Product>> get products{
     isLoaded = false;
-    return productCollection
+    return productCollection!
         .snapshots()
         .map(_productsFromSnapshot);
   }
@@ -22,13 +24,28 @@ class ProductsService{
     List<Product> items = snapshot.docs.map(
             (e) => Product.fromFirebase(
             e.data() as Map<String, dynamic>,
-            int.parse(e.id))
+            e.id)
     ).toList();
     isLoaded = true;
     return items;
   }
 
+  // upload product to firebase
+  Future uploadProduct(Product product, XFile image) async {
+    final storageService = StorageService();
+    storageService.uploadProductImage(image);
+    productCollection!
+        .doc(product.id.toString())
+        .set(await product.toFirebase())
+        .onError((error, stackTrace) =>
+            print("Error writing document: $error"));
+  }
+
   // delete product from firebase
+  Future deleteProduct(Product product) async {
+    await productCollection!.doc(product.id.toString())
+        .delete().then((value) => print("Document deleted"));
+  }
 
   // update product in firebase
 }
