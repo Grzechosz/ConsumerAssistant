@@ -43,6 +43,7 @@ class ProductsService{
 
   // delete product from firebase
   Future deleteProduct(Product product) async {
+    StorageService().deleteProductImage(product);
     await productCollection!.doc(product.id.toString())
         .delete().then((value) => print("Document deleted"));
   }

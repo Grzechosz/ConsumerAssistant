@@ -43,22 +43,22 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   static List<DropdownMenuItem<int>> get sortItems{
     List<DropdownMenuItem<int>> items = [
-      const DropdownMenuItem(value: 0, child: Text('Nazwa')),
-      const DropdownMenuItem(value: 1, child: Text('Oznaczenie E')),
-      const DropdownMenuItem(value: 2, child: Text('Szkodliwość')),
-      const DropdownMenuItem(value: 3, child: Text('Kategoria'))
+      const DropdownMenuItem(value: 0, child: Text('Nazwa', style: TextStyle(color: Constants.dark80),)),
+      // const DropdownMenuItem(value: 1, child: Text('Oznaczenie E')),
+      const DropdownMenuItem(value: 2, child: Text('Szkodliwość', style: TextStyle(color: Constants.dark80),)),
+      const DropdownMenuItem(value: 3, child: Text('Kategoria', style: TextStyle(color: Constants.dark80),))
     ];
     return items;
   }
 
   Widget _buildSearchBox(Size screenSize){
     return Container(
-      margin: EdgeInsets.only(top: screenSize.height/20, left: screenSize.width/40, right: screenSize.width/40),
+      margin: EdgeInsets.only(top: screenSize.height/20,
+        left: screenSize.width/30,
+        right: screenSize.width/30,),
       decoration: BoxDecoration(
-          border: Border.all(),
           borderRadius: BorderRadius.circular(25),
           color: Colors.white),
-
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: TextField(
           onChanged: (text)=>setState(() {
@@ -68,7 +68,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
               icon: Icon(
                 Icons.search,
                 size: 30,
-                color: Constants.dark50,),
+                color: Constants.dark80,),
               hintStyle: TextStyle(
                   color: Constants.dark50,
                   fontSize: 20
@@ -83,13 +83,12 @@ class IngredientsScreenState extends State<IngredientsScreen>{
   Widget _buildSortBy(Size screenSize){
     return Container(
       margin: EdgeInsets.only(top: screenSize.height/100,
-          bottom: screenSize.height/100),
+          bottom: screenSize.height/100,
+      right: screenSize.width/100),
       height: screenSize.width/10,
       decoration: BoxDecoration(
-          border: Border.all(),
           borderRadius: BorderRadius.circular(15),
           color: Colors.white),
-
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: DropdownButton(
         value: selectedSortOption,
@@ -110,7 +109,6 @@ class IngredientsScreenState extends State<IngredientsScreen>{
       height: screenSize.width/10,
       width: screenSize.width/10,
       decoration: BoxDecoration(
-          border: Border.all(),
           borderRadius: BorderRadius.circular(15),
           color: Colors.white),
 
@@ -122,9 +120,12 @@ class IngredientsScreenState extends State<IngredientsScreen>{
         },
         icon: isDownwardArrow ? const Icon(
           Icons.arrow_downward,
-          size: 20,) : const Icon(
+          size: 20,
+          color: Constants.dark80,) : const Icon(
           Icons.arrow_upward,
-          size: 20,),
+          size: 20,
+          color: Constants.dark80
+        ),
       ),
     );
   }
@@ -144,7 +145,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
   Widget _buildIngredientsList(BuildContext context){
     allIngredients = Provider.of<List<Ingredient>>(context);
     if(IngredientsService.isLoaded){
-      ingredients = SortingAndFiltering.ingredientsFilter(searchText, allIngredients).toList();
+      ingredients = SortingAndFiltering.ingredientsFilter(searchText,
+          allIngredients).toList();
       SortingAndFiltering.sort(selectedSortOption, ingredients, isDownwardArrow);
       return ListView.builder(
         padding: const EdgeInsets.only(top: 0),

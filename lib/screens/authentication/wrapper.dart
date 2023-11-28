@@ -7,7 +7,6 @@ import 'authentication.dart';
 import '../navigation_bar.dart';
 
 class Wrapper extends StatelessWidget {
-
   final CameraDescription firstCamera;
 
   const Wrapper({super.key, required this.firstCamera});

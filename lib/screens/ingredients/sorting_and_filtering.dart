@@ -1,5 +1,6 @@
 import 'dart:core';
 
+
 class SortingAndFiltering{
   static Iterable ingredientsFilter(String pattern, List<dynamic> all){
     return all.where((element) {
@@ -26,6 +27,12 @@ class SortingAndFiltering{
       }
       return element.productName.toLowerCase().contains(RegExp(pattern.toLowerCase()));
       });
+  }
+
+  static void productsSorting(List products){
+    products.sort((prodA, prodB){
+      return prodA.createdDate.isBefore(prodB.createdDate) ? 1 : -1;
+    });
   }
 
   static void sort(int sortOption, List ingredients, bool sortDown){

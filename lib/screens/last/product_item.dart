@@ -1,7 +1,10 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:consciousconsumer/screens/loading.dart';
 import 'package:consciousconsumer/models/product.dart';
+import 'package:consciousconsumer/services/products_service.dart';
 import 'package:consciousconsumer/services/storage_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/constants.dart';
@@ -20,7 +23,7 @@ class ProductItem extends StatefulWidget{
 
 class _ProductItemState extends State<ProductItem> {
   _ProductItemState();
-  NetworkImage? image;
+  String? imageUrl;
   List<Ingredient>? ingredients;
 
   @override
@@ -58,7 +61,10 @@ class _ProductItemState extends State<ProductItem> {
                 _getImage(screenSize)
               ],
             ),
-            subtitle: _getDateTime(),
+            subtitle: Container(
+              margin: EdgeInsets.only(top: screenSize.width/50),
+              child: _getDateTime(),
+            ),
             children: [
               _getIngredients(),
             ],
@@ -99,11 +105,11 @@ class _ProductItemState extends State<ProductItem> {
                 },
               ),
               TextButton(
+                onPressed: _deleteProduct,
                 child: const Text(Constants.deleteText,
                   style: TextStyle(
                     color: Colors.red,
                   ),),
-                onPressed: () { },
               ),
             ],
           );
@@ -114,7 +120,7 @@ class _ProductItemState extends State<ProductItem> {
     return Container(
       padding: EdgeInsets.all(screenSize.width/30),
       child: Align(
-        alignment: Alignment.topLeft,
+        alignment: Alignment.topCenter,
         child: Text(
           widget.item.productName,
           style: const TextStyle(
@@ -127,9 +133,9 @@ class _ProductItemState extends State<ProductItem> {
   void _getImageUrl() async {
     StorageService service = StorageService();
     String url = await service.getProductImage(widget.item);
-    if(image == null) {
+    if(imageUrl == null && mounted) {
       setState(() {
-      image = NetworkImage(url);
+      imageUrl = url;
     });
     }
   }
@@ -139,7 +145,7 @@ class _ProductItemState extends State<ProductItem> {
     return Align(
       alignment: Alignment.topRight,
       child: Text(
-        createdDate.substring(0, createdDate.length-7),
+        createdDate.substring(0, createdDate.length-10),
         style: const TextStyle(
             color: Constants.dark,
             fontSize: 14,
@@ -151,10 +157,13 @@ class _ProductItemState extends State<ProductItem> {
 
   Widget _getImage(Size screenSize){
     return Center(child:
-    image!=null ? Image(
-      image: image!,
+    imageUrl!=null ? CachedNetworkImage(
       width: screenSize.width/2,
-      height: screenSize.width/2,) :
+      height: screenSize.width/2,
+      progressIndicatorBuilder: (_,__,___)=>
+      const Center(
+        child: Loading(isReversedColor: true)),
+      imageUrl: imageUrl!,) :
     const Loading(isReversedColor: true),) ;
   }
 
@@ -180,7 +189,12 @@ class _ProductItemState extends State<ProductItem> {
       itemBuilder:(context, index) {
         return (ingredients!.isEmpty ?
         const Center(
-          child: Text("Brak składników"),
+          child: Text("Brak składników",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.w400
+          ),),
         ) :
         ListTile(title: IngredientItem(ingredients![index])));
             //Text(ingredients[index].names[0]));
@@ -188,7 +202,8 @@ class _ProductItemState extends State<ProductItem> {
     ) : const Loading(isReversedColor: false);
   }
 
-  Future<void> _getIngredientsList() async {
+
+  Future _getIngredientsList() async {
     List<Ingredient> ingredients = [];
     for(Future<Ingredient> ingredient in widget.item.ingredients){
       ingredients.add(await ingredient);
@@ -198,6 +213,14 @@ class _ProductItemState extends State<ProductItem> {
         this.ingredients = ingredients;
       });
     }
+  }
+
+  void _deleteProduct() {
+    setState(() {
+      ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
+          .deleteProduct(widget.item);
+    });
+    Navigator.pop(context);
   }
 }
 

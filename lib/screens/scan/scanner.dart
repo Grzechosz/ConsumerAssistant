@@ -119,12 +119,14 @@ class ScannerScreenState extends State<ScannerScreen> {
                   cameraController: _controller,
                 )));
 
+
         Product scannedProduct = Product(_textContoller.text, 4, image.name,
             ingredientsList, now, "none", productId);
 
         ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
             .uploadProduct(scannedProduct, image);
       });
+
 
       // await Navigator.of(context).push(
       //   MaterialPageRoute(

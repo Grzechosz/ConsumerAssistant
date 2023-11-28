@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../models/product.dart';
 
@@ -53,5 +52,12 @@ class StorageService{
     });
 
   }
+
   // delete product image from firebase storage
+  void deleteProductImage(Product product){
+    firebaseStorage
+        .child("products/${FirebaseAuth.instance.currentUser!.uid}")
+        .child(product.productImageUrl)
+        .delete();
+  }
 }

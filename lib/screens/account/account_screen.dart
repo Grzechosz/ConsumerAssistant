@@ -3,13 +3,25 @@ import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/constants.dart';
+import '../authentication/sign_screen_widgets.dart';
 
-class AccountScreen extends StatelessWidget{
-
-  static final AuthenticationService _authService = AuthenticationService();
-
+class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
+  @override
+  State<StatefulWidget> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen>{
+  static final AuthenticationService _authService = AuthenticationService();
+
+  late EmailFieldContainer emailFieldContainer = EmailFieldContainer(formKeyEmail: _formKeyEmail,);
+  late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(formKeyPasswd: _formKeyPasswd,);
+  late String
+  error='';
+
+  final _formKeyEmail = GlobalKey<FormState>(),
+      _formKeyPasswd = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +30,11 @@ class AccountScreen extends StatelessWidget{
         const AccountBackgroundWidget(),
         Align(
           alignment: Alignment.bottomRight,
-          child: _buildLogOutButton(),
+          child: _builtScreenElements(context),
         )
       ]
     );
   }
-
 
   static Widget _buildLogOutButton() {
     return Container(
@@ -42,6 +53,33 @@ class AccountScreen extends StatelessWidget{
           ),
         ),
       ),
+    );
+  }
+
+  Row _builtScreenElements(BuildContext context){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.only(top: MediaQuery.of(context)
+              .size.height/3),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              emailFieldContainer,
+              passwordFieldContainer,
+              Text(error,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.red
+                ),
+              ),
+              _buildLogOutButton(),
+            ],
+          ),
+        )
+      ],
     );
   }
 
