@@ -1,4 +1,6 @@
 
+import 'package:consciousconsumer/services/products_service.dart';
+import 'package:consciousconsumer/services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/app_user.dart';
@@ -7,7 +9,7 @@ class AuthenticationService{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   AppUser _userFromFirebase(User user){
-    return AppUser(id: user.uid, name: user.email!);
+    return AppUser(id: user.uid, name: user.displayName!, email: user.email!);
   }
 
   Stream<AppUser> get user{
@@ -46,5 +48,22 @@ class AuthenticationService{
     }catch(e){
       return AppUser.emptyUser;
     }
+  }
+
+  void updateName(String name){
+    _auth.currentUser?.updateDisplayName(name);
+  }
+
+  void updateEmail(String newEmail){
+    _auth.currentUser?.updateEmail(newEmail);
+  }
+
+  void deleteAccount(){
+    ProductsService service = ProductsService(userId: _auth.currentUser?.uid);
+    service.clearProducts(_auth.currentUser!.uid).then((value) => _auth.currentUser?.delete());
+  }
+
+  void updatePassword(String newPassword){
+    _auth.currentUser?.updatePassword(newPassword);
   }
 }

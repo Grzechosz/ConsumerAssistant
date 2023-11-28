@@ -48,5 +48,17 @@ class ProductsService{
         .delete().then((value) => print("Document deleted"));
   }
 
+  // delete all products of user
+  Future clearProducts(String userId) async {
+    StorageService storageService = StorageService();
+    storageService.deleteUserFolder(userId);
+    List<List<Product>> tmp = await products.toList();
+    for(List<Product> list in tmp){
+      for(Product product in list){
+        deleteProduct(product);
+      }
+    }
+  }
+
   // update product in firebase
 }

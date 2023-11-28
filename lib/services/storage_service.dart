@@ -50,7 +50,27 @@ class StorageService{
           break;
       }
     });
+  }
 
+  Future deleteUserFolder(String userId) async {
+    List<String> paths = [];
+    paths = await _deleteFolder("products/${FirebaseAuth.instance.currentUser!.uid}", paths);
+    for (String path in paths) {
+      await firebaseStorage.child(path).delete();
+    }
+  }
+
+  Future<List<String>> _deleteFolder(String folder, List<String> paths) async {
+    ListResult list = await firebaseStorage.child(folder).listAll();
+    List<Reference> items = list.items;
+    List<Reference> prefixes = list.prefixes;
+    for (Reference item in items) {
+      paths.add(item.fullPath);
+    }
+    for (Reference subfolder in prefixes) {
+      paths = await _deleteFolder(subfolder.fullPath, paths);
+    }
+    return paths;
   }
 
   // delete product image from firebase storage

@@ -1,7 +1,8 @@
 class AppUser{
-  static final emptyUser = AppUser(id: 'null', name: 'null');
+  static final emptyUser = AppUser(id: 'null', name: 'null', email: 'null');
 
   final String id;
   final String name;
-  AppUser({required this.id, required this.name});
+  final String email;
+  AppUser({required this.id, required this.name, required this.email});
 }
