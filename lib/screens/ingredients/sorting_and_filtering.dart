@@ -1,6 +1,5 @@
 import 'dart:core';
 
-import '../../models/product.dart';
 
 class SortingAndFiltering{
   static Iterable ingredientsFilter(String pattern, List<dynamic> all){

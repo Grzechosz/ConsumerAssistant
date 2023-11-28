@@ -93,7 +93,6 @@ class ScannerScreenState extends State<ScannerScreen> {
   }
 
   Widget _buildPreviewScreen(BuildContext context){
-
     return Scaffold(
       body: FutureBuilder<void>(
           future: _initializeControllerFuture,

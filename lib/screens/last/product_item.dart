@@ -61,7 +61,10 @@ class _ProductItemState extends State<ProductItem> {
                 _getImage(screenSize)
               ],
             ),
-            subtitle: _getDateTime(),
+            subtitle: Container(
+              margin: EdgeInsets.only(top: screenSize.width/50),
+              child: _getDateTime(),
+            ),
             children: [
               _getIngredients(),
             ],
@@ -117,7 +120,7 @@ class _ProductItemState extends State<ProductItem> {
     return Container(
       padding: EdgeInsets.all(screenSize.width/30),
       child: Align(
-        alignment: Alignment.topLeft,
+        alignment: Alignment.topCenter,
         child: Text(
           widget.item.productName,
           style: const TextStyle(
@@ -142,7 +145,7 @@ class _ProductItemState extends State<ProductItem> {
     return Align(
       alignment: Alignment.topRight,
       child: Text(
-        createdDate.substring(0, createdDate.length-7),
+        createdDate.substring(0, createdDate.length-10),
         style: const TextStyle(
             color: Constants.dark,
             fontSize: 14,
@@ -198,6 +201,7 @@ class _ProductItemState extends State<ProductItem> {
       },
     ) : const Loading(isReversedColor: false);
   }
+
 
   Future _getIngredientsList() async {
     List<Ingredient> ingredients = [];

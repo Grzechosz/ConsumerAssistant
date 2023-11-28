@@ -7,7 +7,7 @@ class AuthenticationService{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   AppUser _userFromFirebase(User user){
-    return AppUser(id: user.uid);
+    return AppUser(id: user.uid, name: user.email!);
   }
 
   Stream<AppUser> get user{

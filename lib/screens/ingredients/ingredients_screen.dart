@@ -43,10 +43,10 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   static List<DropdownMenuItem<int>> get sortItems{
     List<DropdownMenuItem<int>> items = [
-      const DropdownMenuItem(value: 0, child: Text('Nazwa')),
+      const DropdownMenuItem(value: 0, child: Text('Nazwa', style: TextStyle(color: Constants.dark80),)),
       // const DropdownMenuItem(value: 1, child: Text('Oznaczenie E')),
-      const DropdownMenuItem(value: 2, child: Text('Szkodliwość')),
-      const DropdownMenuItem(value: 3, child: Text('Kategoria'))
+      const DropdownMenuItem(value: 2, child: Text('Szkodliwość', style: TextStyle(color: Constants.dark80),)),
+      const DropdownMenuItem(value: 3, child: Text('Kategoria', style: TextStyle(color: Constants.dark80),))
     ];
     return items;
   }
@@ -59,7 +59,6 @@ class IngredientsScreenState extends State<IngredientsScreen>{
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           color: Colors.white),
-
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: TextField(
           onChanged: (text)=>setState(() {
@@ -90,7 +89,6 @@ class IngredientsScreenState extends State<IngredientsScreen>{
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Colors.white),
-
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: DropdownButton(
         value: selectedSortOption,
@@ -122,9 +120,12 @@ class IngredientsScreenState extends State<IngredientsScreen>{
         },
         icon: isDownwardArrow ? const Icon(
           Icons.arrow_downward,
-          size: 20,) : const Icon(
+          size: 20,
+          color: Constants.dark80,) : const Icon(
           Icons.arrow_upward,
-          size: 20,),
+          size: 20,
+          color: Constants.dark80
+        ),
       ),
     );
   }
