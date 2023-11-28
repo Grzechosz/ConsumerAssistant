@@ -84,4 +84,10 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
       ),
     );
   }
+
+  void navigateToLast(){
+    setState(() {
+      _selectedIndex = 0;
+    });
+  }
 }

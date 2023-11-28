@@ -36,9 +36,11 @@ class ProductsScreenState extends State<ProductsScreen>{
 
   Widget _buildSearchBox(Size screenSize){
     return Container(
-      margin: EdgeInsets.only(top: screenSize.height/20, left: screenSize.width/40, right: screenSize.width/40),
+      margin: EdgeInsets.only(top: screenSize.height/20,
+          left: screenSize.width/30,
+          right: screenSize.width/30,
+      bottom: screenSize.height/80),
       decoration: BoxDecoration(
-          border: Border.all(),
           borderRadius: BorderRadius.circular(25),
           color: Colors.white),
 
@@ -51,7 +53,7 @@ class ProductsScreenState extends State<ProductsScreen>{
               icon: Icon(
                 Icons.search,
                 size: 30,
-                color: Constants.dark50,),
+                color: Constants.dark80,),
               hintStyle: TextStyle(
                   color: Constants.dark50,
                   fontSize: 20
@@ -81,6 +83,7 @@ class ProductsScreenState extends State<ProductsScreen>{
     products = SortingAndFiltering
         .productsFilter(searchText, allProducts)
         .toList();
+    SortingAndFiltering.productsSorting(products);
 
     if(ProductsService.isLoaded){
       return ListView.builder(

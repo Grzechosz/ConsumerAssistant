@@ -158,8 +158,6 @@ class ScannerScreenState extends State<ScannerScreen> {
             .currentUser!.uid).uploadProduct(scannedProduct, image);
       });
 
-
-
       // await Navigator.of(context).push(
       //   MaterialPageRoute(
       //     builder: (context) => DisplayPictureScreen(

@@ -53,5 +53,12 @@ class StorageService{
     });
 
   }
+
   // delete product image from firebase storage
+  void deleteProductImage(Product product){
+    firebaseStorage
+        .child("products/${FirebaseAuth.instance.currentUser!.uid}")
+        .child(product.productImageUrl)
+        .delete();
+  }
 }
