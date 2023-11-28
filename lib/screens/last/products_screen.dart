@@ -86,18 +86,22 @@ class ProductsScreenState extends State<ProductsScreen>{
     SortingAndFiltering.productsSorting(products);
 
     if(ProductsService.isLoaded){
-      return ListView.builder(
+        return products.isNotEmpty ? ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: products.length,
-        itemBuilder:(context, index) {
-          return (products.isEmpty ?
-          const Center(
-            child: Text("Brak Produktów"),
-          ) :
-          ListTile(title: ProductItem(item: products[index],)));
-        },
-      );
+        itemBuilder:(context, index) =>
+          ListTile(title: ProductItem(item: products[index],)
+      )) : const Center(
+          child: Text("Brak Produktów",
+          style: TextStyle(letterSpacing: 0.5,
+            fontSize: 35,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+
+          ),),
+        );
+
     }else{
       return const Loading(isReversedColor: false,);
     }
