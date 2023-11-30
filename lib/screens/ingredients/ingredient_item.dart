@@ -24,11 +24,6 @@ class IngredientItem extends StatelessWidget{
                   IngredientDescription(ingredient: item))
           );
         },
-        shape: const Border(
-            bottom: BorderSide(
-                color: Constants.dark50
-            ),
-        ),
         title: Text(_getNameToDisplay()),
         subtitle: Text(_getTrailing(),
             style: const TextStyle(
@@ -73,6 +68,7 @@ class IngredientItem extends StatelessWidget{
     }
     return Image.asset(icon, height: screenSize.height/20,);
   }
+
   String _getTrailing(){
     String visibleCategory;
     switch(item.category){

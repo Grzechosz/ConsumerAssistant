@@ -50,11 +50,6 @@ class _ProductItemState extends State<ProductItem> {
                 // )
               ],
             ),
-            shape: const Border(
-                bottom: BorderSide(
-                    color: Constants.dark50
-                )
-            ),
             title: Column(
               children: [
                 _getNameToDisplay(screenSize),

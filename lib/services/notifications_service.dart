@@ -26,17 +26,17 @@ class NotificationsService{
     );
     if(settings.authorizationStatus == AuthorizationStatus.authorized){
       token = await getToken();
-      print('token: ${token}');
+      print('token: $token');
     }
   }
 
   Future<String> getToken() async {
-    DocumentSnapshot<Object?> map =
-      await tokensCollection!.doc(uid).get();
+    // DocumentSnapshot<Object?> map =
+    //   await tokensCollection!.doc(uid).get();
     String? token;
-    if(map.exists) {
-      token = map['token'] as String;
-    }
+    // if(map.exists) {
+    //   token = map['token'] as String;
+    // }
     token ??= await saveToken();
     return token;
   }

@@ -10,7 +10,7 @@ class IngredientsService{
   Stream<List<Ingredient>> get ingredients{
     isLoaded = false;
     return ingredientCollection
-        .orderBy('harmfulness')
+        .orderBy('names')
         .snapshots()
     .map(_ingredientsFromSnapshot);
   }
