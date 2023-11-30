@@ -2,6 +2,9 @@ import 'package:consciousconsumer/screens/account/account_screen.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredients_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/last/products_screen.dart';
+import 'package:consciousconsumer/services/notifications_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../config/constants.dart';
@@ -16,6 +19,7 @@ class ConsciousConsumer extends StatefulWidget{
   State<ConsciousConsumer> createState()=>
       _ConsciousConsumerState();
 }
+
 
 class _ConsciousConsumerState extends State<ConsciousConsumer> {
   int _selectedIndex = 0;
@@ -34,6 +38,13 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
     const Text("Alergeny", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
     const AccountScreen(),
 ];
+
+  @override
+  void initState() {
+    NotificationsService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .initNotifications();
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {

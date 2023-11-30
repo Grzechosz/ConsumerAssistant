@@ -29,7 +29,7 @@ class AccountBackgroundWidget extends StatelessWidget{
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     AppUser user = Provider.of<AppUser>(context);
-    String name = user.name;
+    String name = user.email;
     if(name.contains(RegExp('@'))){
       name = name.substring(0, name.indexOf(RegExp('@')));
       name = name[0].toUpperCase() + name.substring(1);
