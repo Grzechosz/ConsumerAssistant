@@ -65,8 +65,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
   Widget _buildSearchBox(Size screenSize){
     return Container(
       margin: EdgeInsets.only(top: screenSize.height/20,
-        left: screenSize.width/30,
-        right: screenSize.width/30,
+        left: screenSize.width/100,
+        right: screenSize.width/100,
       bottom: screenSize.height/250),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
