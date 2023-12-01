@@ -60,13 +60,15 @@ class _AccountScreenState extends State<AccountScreen>{
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.only(top: MediaQuery.of(context)
-              .size.height/3),
+        // SingleChildScrollView(
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   padding: EdgeInsets.only(top: MediaQuery.of(context)
+        //       .size.height/3),
+          Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              const Spacer(),
               emailFieldContainer,
               passwordFieldContainer,
               Text(error,

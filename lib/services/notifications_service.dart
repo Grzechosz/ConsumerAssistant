@@ -1,17 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:rxdart/rxdart.dart';
 
 enum NotificationType{
   emailConfirmation;
 }
 
 class NotificationsService{
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  CollectionReference tokensCollection = FirebaseFirestore.instance.collection('tokens');
-  String uid;
+  final _firebaseMessaging = FirebaseMessaging.instance;
+  final _messageStreamController = BehaviorSubject<RemoteMessage>();
+  final _tokensCollection = FirebaseFirestore.instance.collection('tokens');
+  final String _uid;
   String? token;
 
-  NotificationsService({required this.uid});
+  NotificationsService({required String uid}) : _uid = uid;
 
   Future initNotifications() async {
     await _firebaseMessaging.setAutoInitEnabled(true);
@@ -24,26 +27,33 @@ class NotificationsService{
       provisional: true,
       sound: true,
     );
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (kDebugMode) {
+        print('Handling a foreground message: ${message.messageId}');
+        print('Message data: ${message.data}');
+        print('Message notification: ${message.notification?.title}');
+        print('Message notification: ${message.notification?.body}');
+        _messageStreamController.sink.add(message);
+      }
+    });
+
     if(settings.authorizationStatus == AuthorizationStatus.authorized){
       token = await getToken();
-      print('token: $token');
+      if (kDebugMode) {
+        print('token: $token');
+      }
     }
   }
 
   Future<String> getToken() async {
-    // DocumentSnapshot<Object?> map =
-    //   await tokensCollection!.doc(uid).get();
-    String? token;
-    // if(map.exists) {
-    //   token = map['token'] as String;
-    // }
-    token ??= await saveToken();
+    String token = await saveToken();
     return token;
   }
 
   Future<String> saveToken() async {
     final token = await _firebaseMessaging.getToken();
-    tokensCollection!.doc(uid).set({
+    _tokensCollection!.doc(_uid).set({
     'token': token!
     });
     return token;

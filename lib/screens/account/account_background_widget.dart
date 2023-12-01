@@ -29,11 +29,16 @@ class AccountBackgroundWidget extends StatelessWidget{
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     AppUser user = Provider.of<AppUser>(context);
-    String name = user.email;
-    if(name.contains(RegExp('@'))){
-      name = name.substring(0, name.indexOf(RegExp('@')));
-      name = name[0].toUpperCase() + name.substring(1);
+
+    String name = user.name;
+    if (name == 'null'){
+      name = user.email;
+      if(name.contains(RegExp('@'))){
+        name = name.substring(0, name.indexOf(RegExp('@')));
+        name = name[0].toUpperCase() + name.substring(1);
+      }
     }
+
     return Container(
         width: screenWidth*0.9,
         margin: EdgeInsets.only(top: screenHeight/6),
@@ -44,7 +49,7 @@ class AccountBackgroundWidget extends StatelessWidget{
               fontWeight: FontWeight.w600,
               fontSize: 32,
               letterSpacing: 1,
-              color: Constants.dark
+              color: Constants.dark80
           ),
           overflow: TextOverflow.visible,
           textAlign: TextAlign.center,

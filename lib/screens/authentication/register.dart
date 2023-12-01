@@ -23,7 +23,10 @@ class RegisterState extends State<Register> {
   bool loading = false;
   final AuthenticationService _authentication = AuthenticationService();
   late FirstButton registerButton = FirstButton(function: () async {
-          if(_formKeyEmail.currentState!.validate() && _formKeyPasswd.currentState!.validate()){
+          if(_formKeyEmail.currentState!.validate()
+              && _formKeyPasswd.currentState!.validate()
+              && _formKeyConfPasswd.currentState!.validate()
+              && passwordFieldContainer.password == confirmPasswordFieldContainer.password){
             loading = true;
             dynamic result = await _authentication.register(emailFieldContainer.email, passwordFieldContainer.password);
             if(result == AppUser.emptyUser){
@@ -40,11 +43,13 @@ class RegisterState extends State<Register> {
 
   late EmailFieldContainer emailFieldContainer = EmailFieldContainer(formKeyEmail: _formKeyEmail,);
   late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(formKeyPasswd: _formKeyPasswd,);
+  late ConfirmPasswordFieldContainer confirmPasswordFieldContainer = ConfirmPasswordFieldContainer(formKeyPasswd: _formKeyConfPasswd,);
   late String
   error='';
 
   final _formKeyEmail = GlobalKey<FormState>(),
-      _formKeyPasswd = GlobalKey<FormState>();
+      _formKeyPasswd = GlobalKey<FormState>(),
+      _formKeyConfPasswd = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +83,7 @@ class RegisterState extends State<Register> {
               ),
               emailFieldContainer,
               passwordFieldContainer,
+              confirmPasswordFieldContainer,
               Text(error,
                 style: const TextStyle(
                     fontSize: 15,
