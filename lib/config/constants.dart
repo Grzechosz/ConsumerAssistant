@@ -4,6 +4,7 @@ class Constants {
   //ASSETS
   static const assetsImage = 'assets/images/';
   static const assetsHarmfulnessIcons = 'assets/images/harmfulness/';
+  static const assetsCategoriesIcons = 'assets/images/categories/';
   static const backgroundImage = 'background.jpg';
   static const logoImage = 'full_logo.png';
   static const goodIcon = "good.png";

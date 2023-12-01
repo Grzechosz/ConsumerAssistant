@@ -15,14 +15,15 @@ class IngredientItem extends StatelessWidget{
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Card(
+      margin: EdgeInsets.symmetric(horizontal: screenSize.width/40,
+          vertical: screenSize.height/150),
       color: Colors.white,
       child: ListTile(
         leading: _getIconImage(screenSize),
         onTap: (){
           Navigator.push(context,
               PageRouteBuilder(pageBuilder: (q,w,e) =>
-                  IngredientDescription(ingredient: item))
-          );
+                  IngredientDescription(ingredient: item)));
         },
         title: Text(_getNameToDisplay()),
         subtitle: Text(_getTrailing(),

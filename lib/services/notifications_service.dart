@@ -53,7 +53,7 @@ class NotificationsService{
 
   Future<String> saveToken() async {
     final token = await _firebaseMessaging.getToken();
-    _tokensCollection!.doc(_uid).set({
+    _tokensCollection.doc(_uid).set({
     'token': token!
     });
     return token;

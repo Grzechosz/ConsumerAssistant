@@ -1,11 +1,13 @@
 import 'package:consciousconsumer/screens/ingredients/sorting_and_filtering.dart';
 import 'package:consciousconsumer/services/ingredients_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../config/constants.dart';
 import '../loading.dart';
 import '../../models/ingredient.dart';
+import '../../models/enums.dart' as enums;
 import 'ingredient_item.dart';
 
 class IngredientsScreen extends StatefulWidget{
@@ -21,6 +23,14 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   late List allIngredients;
   late List ingredients;
+  enums.Category? checkedCategory;
+
+  final List _categoriesList = ['wszystkie',
+    'barwniki', 'konserwanty', 'przeciwutleniacze',
+  'emulgatory', 'wzmacniacze', 'substancje pomocnicze',
+  'słodziki', 'pozostałe dodatki', 'owoce', 'warzywa',
+  'orzechy', 'cukry', 'sypkie', 'nabiał', 'mięsa',
+  'zioła i przyprawy', 'ryby i owoce morza', 'półprodukty'];
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +39,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
       color: Constants.sea80,
       child: Column(children: [
         _buildSearchBox(screenSize),
+        _buildCategoriesList(screenSize),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -55,7 +66,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
     return Container(
       margin: EdgeInsets.only(top: screenSize.height/20,
         left: screenSize.width/30,
-        right: screenSize.width/30,),
+        right: screenSize.width/30,
+      bottom: screenSize.height/250),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           color: Colors.white),
@@ -82,8 +94,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   Widget _buildSortBy(Size screenSize){
     return Container(
-      margin: EdgeInsets.only(top: screenSize.height/100,
-          bottom: screenSize.height/100,
+      margin: EdgeInsets.only(bottom: screenSize.height/150,
       right: screenSize.width/100),
       height: screenSize.width/10,
       decoration: BoxDecoration(
@@ -104,8 +115,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   Widget _buildSortDirection(Size screenSize){
     return Container(
-      margin: EdgeInsets.only(top: screenSize.height/100,
-          bottom: screenSize.height/100),
+      margin: EdgeInsets.only(
+          bottom: screenSize.height/150),
       height: screenSize.width/10,
       width: screenSize.width/10,
       decoration: BoxDecoration(
@@ -148,6 +159,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
       ingredients = SortingAndFiltering.ingredientsFilter(searchText,
           allIngredients).toList();
       SortingAndFiltering.sort(selectedSortOption, ingredients, isDownwardArrow);
+      ingredients = SortingAndFiltering
+          .ingredientsFromCategory(checkedCategory, ingredients).toList();
       return ListView.builder(
         padding: const EdgeInsets.only(top: 0),
         scrollDirection: Axis.vertical,
@@ -158,11 +171,51 @@ class IngredientsScreenState extends State<IngredientsScreen>{
           const Center(
             child: Text("Brak składników"),
           ) :
-          ListTile(title: IngredientItem(ingredients[index])));
+          IngredientItem(ingredients[index]));
         },
       );
     }else{
       return const Loading(isReversedColor:false);
     }
+  }
+
+  Widget _buildCategoriesList(Size screenSize) {
+    return Container(
+      height: screenSize.height/5.2,
+      margin: const EdgeInsets.only(bottom: 5),
+      child: Expanded(child: ListView.builder(
+          padding: const EdgeInsets.only(top: 0),
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount:_categoriesList.length,
+          itemBuilder:(context, index) {
+            return SizedBox(
+              width: screenSize.width/2.5,
+              child: Card(
+                color: Colors.white,
+                child: ListTile(
+                  onTap: (){
+                    setState(() {
+                      checkedCategory = index-1>=0 ? enums.Category.values.elementAt(index-1) : null;
+                    });
+                  },
+                  title: Text((_categoriesList[index] as String)[0].toUpperCase()
+                      +(_categoriesList[index] as String).substring(1),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontSize: 18
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Image.asset("${Constants.assetsCategoriesIcons}"
+                      "${index-1>=0 ? enums.Category.values.elementAt(index-1).name : "all"}"
+                      ".png"),
+                ),
+              ),
+            );
+          }
+        )
+      ),
+    );
   }
 }

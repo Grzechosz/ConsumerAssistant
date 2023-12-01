@@ -71,6 +71,7 @@ flutter:
     - assets/tessdata_config.json
   #   - images/a_dot_burr.jpeg
     - assets/images/harmfulness/
+    - assets/images/categories/
     - assets/images/background.jpg
     - assets/images/full_logo.png
   #   - images/a_dot_ham.jpeg
