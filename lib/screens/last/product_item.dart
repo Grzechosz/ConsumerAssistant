@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:consciousconsumer/screens/loading.dart';
 import 'package:consciousconsumer/models/product.dart';
@@ -11,14 +10,13 @@ import '../../config/constants.dart';
 import '../../models/ingredient.dart';
 import '../ingredients/ingredient_item.dart';
 
-class ProductItem extends StatefulWidget{
+class ProductItem extends StatefulWidget {
   final Product item;
 
   const ProductItem({super.key, required this.item});
 
   @override
   State<StatefulWidget> createState() => _ProductItemState();
-
 }
 
 class _ProductItemState extends State<ProductItem> {
@@ -34,43 +32,42 @@ class _ProductItemState extends State<ProductItem> {
     return Card(
         color: Colors.white,
         child: GestureDetector(
-          onLongPress: ()=>{
-            _showOptionsDialog()
-          },
+          onLongPress: () => {_showOptionsDialog()},
           child: ExpansionTile(
             textColor: Constants.sea,
-            expandedCrossAxisAlignment: CrossAxisAlignment.end,
-            leading: Column(
-              children: [
-                _getIconImage(screenSize),
-              ],
-            ),
             title: Column(
               children: [
-                _getNameToDisplay(screenSize),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _getIconImage(screenSize),
+                    Expanded(child: _getNameToDisplay(screenSize))
+                  ],
+                ),
                 _getImage(screenSize)
               ],
             ),
             subtitle: Container(
-              margin: EdgeInsets.only(top: screenSize.width/50),
+              margin: EdgeInsets.only(top: screenSize.width / 50),
               child: _getDateTime(),
             ),
             children: [
               _getIngredients(),
             ],
           ),
-        )
-    );
+        ));
   }
 
-  void _showOptionsDialog(){
-    showDialog(context: context,
-        builder: (context){
+  void _showOptionsDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
           return AlertDialog(
             title: const Text(Constants.askAboutAction),
             actions: [
               TextButton(
-                child: const Text(Constants.cancelText,
+                child: const Text(
+                  Constants.cancelText,
                   style: TextStyle(
                     color: Constants.dark,
                   ),
@@ -80,7 +77,8 @@ class _ProductItemState extends State<ProductItem> {
                 },
               ),
               TextButton(
-                child: const Text(Constants.editText,
+                child: const Text(
+                  Constants.editText,
                   style: TextStyle(
                     color: Constants.sea,
                   ),
@@ -91,10 +89,12 @@ class _ProductItemState extends State<ProductItem> {
               ),
               TextButton(
                 onPressed: _deleteProduct,
-                child: const Text(Constants.deleteText,
+                child: const Text(
+                  Constants.deleteText,
                   style: TextStyle(
                     color: Colors.red,
-                  ),),
+                  ),
+                ),
               ),
             ],
           );
@@ -103,97 +103,106 @@ class _ProductItemState extends State<ProductItem> {
 
   Widget _getNameToDisplay(Size screenSize) {
     return Container(
-      padding: EdgeInsets.all(screenSize.width/30),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: Text(
-          widget.item.productName,
-          style: const TextStyle(
-              fontSize: 18
-          ),),),
-    );
-  }
-
-
-  void _getImageUrl() async {
-    StorageService service = StorageService();
-    String url = await service.getProductImage(widget.item);
-    if(imageUrl == null && mounted) {
-      setState(() {
-      imageUrl = url;
-      });
-    }
-  }
-
-  Widget _getDateTime(){
-    String createdDate = widget.item.createdDate.toString();
-    return Align(
-      alignment: Alignment.topRight,
+      padding: EdgeInsets.all(screenSize.width / 50),
       child: Text(
-        createdDate.substring(0, createdDate.length-10),
+        widget.item.productName[0].toUpperCase() +
+            widget.item.productName.substring(1),
+        textAlign: TextAlign.center,
+        maxLines: 2,
         style: const TextStyle(
-            color: Constants.dark,
-            fontSize: 14,
-            fontWeight: FontWeight.w400
+          overflow: TextOverflow.ellipsis,
+          fontSize: 22,
         ),
       ),
     );
   }
 
-  Widget _getImage(Size screenSize){
-    return Center(child:
-    imageUrl!=null ? CachedNetworkImage(
-      width: screenSize.width/2,
-      height: screenSize.width/2,
-      progressIndicatorBuilder: (_,__,___)=>
-      const Center(
-        child: Loading(isReversedColor: true)),
-      imageUrl: imageUrl!,) :
-    const Loading(isReversedColor: true),) ;
+  void _getImageUrl() async {
+    StorageService service = StorageService();
+    String url = await service.getProductImage(widget.item);
+    if (imageUrl == null && mounted) {
+      setState(() {
+        imageUrl = url;
+      });
+    }
+  }
+
+  Widget _getDateTime() {
+    String createdDate = widget.item.createdDate.toString();
+    return Align(
+      alignment: Alignment.topRight,
+      child: Text(
+        createdDate.substring(0, 16),
+        style: const TextStyle(
+            color: Constants.dark80, fontSize: 15, fontWeight: FontWeight.w400),
+      ),
+    );
+  }
+
+  Widget _getImage(Size screenSize) {
+    return Center(
+      child: imageUrl != null
+          ? CachedNetworkImage(
+              width: screenSize.width / 2.5,
+              progressIndicatorBuilder: (_, __, ___) =>
+                  const Center(child: Loading(isReversedColor: true)),
+              imageUrl: imageUrl!,
+            )
+          : const Loading(isReversedColor: true),
+    );
   }
 
   Widget _getIconImage(Size screenSize) {
     String icon;
-    if(widget.item.rating<0.33){
+    if (widget.item.rating < 0.33) {
       icon = Constants.assetsHarmfulnessIcons + Constants.dangerousIcon;
-    }else if(widget.item.rating<0.66){
+    } else if (widget.item.rating < 0.66) {
       icon = Constants.assetsHarmfulnessIcons + Constants.harmfulIcon;
-    }else{
+    } else {
       icon = Constants.assetsHarmfulnessIcons + Constants.goodIcon;
     }
-    return Expanded(child: Image.asset(icon, scale: 5));
+    return Container(
+      margin: EdgeInsets.all(screenSize.width / 100),
+      child: Image.asset(icon, scale: 8),
+    );
   }
 
   Widget _getIngredients() {
-    return ingredients!=null ? ListView.builder(
-      padding: const EdgeInsets.only(top: 0),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: ingredients!.length,
-      itemBuilder:(context, index) {
-        return (ingredients!.isEmpty ?
-        const Center(
-          child: Text("Brak składników",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25,
-            fontWeight: FontWeight.w400
-          ),),
-        ) :
-        ListTile(title: IngredientItem(ingredients![index])));
-            //Text(ingredients[index].names[0]));
-      },
-    ) : const Loading(isReversedColor: false);
+    if (ingredients != null) {
+      return ingredients!.isNotEmpty
+          ? ListView.builder(
+              padding: const EdgeInsets.only(top: 0),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: ingredients!.length,
+              itemBuilder: (context, index) {
+                return (ingredients!.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "Brak składników",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      )
+                    : ListTile(title: IngredientItem(ingredients![index])));
+                //Text(ingredients[index].names[0]));
+              },
+            )
+          : const Loading(isReversedColor: false);
+    }else{
+      return const Loading(isReversedColor: false);
+    }
   }
-
 
   Future _getIngredientsList() async {
     List<Ingredient> ingredients = [];
-    for(Future<Ingredient> ingredient in widget.item.ingredients){
+    for (Future<Ingredient> ingredient in widget.item.ingredients) {
       ingredients.add(await ingredient);
     }
-    if(this.ingredients == null) {
+    if (this.ingredients == null) {
       setState(() {
         this.ingredients = ingredients;
       });
@@ -206,11 +215,5 @@ class _ProductItemState extends State<ProductItem> {
           .deleteProduct(widget.item);
     });
     Navigator.pop(context);
-  }
-}
-
-  extension StringExtension on String {
-  String firstLetterUpper() {
-    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }

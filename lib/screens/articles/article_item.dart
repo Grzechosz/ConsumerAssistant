@@ -38,10 +38,16 @@ class _ArticleItemState extends State<ArticleItem>{
             child: Column(
               children: [
                 _getImage(screenSize),
-                Text(item.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 22,)),
+                Container(
+                  margin: EdgeInsets.only(top: screenSize.width/50,
+                      left: screenSize.width/50,
+                  right: screenSize.width/50),
+                  child:
+                  Text(item.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 20,)),
+                ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Text(item.date.toString().substring(0, 10),

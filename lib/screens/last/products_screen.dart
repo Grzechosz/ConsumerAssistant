@@ -28,7 +28,6 @@ class ProductsScreenState extends State<ProductsScreen>{
       color: Constants.sea80,
       child: Column(children: [
         _buildSearchBox(screenSize),
-        //_buildSortBy(screenSize),
         _buildProducts()
       ]),
     );
@@ -37,9 +36,9 @@ class ProductsScreenState extends State<ProductsScreen>{
   Widget _buildSearchBox(Size screenSize){
     return Container(
       margin: EdgeInsets.only(top: screenSize.height/20,
-          left: screenSize.width/30,
-          right: screenSize.width/30,
-      bottom: screenSize.height/80),
+        left: screenSize.width/100,
+        right: screenSize.width/100,
+          bottom: screenSize.height/150),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           color: Colors.white),
