@@ -8,6 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../config/constants.dart';
+import 'articles/articles_screen.dart';
 import 'scan/scanner.dart';
 
 class ConsciousConsumer extends StatefulWidget{
@@ -27,7 +28,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
     const Icon(Icons.history),
     const Icon(Icons.menu_book_rounded),
     const Icon(Icons.document_scanner),
-    const Icon(Icons.no_food),
+    const Icon(Icons.article),
     const Icon(Icons.account_circle_rounded)
   ];
 
@@ -35,7 +36,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
     const ProductsScreen(),
     const IngredientsScreen(),
     const Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
-    const Text("Alergeny", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.red),),
+    ArticlesScreen(),
     const AccountScreen(),
 ];
 
@@ -74,7 +75,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
             icon: icons[2],
           ),
           BottomNavigationBarItem(
-            label: Constants.navigationBarAllergensIcon,
+            label: Constants.navigationBarArticlesIcon,
             icon: icons[3],
           ),
           BottomNavigationBarItem(

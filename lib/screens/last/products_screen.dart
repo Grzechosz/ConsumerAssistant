@@ -91,7 +91,7 @@ class ProductsScreenState extends State<ProductsScreen>{
         shrinkWrap: true,
         itemCount: products.length,
         itemBuilder:(context, index) =>
-          ListTile(title: ProductItem(item: products[index],)
+          ProductItem(item: products[index],
       )) : const Center(
           child: Text("Brak Produktów",
           style: TextStyle(letterSpacing: 0.5,

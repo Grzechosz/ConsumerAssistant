@@ -27,7 +27,7 @@ class Constants {
   static const navigationBarLastIcon = "Ostatnie";
   static const navigationBarListIcon = "Składniki";
   static const navigationBarScanIcon = "Skanuj";
-  static const navigationBarAllergensIcon = "Alergeny";
+  static const navigationBarArticlesIcon = "Artykuły";
   static const navigationBarAccountIcon = "Konto";
 
   //ingredients screen

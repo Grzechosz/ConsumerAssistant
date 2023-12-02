@@ -183,7 +183,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
     return Container(
       height: screenSize.height/5.2,
       margin: const EdgeInsets.only(bottom: 5),
-      child: Expanded(child: ListView.builder(
+      child: ListView.builder(
           padding: const EdgeInsets.only(top: 0),
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
@@ -214,8 +214,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
               ),
             );
           }
-        )
-      ),
+        ),
     );
   }
 }
