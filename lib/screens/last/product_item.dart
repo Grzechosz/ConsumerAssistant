@@ -34,7 +34,6 @@ class _ProductItemState extends State<ProductItem> {
     return Card(
         color: Colors.white,
         child: GestureDetector(
-
           onLongPress: ()=>{
             _showOptionsDialog()
           },
@@ -44,10 +43,6 @@ class _ProductItemState extends State<ProductItem> {
             leading: Column(
               children: [
                 _getIconImage(screenSize),
-                // Container(
-                //   margin: EdgeInsets.only(top: screenSize.width/80),
-                //     child: Text(widget.item.rating.toString())
-                // )
               ],
             ),
             title: Column(
@@ -72,11 +67,6 @@ class _ProductItemState extends State<ProductItem> {
     showDialog(context: context,
         builder: (context){
           return AlertDialog(
-            // icon: const Icon(
-            //   Icons.delete,
-            //   size: 50,
-            //   color: Colors.red,
-            // ),
             title: const Text(Constants.askAboutAction),
             actions: [
               TextButton(
@@ -131,7 +121,7 @@ class _ProductItemState extends State<ProductItem> {
     if(imageUrl == null && mounted) {
       setState(() {
       imageUrl = url;
-    });
+      });
     }
   }
 

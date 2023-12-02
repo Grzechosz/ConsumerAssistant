@@ -10,6 +10,7 @@ class ArticlesService{
   Stream<List<Article>> get articles{
     isLoaded = false;
     return ingredientCollection
+        .orderBy('date')
         .snapshots()
         .map(_articlesFromSnapshot);
   }

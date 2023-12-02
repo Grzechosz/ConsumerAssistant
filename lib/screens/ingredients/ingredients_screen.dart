@@ -184,7 +184,6 @@ class IngredientsScreenState extends State<IngredientsScreen>{
       height: screenSize.height/5.2,
       margin: const EdgeInsets.only(bottom: 5),
       child: ListView.builder(
-          padding: const EdgeInsets.only(top: 0),
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           itemCount:_categoriesList.length,
@@ -207,9 +206,10 @@ class IngredientsScreenState extends State<IngredientsScreen>{
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle: Image.asset("${Constants.assetsCategoriesIcons}"
-                      "${index-1>=0 ? enums.Category.values.elementAt(index-1).name : "all"}"
-                      ".png"),
+                  subtitle:
+                    Image.asset("${Constants.assetsCategoriesIcons}"
+                        "${index-1>=0 ? enums.Category.values.elementAt(index-1).name : "all"}"
+                        ".png",),
                 ),
               ),
             );

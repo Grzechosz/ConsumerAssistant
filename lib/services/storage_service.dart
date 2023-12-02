@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../models/article.dart';
 import '../models/product.dart';
 
 class StorageService{
@@ -19,6 +20,14 @@ class StorageService{
     .getDownloadURL();
   }
 
+  // download article image from firebase storage
+  Future<String> getArticleImage(Article article) {
+    return firebaseStorage
+        .child("articles/")
+        .child(article.imagePath)
+        .getDownloadURL();
+  }
+
   // upload product image to firebase storage
   Future uploadProductImage(XFile image) async {
     final metadata = SettableMetadata(contentType: "image/jpeg");
@@ -27,7 +36,6 @@ class StorageService{
         .child("products/${FirebaseAuth.instance.currentUser!.uid}")
         .child(image.name)
         .putFile(uploadFile, metadata);
-
     uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
       switch (taskSnapshot.state) {
         case TaskState.running:

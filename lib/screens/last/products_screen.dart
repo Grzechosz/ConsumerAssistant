@@ -98,7 +98,6 @@ class ProductsScreenState extends State<ProductsScreen>{
             fontSize: 35,
             color: Colors.white,
             fontWeight: FontWeight.w600,
-
           ),),
         );
 
