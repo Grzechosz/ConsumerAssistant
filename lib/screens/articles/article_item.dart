@@ -46,14 +46,14 @@ class _ArticleItemState extends State<ArticleItem>{
                   Text(item.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 20,)),
+                      style: const TextStyle(fontSize: Constants.headerSize,)),
                 ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Text(item.date.toString().substring(0, 10),
                       style: const TextStyle(
                         color: Constants.dark50,
-                        fontSize: 15,
+                        fontSize: Constants.subTitleSize,
                       )
                   ),
                 ),

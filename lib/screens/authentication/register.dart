@@ -44,60 +44,67 @@ class RegisterState extends State<Register> {
   late EmailFieldContainer emailFieldContainer = EmailFieldContainer(formKeyEmail: _formKeyEmail,);
   late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(formKeyPasswd: _formKeyPasswd,);
   late ConfirmPasswordFieldContainer confirmPasswordFieldContainer = ConfirmPasswordFieldContainer(formKeyPasswd: _formKeyConfPasswd,);
+  late NicknameFieldContainer nicknameFieldContainer = NicknameFieldContainer(formKeyNickname: _formKeyNickname);
   late String
   error='';
 
   final _formKeyEmail = GlobalKey<FormState>(),
       _formKeyPasswd = GlobalKey<FormState>(),
+      _formKeyNickname = GlobalKey<FormState>(),
       _formKeyConfPasswd = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return loading ? const Loading(isReversedColor: false,) : Scaffold(
-      body:
-      MenuBackgroundWidget(
-        screenName: "Rejestracja",
-          child: _builtScreenElements()),
+    return Container(
+      color: Constants.light,
+      child: loading ? const Loading(isReversedColor: false,) :
+      Column(
+        children: [
+          const MenuBackgroundWidget(screenName: "Rejestracja",),
+          Material(
+            color: Colors.transparent,
+            child: _builtScreenElements(),
+          ),
+          Spacer(),
+          SecondButton(function: widget.changeRegisterView, text: Constants.signIn,),
+          SizedBox(height: MediaQuery.of(context).size.width/10,)
+        ],
+      ),
     );
   }
 
-  Row _builtScreenElements(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SingleChildScrollView(
+  Widget _builtScreenElements(){
+    return Align(
+        alignment: Alignment.bottomCenter,
+        child:  SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.04, top: MediaQuery.of(context).size.height/20),
+                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.04),
                 child: const Text("Wprowadź email i hasło",
                   style: TextStyle(
-                      fontSize: 22,
+                      fontSize: Constants.headerSize,
                       color: Constants.darker80,
                       fontWeight: FontWeight.bold
                   ),
                 ),
               ),
+              nicknameFieldContainer,
               emailFieldContainer,
               passwordFieldContainer,
               confirmPasswordFieldContainer,
               Text(error,
                 style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: Constants.subTitleSize,
                     color: Colors.red
                 ),
               ),
-              RemindPasswordButton(function: widget.changeRegisterView),
               registerButton,
-              SecondButton(function: widget.changeRegisterView, text: Constants.signIn,),
             ],
           ),
         )
-
-      ],
     );
   }
 }

@@ -14,18 +14,24 @@ class FirstButton extends StatelessWidget{
     double height = MediaQuery.of(context).size.height;
 
     return Container(
-      color: Constants.sea,
+      decoration: const BoxDecoration(
+        color: Constants.sea,
+          borderRadius: BorderRadius.all(
+              Radius.circular(25)
+          )
+      ),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           side: BorderSide.none,
           textStyle:
           const TextStyle(
-              fontSize: 25,
+              fontSize: Constants.headerSize,
+              fontWeight: FontWeight.w600,
               letterSpacing: 0.5
           ),
           foregroundColor: Constants.light,
-          minimumSize: Size(width*0.8,
-              height*0.075),
+          minimumSize: Size(width*0.75,
+              height*0.07),
         ),
         child: Text(text),
         onPressed: () {
@@ -47,9 +53,14 @@ class SecondButton extends StatelessWidget{
     double height = MediaQuery.of(context).size.height;
 
     return Container(
-      color: Constants.dark,
-      width: width*0.8,
-      height: height*0.075,
+      decoration: const BoxDecoration(
+          color: Constants.dark,
+          borderRadius: BorderRadius.all(
+              Radius.circular(10)
+          )
+      ),
+      width: width*0.75,
+      height: height*0.07,
       margin: EdgeInsets.only(top: height*0.02),
 
       child: OutlinedButton(
@@ -57,7 +68,8 @@ class SecondButton extends StatelessWidget{
           side: BorderSide.none,
           textStyle:
           const TextStyle(
-              fontSize: 25,
+              fontSize: Constants.headerSize,
+              fontWeight: FontWeight.w600,
               letterSpacing: 0.5
           ),
           foregroundColor: Colors.white,
@@ -89,7 +101,7 @@ class RemindPasswordButton extends StatelessWidget{
         ),
         child: const Text("Nie pamiętasz hasła?",
         style: TextStyle(
-          fontSize: 17
+          fontSize: Constants.subTitleSize
         ),),
         onPressed: () {
         },
@@ -112,7 +124,7 @@ class EmailFieldContainer extends StatelessWidget{
     return Container(
       width: width*0.8,
         height: height*0.075,
-        // margin: const EdgeInsets.only(bottom: 15),
+        margin: EdgeInsets.only(top: height*0.01),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
@@ -139,9 +151,61 @@ class EmailFieldContainer extends StatelessWidget{
                     color: Constants.dark50,),
                   hintStyle: TextStyle(
                       color: Constants.dark50,
-                      fontSize: 20
+                      fontSize: Constants.headerSize
                   ),
                   hintText: 'Email',
+                  border: InputBorder.none
+              )
+          ),
+        )
+    );
+  }
+}
+
+class NicknameFieldContainer extends StatelessWidget{
+  final formKeyNickname;
+  NicknameFieldContainer({super.key, required this.formKeyNickname});
+
+  String nickname='';
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    return Container(
+        width: width*0.8,
+        height: height*0.075,
+        // margin: const EdgeInsets.only(bottom: 15),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(
+                color: Constants.dark50,
+                width: 2
+            ),
+            color: Colors.white
+        ),
+
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: Form(
+          key: formKeyNickname,
+          child:
+          TextFormField(
+              onChanged: (value) {
+                nickname = value;
+                formKeyNickname.currentState!.validate();
+              },
+              validator: (val)=> val!.isEmpty ? "Wprowadź Nickname" : null,
+              decoration: const InputDecoration(
+                  icon: Icon(
+                    Icons.supervised_user_circle,
+                    size: 30,
+                    color: Constants.dark50,),
+                  hintStyle: TextStyle(
+                      color: Constants.dark50,
+                      fontSize: Constants.headerSize
+                  ),
+                  hintText: 'Nickname',
                   border: InputBorder.none
               )
           ),
@@ -193,7 +257,7 @@ class PasswordFieldContainer extends StatelessWidget{
                     color: Constants.dark50,),
                   hintStyle: TextStyle(
                       color: Constants.dark50,
-                      fontSize: 20
+                      fontSize: Constants.headerSize
                   ),
                   hintText: 'Password',
                   border: InputBorder.none
@@ -247,7 +311,7 @@ class ConfirmPasswordFieldContainer extends StatelessWidget{
                     color: Constants.dark50,),
                   hintStyle: TextStyle(
                       color: Constants.dark50,
-                      fontSize: 20
+                      fontSize: Constants.headerSize
                   ),
                   hintText: 'Confirm Password',
                   border: InputBorder.none

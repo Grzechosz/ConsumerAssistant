@@ -50,53 +50,53 @@ class LogInState extends State<LogIn>{
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Constants.sea,
-      child: loading ? const Loading(isReversedColor: false,) : Scaffold(
-        body:
-        MenuBackgroundWidget(
-          screenName: "Logowanie",
-          child: _builtScreenElements(),),
+      color: Constants.light,
+      child: loading ? const Loading(isReversedColor: false,) :
+      Column(
+        children: [
+          const MenuBackgroundWidget(screenName: "Logowanie",),
+          Material(
+              color: Colors.transparent,
+              child: _builtScreenElements(),
+            ),
+          Spacer(),
+          SecondButton(function: widget.changeRegisterView, text: Constants.register,),
+          SizedBox(height: MediaQuery.of(context).size.width/10,)
+        ],
       ),
     );
   }
 
-  Row _builtScreenElements(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.04, top: MediaQuery.of(context).size.height/20),
-                child: const Text("Wprowadź email i hasło",
-                  style: TextStyle(
-                      fontSize: 22,
-                      color: Constants.darker80,
-                      fontWeight: FontWeight.bold
-                  ),
+  Align _builtScreenElements(){
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.04),
+              child: const Text("Wprowadź email i hasło",
+                style: TextStyle(
+                    fontSize: Constants.headerSize,
+                    color: Constants.darker80,
+                    fontWeight: FontWeight.bold
                 ),
               ),
-              emailFieldContainer,
-              passwordFieldContainer,
-              Text(error,
-                style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.red
-                ),
+            ),
+            emailFieldContainer,
+            passwordFieldContainer,
+            Text(error,
+              style: const TextStyle(
+                  fontSize: Constants.subTitleSize,
+                  color: Colors.red
               ),
-              RemindPasswordButton(function: widget.changeRegisterView),
-              logInButton,
-              SecondButton(function: widget.changeRegisterView, text: Constants.register,),
-            ],
-          ),
-        )
-
-
-      ],
+            ),
+            logInButton,
+            RemindPasswordButton(function: widget.changeRegisterView),
+          ],
+        ),
+      ),
     );
   }
 }

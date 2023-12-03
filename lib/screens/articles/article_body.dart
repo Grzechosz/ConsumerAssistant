@@ -37,7 +37,7 @@ class _ArticleBodyState extends State<ArticleBody>{
         title: Text(widget.article!.title,
           style: const TextStyle(
             color: Colors.white,
-              fontSize: 22
+              fontSize: Constants.headerSize
           ),
         ),
       ),
@@ -74,7 +74,7 @@ class _ArticleBodyState extends State<ArticleBody>{
       child: Text(widget.article!.title,
         textAlign: TextAlign.left,
         style: const TextStyle(
-            fontSize: 25,
+            fontSize: Constants.bigHeaderSize,
             fontWeight: FontWeight.bold
         ),
       ),
@@ -100,7 +100,7 @@ class _ArticleBodyState extends State<ArticleBody>{
           alignment: Alignment.bottomRight,
           child: Text(widget.article!.author,
             style: const TextStyle(
-                fontSize: 18,
+                fontSize: Constants.subTitleSize,
             ),
           ),
         )
@@ -139,7 +139,7 @@ class _ArticleBodyState extends State<ArticleBody>{
         alignment: Alignment.topRight,
         child: Text(widget.article!.date.toString().substring(0, 10),
           style: const TextStyle(
-              fontSize: 15
+              fontSize: Constants.subTitleSize
           ),
         ),
       ),

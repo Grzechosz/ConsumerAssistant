@@ -13,14 +13,6 @@ class IngredientDescription extends StatelessWidget{
       body:
       MenuBackgroundWidget(
           screenName: ingredient.names[0],
-          child: Stack(
-            children: [
-              Text(ingredient.description),
-              ElevatedButton(
-                onPressed: () { Navigator.pop(context); },
-                child: const Text("Kliknij mie"),)
-            ],
-          )
       ),
     );
 

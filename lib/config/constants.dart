@@ -57,4 +57,11 @@ class Constants {
 
   //account
   static const String accountDetails = "Szczegóły konta";
+
+  //fontSizes
+  static const double theBiggestSize = 35;
+  static const double bigHeaderSize = 25;
+  static const double headerSize = 17;
+  static const double titleSize = 15;
+  static const double subTitleSize = 14;
 }

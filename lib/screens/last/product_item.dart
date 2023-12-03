@@ -63,13 +63,17 @@ class _ProductItemState extends State<ProductItem> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text(Constants.askAboutAction),
+            title: const Text(Constants.askAboutAction,
+            style: TextStyle(
+              fontSize: Constants.headerSize
+            ),),
             actions: [
               TextButton(
                 child: const Text(
                   Constants.cancelText,
                   style: TextStyle(
                     color: Constants.dark,
+                      fontSize: Constants.titleSize
                   ),
                 ),
                 onPressed: () {
@@ -81,6 +85,7 @@ class _ProductItemState extends State<ProductItem> {
                   Constants.editText,
                   style: TextStyle(
                     color: Constants.sea,
+                      fontSize: Constants.titleSize
                   ),
                 ),
                 onPressed: () {
@@ -93,6 +98,7 @@ class _ProductItemState extends State<ProductItem> {
                   Constants.deleteText,
                   style: TextStyle(
                     color: Colors.red,
+                      fontSize: Constants.titleSize
                   ),
                 ),
               ),
@@ -111,7 +117,8 @@ class _ProductItemState extends State<ProductItem> {
         maxLines: 2,
         style: const TextStyle(
           overflow: TextOverflow.ellipsis,
-          fontSize: 22,
+          fontSize: Constants.headerSize,
+          fontWeight: FontWeight.w500
         ),
       ),
     );
@@ -134,7 +141,9 @@ class _ProductItemState extends State<ProductItem> {
       child: Text(
         createdDate.substring(0, 16),
         style: const TextStyle(
-            color: Constants.dark80, fontSize: 15, fontWeight: FontWeight.w400),
+            color: Constants.dark80,
+            fontSize: Constants.subTitleSize,
+            fontWeight: FontWeight.w400),
       ),
     );
   }
@@ -183,12 +192,11 @@ class _ProductItemState extends State<ProductItem> {
                           "Brak składników",
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 25,
+                              fontSize: Constants.theBiggestSize,
                               fontWeight: FontWeight.w400),
                         ),
                       )
-                    : ListTile(title: IngredientItem(ingredients![index])));
-                //Text(ingredients[index].names[0]));
+                    : IngredientItem(ingredients![index], true));
               },
             )
           : const Loading(isReversedColor: false);
@@ -213,6 +221,7 @@ class _ProductItemState extends State<ProductItem> {
     setState(() {
       ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
           .deleteProduct(widget.item);
+      _getImageUrl();
     });
     Navigator.pop(context);
   }

@@ -8,13 +8,18 @@ import 'ingredient_description.dart';
 class IngredientItem extends StatelessWidget{
 
   final Ingredient item;
+  final bool isForProduct;
 
-  const IngredientItem(this.item, {super.key});
+  const IngredientItem(this.item,  this.isForProduct, {super.key});
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Card(
+        shape: isForProduct ? RoundedRectangleBorder(
+          side: const BorderSide(color: Constants.dark50, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ) : null,
       margin: EdgeInsets.symmetric(horizontal: screenSize.width/40,
           vertical: screenSize.height/150),
       color: Colors.white,
@@ -25,11 +30,15 @@ class IngredientItem extends StatelessWidget{
               PageRouteBuilder(pageBuilder: (q,w,e) =>
                   IngredientDescription(ingredient: item)));
         },
-        title: Text(_getNameToDisplay()),
+        title: Text(_getNameToDisplay(),
+          style: const TextStyle(
+            fontSize: Constants.titleSize,
+          ),)
+        ,
         subtitle: Text(_getTrailing(),
             style: const TextStyle(
                 color: Constants.dark50,
-                fontSize: 15
+                fontSize: Constants.subTitleSize
             )),
       )
     );

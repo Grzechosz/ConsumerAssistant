@@ -5,67 +5,63 @@ import 'package:flutter/material.dart';
 
 import '../../config/constants.dart';
 
-class MenuBackgroundWidget extends StatelessWidget{
-  final Widget child;
+class MenuBackgroundWidget extends StatelessWidget {
   final String screenName;
-  const MenuBackgroundWidget({super.key, required this.child, required this.screenName});
+  const MenuBackgroundWidget({super.key, required this.screenName});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-        children: [
-          Container(color: Constants.light),
+    Size screenSize = MediaQuery.of(context).size;
+    return SizedBox(
+      width: screenSize.width,
+      height: screenSize.height/3.5,
+      child: Material(
+        color: Colors.transparent,
+        child: Stack(children: [
           ClipPath(
-              clipper: ClipperPathBorder(MediaQuery.of(context).size),
-              child: Container(color: Constants.darker)
-          ),
-            ClipPath(
-              clipper: MyClipperPath(MediaQuery.of(context).size),
-                child: Stack(
-                  children: [
-                    _buildBackgroundImage(),
-                    _buildBackgroundBlur()
-                  ],
-              )
-            ),
-            Positioned.fill(child: _builtAppName(context)),
-            Positioned.fill(child: _builtScreenName(context)),
-          child
-        ]
+              clipper: ClipperPathBorder(screenSize),
+              child: Container(color: Constants.darker)),
+          ClipPath(
+              clipper: MyClipperPath(screenSize),
+              child: Stack(
+                children: [
+                  _buildBackgroundImage(screenSize),
+                  _buildBackgroundBlur()],
+              )),
+          Positioned.fill(child: _builtAppName(context)),
+          Positioned.fill(child: _builtScreenName(context)),
+        ]),
+      ),
     );
   }
 
-  Container _builtScreenName(BuildContext context){
+  Container _builtScreenName(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     return Container(
-        margin: EdgeInsets.only(top: screenHeight/4,),
+        margin: EdgeInsets.only(
+          top: 18 * screenHeight / 100,
+        ),
         child: Text(screenName,
-                  style: const TextStyle(
-                      fontSize: 28,
-                      color: Constants.light,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1,
-
-                      ),
-                  textAlign: TextAlign.center
-        )
-    );
+            style: const TextStyle(
+              fontSize: Constants.bigHeaderSize,
+              color: Constants.light,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 1,
+            ),
+            textAlign: TextAlign.center));
   }
-  Image _buildBackgroundImage(){
-    return Image.asset(Constants.assetsImage + Constants.backgroundImage,
-      fit: BoxFit.contain,
-      height: double.infinity,
-      width: double.infinity,
+
+  Image _buildBackgroundImage(Size screenSize) {
+    return Image.asset(
+      Constants.assetsImage + Constants.backgroundImage,
       alignment: Alignment.topCenter,
+      height: screenSize.height,
     );
   }
 
-  BackdropFilter _buildBackgroundBlur(){
+  BackdropFilter _buildBackgroundBlur() {
     return BackdropFilter(
-      filter: ImageFilter.blur(
-          sigmaX: 0.5,
-          sigmaY: 0.5
-      ),
+      filter: ImageFilter.blur(sigmaX: 0.5, sigmaY: 0.5),
       child: Container(
         decoration: const BoxDecoration(color: Constants.darker70),
       ),
@@ -76,39 +72,34 @@ class MenuBackgroundWidget extends StatelessWidget{
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Container(
-        width: screenWidth*0.9,
-        margin: EdgeInsets.only(top: screenHeight/13),
-        child:
-        const Text(
+        width: screenWidth * 0.9,
+        margin: EdgeInsets.only(top: screenHeight / 20),
+        child: const Text(
           Constants.appName,
           style: TextStyle(
               fontWeight: FontWeight.w900,
-              fontSize: 40,
-              letterSpacing: 2,
-              color: Constants.light
-          ),
+              fontSize: Constants.theBiggestSize,
+              letterSpacing: 3,
+              color: Colors.white),
           overflow: TextOverflow.visible,
           textAlign: TextAlign.center,
-        )
-    );
+        ));
   }
-
 }
 
 class MyClipperPath extends CustomClipper<Path> {
   final constSize;
   MyClipperPath(Size this.constSize);
 
-
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.moveTo(0,0);
-    path.lineTo(constSize.width,0);
-    path.lineTo(constSize.width,28*constSize.height/100);
-    path.lineTo(constSize.width/2,constSize.height/3);
-    path.lineTo(0,28*constSize.height/100);
-    path.lineTo(0,constSize.height);
+    path.moveTo(0, 0);
+    path.lineTo(constSize.width, 0);
+    path.lineTo(constSize.width, constSize.height / 5);
+    path.lineTo(constSize.width / 2, constSize.height / 4);
+    path.lineTo(0, constSize.height / 5);
+    path.lineTo(0, constSize.height);
     path.close();
     return path;
   }
@@ -127,12 +118,12 @@ class ClipperPathBorder extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.moveTo(0,0);
-    path.lineTo(constSize.width,0);
-    path.lineTo(constSize.width,28*constSize.height/100+borderSize);
-    path.lineTo(constSize.width/2,constSize.height/3+borderSize);
-    path.lineTo(0,28*constSize.height/100+borderSize);
-    path.lineTo(0,constSize.height);
+    path.moveTo(0, 0);
+    path.lineTo(constSize.width, 0);
+    path.lineTo(constSize.width, constSize.height / 5 + borderSize);
+    path.lineTo(constSize.width / 2, constSize.height / 4 + borderSize);
+    path.lineTo(0, constSize.height / 5 + borderSize);
+    path.lineTo(0, constSize.height);
     path.close();
     return path;
   }

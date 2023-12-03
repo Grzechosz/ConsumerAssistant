@@ -27,8 +27,8 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   final List _categoriesList = ['wszystkie',
     'barwniki', 'konserwanty', 'przeciwutleniacze',
-  'emulgatory', 'wzmacniacze', 'substancje pomocnicze',
-  'słodziki', 'pozostałe dodatki', 'owoce', 'warzywa',
+  'emulgatory', 'wzmacniacze', 'środki pomocnicze',
+    'słodziki', 'pozostałe dodatki', 'owoce', 'warzywa',
   'orzechy', 'cukry', 'sypkie', 'nabiał', 'mięsa',
   'zioła i przyprawy', 'ryby i owoce morza', 'półprodukty'];
 
@@ -54,10 +54,10 @@ class IngredientsScreenState extends State<IngredientsScreen>{
 
   static List<DropdownMenuItem<int>> get sortItems{
     List<DropdownMenuItem<int>> items = [
-      const DropdownMenuItem(value: 0, child: Text('Nazwa', style: TextStyle(color: Constants.dark80),)),
+      const DropdownMenuItem(value: 0, child: Text('Nazwa', style: TextStyle(color: Constants.dark80, fontSize: Constants.headerSize),)),
       // const DropdownMenuItem(value: 1, child: Text('Oznaczenie E')),
-      const DropdownMenuItem(value: 2, child: Text('Szkodliwość', style: TextStyle(color: Constants.dark80),)),
-      const DropdownMenuItem(value: 3, child: Text('Kategoria', style: TextStyle(color: Constants.dark80),))
+      const DropdownMenuItem(value: 2, child: Text('Szkodliwość', style: TextStyle(color: Constants.dark80, fontSize: Constants.headerSize),)),
+      const DropdownMenuItem(value: 3, child: Text('Kategoria', style: TextStyle(color: Constants.dark80, fontSize: Constants.headerSize),))
     ];
     return items;
   }
@@ -83,7 +83,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
                 color: Constants.dark80,),
               hintStyle: TextStyle(
                   color: Constants.dark50,
-                  fontSize: 20
+                  fontSize: Constants.headerSize
               ),
               hintText: Constants.searchText,
               border: InputBorder.none
@@ -169,9 +169,12 @@ class IngredientsScreenState extends State<IngredientsScreen>{
         itemBuilder:(context, index) {
           return (ingredients.isEmpty ?
           const Center(
-            child: Text("Brak składników"),
+            child: Text("Brak składników",
+            style: TextStyle(
+              fontSize: Constants.theBiggestSize
+            ),),
           ) :
-          IngredientItem(ingredients[index]));
+          IngredientItem(ingredients[index], false));
         },
       );
     }else{
@@ -202,7 +205,7 @@ class IngredientsScreenState extends State<IngredientsScreen>{
                       +(_categoriesList[index] as String).substring(1),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                        fontSize: 18
+                        fontSize: Constants.headerSize
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

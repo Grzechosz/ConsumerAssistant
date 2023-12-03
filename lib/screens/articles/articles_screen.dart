@@ -58,7 +58,7 @@ class _ArticlesScreenState extends State<ArticlesScreen>{
               const Center(
                 child: Text("Brak artykułów",
                   style: TextStyle(letterSpacing: 0.5,
-                    fontSize: 35,
+                    fontSize: Constants.theBiggestSize,
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),),

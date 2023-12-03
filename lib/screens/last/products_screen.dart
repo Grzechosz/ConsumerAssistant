@@ -55,7 +55,7 @@ class ProductsScreenState extends State<ProductsScreen>{
                 color: Constants.dark80,),
               hintStyle: TextStyle(
                   color: Constants.dark50,
-                  fontSize: 20
+                  fontSize: Constants.headerSize,
               ),
               hintText: Constants.searchText,
               border: InputBorder.none
@@ -94,7 +94,7 @@ class ProductsScreenState extends State<ProductsScreen>{
       )) : const Center(
           child: Text("Brak Produktów",
           style: TextStyle(letterSpacing: 0.5,
-            fontSize: 35,
+            fontSize: Constants.theBiggestSize,
             color: Colors.white,
             fontWeight: FontWeight.w600,
           ),),
