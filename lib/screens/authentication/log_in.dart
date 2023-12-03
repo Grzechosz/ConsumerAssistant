@@ -1,4 +1,3 @@
-
 import 'package:consciousconsumer/models/app_user.dart';
 import 'package:consciousconsumer/screens/authentication/menu_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
@@ -11,63 +10,83 @@ import 'sign_screen_widgets.dart';
 class LogIn extends StatefulWidget {
   final Function changeRegisterView;
 
-
   const LogIn({super.key, required this.changeRegisterView});
 
   @override
   LogInState createState() => LogInState();
 }
 
-class LogInState extends State<LogIn>{
+class LogInState extends State<LogIn> {
   bool loading = false;
-  
-  final AuthenticationService _authentication = AuthenticationService();
-  late FirstButton logInButton = FirstButton(function: () async {
-        if(_formKeyEmail.currentState!.validate() && _formKeyPasswd.currentState!.validate()){
-          setState(() {
-            loading = true;
-          });
-          dynamic result = await _authentication.logIn(emailFieldContainer.email,
-              passwordFieldContainer.password);
-          if(result == AppUser.emptyUser){
-            setState(() {
-              error = "Nieprawidłowe dane";
-              loading = false;
-            });
-          }
-        }
-      },
-  text: Constants.logIn,);
 
-  late EmailFieldContainer emailFieldContainer = EmailFieldContainer(formKeyEmail: _formKeyEmail,);
-  late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(formKeyPasswd: _formKeyPasswd,);
-  late String
-      error='';
+  final AuthenticationService _authentication = AuthenticationService();
+  late FirstButton logInButton = FirstButton(
+    function: () async {
+      if (_formKeyEmail.currentState!.validate() &&
+          _formKeyPasswd.currentState!.validate()) {
+        setState(() {
+          loading = true;
+        });
+        dynamic result = await _authentication.logIn(
+            emailFieldContainer.email, passwordFieldContainer.password);
+        if (result == AppUser.emptyUser) {
+          setState(() {
+            error = "Nieprawidłowe dane";
+            loading = false;
+          });
+        }else if(Navigator.canPop(context)){
+          Navigator.pop(context);
+        }
+      }
+    },
+    text: Constants.logIn,
+  );
+
+  late EmailFieldContainer emailFieldContainer = EmailFieldContainer(
+    formKeyEmail: _formKeyEmail,
+  );
+  late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(
+    formKeyPasswd: _formKeyPasswd,
+  );
+  late String error = '';
 
   final _formKeyEmail = GlobalKey<FormState>(),
       _formKeyPasswd = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Constants.light,
-      child: loading ? const Loading(isReversedColor: false,) :
-      Column(
-        children: [
-          const MenuBackgroundWidget(screenName: "Logowanie",),
-          Material(
-              color: Colors.transparent,
-              child: _builtScreenElements(),
+    return loading
+        ? Container(
+            color: Constants.sea,
+            child: const Loading(
+              isReversedColor: false,
             ),
-          Spacer(),
-          SecondButton(function: widget.changeRegisterView, text: Constants.register,),
-          SizedBox(height: MediaQuery.of(context).size.width/10,)
-        ],
-      ),
-    );
+          )
+        : Container(
+            color: Constants.light,
+            child: Column(
+              children: [
+                const MenuBackgroundWidget(
+                  screenName: "Logowanie",
+                ),
+                Material(
+                  color: Colors.transparent,
+                  child: _builtScreenElements(),
+                ),
+                const Spacer(),
+                SecondButton(
+                  function: widget.changeRegisterView,
+                  text: Constants.register,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.width / 10,
+                )
+              ],
+            ),
+          );
   }
 
-  Align _builtScreenElements(){
+  Align _builtScreenElements() {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SingleChildScrollView(
@@ -75,22 +94,22 @@ class LogInState extends State<LogIn>{
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.width*0.04),
-              child: const Text("Wprowadź email i hasło",
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.width * 0.04),
+              child: const Text(
+                "Wprowadź email i hasło",
                 style: TextStyle(
                     fontSize: Constants.headerSize,
                     color: Constants.darker80,
-                    fontWeight: FontWeight.bold
-                ),
+                    fontWeight: FontWeight.bold),
               ),
             ),
             emailFieldContainer,
             passwordFieldContainer,
-            Text(error,
+            Text(
+              error,
               style: const TextStyle(
-                  fontSize: Constants.subTitleSize,
-                  color: Colors.red
-              ),
+                  fontSize: Constants.subTitleSize, color: Colors.red),
             ),
             logInButton,
             RemindPasswordButton(function: widget.changeRegisterView),

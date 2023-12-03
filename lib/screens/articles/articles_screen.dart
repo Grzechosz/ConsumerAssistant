@@ -53,7 +53,6 @@ class _ArticlesScreenState extends State<ArticlesScreen>{
       });
       return Container(
         height: screenSize.height/4.5,
-          margin: const EdgeInsets.only(bottom: 5),
           child: articles.isEmpty ?
               const Center(
                 child: Text("Brak artykułów",

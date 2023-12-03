@@ -8,13 +8,17 @@ enum NotificationType{
 }
 
 class NotificationsService{
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final _messageStreamController = BehaviorSubject<RemoteMessage>();
   final _tokensCollection = FirebaseFirestore.instance.collection('tokens');
   final String _uid;
   String? token;
 
   NotificationsService({required String uid}) : _uid = uid;
+
+  get firebaseMessaging {
+    return _firebaseMessaging;
+  }
 
   Future initNotifications() async {
     await _firebaseMessaging.setAutoInitEnabled(true);
