@@ -111,10 +111,9 @@ class RemindPasswordButton extends StatelessWidget{
 }
 
 class EmailFieldContainer extends StatelessWidget{
-  final formKeyEmail;
-  EmailFieldContainer({super.key, required this.formKeyEmail});
-
-  String email='';
+  final GlobalKey<FormState> formKeyEmail;
+  String email = '';
+  EmailFieldContainer(this.formKeyEmail);
 
   @override
   Widget build(BuildContext context) {

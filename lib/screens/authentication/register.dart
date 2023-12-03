@@ -2,7 +2,6 @@ import 'package:consciousconsumer/screens/loading.dart';
 import 'package:consciousconsumer/models/app_user.dart';
 import 'package:consciousconsumer/screens/authentication/menu_background_widget.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
-import 'package:consciousconsumer/services/notifications_service.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/constants.dart';
@@ -47,7 +46,7 @@ class RegisterState extends State<Register> {
   );
 
   late EmailFieldContainer emailFieldContainer = EmailFieldContainer(
-    formKeyEmail: _formKeyEmail,
+    _formKeyEmail,
   );
   late PasswordFieldContainer passwordFieldContainer = PasswordFieldContainer(
     formKeyPasswd: _formKeyPasswd,

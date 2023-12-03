@@ -1,24 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import '../../config/constants.dart';
+import '../../models/article.dart';
 import '../../services/storage_service.dart';
 import '../loading.dart';
 
 class ArticleBody extends StatefulWidget{
-  final article;
+  final Article article;
   const ArticleBody({required this.article, super.key});
-
-
 
   @override
   State<StatefulWidget> createState() =>_ArticleBodyState();
 }
 
 class _ArticleBodyState extends State<ArticleBody>{
-
   String? imageUrl;
   final Container spacer = Container(
     margin: const EdgeInsets.symmetric(vertical: 20),
@@ -34,7 +31,7 @@ class _ArticleBodyState extends State<ArticleBody>{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Constants.dark,
-        title: Text(widget.article!.title,
+        title: Text(widget.article.title,
           style: const TextStyle(
             color: Colors.white,
               fontSize: Constants.headerSize
@@ -71,7 +68,7 @@ class _ArticleBodyState extends State<ArticleBody>{
       padding: EdgeInsets.only(top: screenSize.width/30,
           left: screenSize.width/30,
           right: screenSize.width/30,),
-      child: Text(widget.article!.title,
+      child: Text(widget.article.title,
         textAlign: TextAlign.left,
         style: const TextStyle(
             fontSize: Constants.bigHeaderSize,
@@ -86,7 +83,7 @@ class _ArticleBodyState extends State<ArticleBody>{
       padding: EdgeInsets.symmetric(
           horizontal: screenSize.width/25,),
       child: Html(
-        data: widget.article!.body,
+        data: widget.article.body,
       )
     );
   }
@@ -98,7 +95,7 @@ class _ArticleBodyState extends State<ArticleBody>{
       color: Constants.sea20,
       child:Align(
           alignment: Alignment.bottomRight,
-          child: Text(widget.article!.author,
+          child: Text(widget.article.author,
             style: const TextStyle(
                 fontSize: Constants.subTitleSize,
             ),
@@ -137,7 +134,7 @@ class _ArticleBodyState extends State<ArticleBody>{
           bottom: screenSize.width/50),
       child: Align(
         alignment: Alignment.topRight,
-        child: Text(widget.article!.date.toString().substring(0, 10),
+        child: Text(widget.article.date.toString().substring(0, 10),
           style: const TextStyle(
               fontSize: Constants.subTitleSize
           ),

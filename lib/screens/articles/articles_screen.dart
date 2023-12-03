@@ -1,4 +1,3 @@
-import 'package:consciousconsumer/screens/articles/article_body.dart';
 import 'package:consciousconsumer/screens/articles/article_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

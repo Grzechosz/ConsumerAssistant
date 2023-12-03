@@ -24,18 +24,14 @@ class IngredientItem extends StatelessWidget{
           vertical: screenSize.height/150),
       color: Colors.white,
       child: ListTile(
-        leading: _getIconImage(screenSize),
-        onTap: (){
-          Navigator.push(context,
-              PageRouteBuilder(pageBuilder: (q,w,e) =>
-                  IngredientDescription(ingredient: item)));
-        },
-        title: Text(_getNameToDisplay(),
+        leading: getHarmfulnessIconImage(screenSize, item),
+        onTap: () => pushIngredientDescription(context),
+        title: Text(getNameToDisplay(item),
           style: const TextStyle(
             fontSize: Constants.titleSize,
           ),)
         ,
-        subtitle: Text(_getTrailing(),
+        subtitle: Text(getCategoryName(item),
             style: const TextStyle(
                 color: Constants.dark50,
                 fontSize: Constants.subTitleSize
@@ -44,23 +40,23 @@ class IngredientItem extends StatelessWidget{
     );
   }
 
-  String _getNameToDisplay(){
+  static String getNameToDisplay(Ingredient ingredient){
     String name = "";
-    bool eIngredient = item.names[0].substring(0, 1) == 'E' ? false : true;
+    bool eIngredient = ingredient.names[0].substring(0, 1) == 'E' ? false : true;
     bool flag = eIngredient;
-    for (var element in item.names) {
+    for (var element in ingredient.names) {
       if(flag) {
         name = "$name$element, ";
       }
       flag = true;
     }
     name = name.substring(0, name.length-2);
-    name = eIngredient ?  name : "$name (${item.names[0]})";
+    name = eIngredient ?  name : "$name (${ingredient.names[0]})";
     name = name.firstLetterUpper();
     return name;
   }
 
-  Image _getIconImage(Size screenSize){
+  static Image getHarmfulnessIconImage(Size screenSize, Ingredient item){
     String icon;
     switch(item.harmfulness){
       case Harmfulness.good:
@@ -79,7 +75,7 @@ class IngredientItem extends StatelessWidget{
     return Image.asset(icon, height: screenSize.height/20,);
   }
 
-  String _getTrailing(){
+  static String getCategoryName(Ingredient item){
     String visibleCategory;
     switch(item.category){
       case Category.color:
@@ -139,6 +135,21 @@ class IngredientItem extends StatelessWidget{
     }
     return visibleCategory;
   }
+
+  void pushIngredientDescription(BuildContext context) {
+    Navigator.push(context,
+        PageRouteBuilder(pageBuilder: (q,w,e) => IngredientDescription(ingredient: item),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                SlideTransition(
+                  position: Tween(
+                    begin: const Offset(0.0, -1.0),
+                    end: const Offset(0.0, 0.0),)
+                      .animate(animation),
+                  child: child,
+                ))
+    );
+  }
+
 }
 
 extension StringExtension on String {

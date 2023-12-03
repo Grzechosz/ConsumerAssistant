@@ -63,7 +63,7 @@ class AuthenticationService {
   }
 
   void updateEmail(String newEmail) {
-    _auth.currentUser?.updateEmail(newEmail);
+    _auth.currentUser!.updateEmail(newEmail);
   }
 
   void deleteAccount() {
@@ -74,6 +74,6 @@ class AuthenticationService {
   }
 
   void updatePassword(String newPassword) {
-    _auth.currentUser?.updatePassword(newPassword);
+    _auth.currentUser!.updatePassword(newPassword);
   }
 }
