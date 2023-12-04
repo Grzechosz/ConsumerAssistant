@@ -30,10 +30,10 @@ class _ArticleBodyState extends State<ArticleBody>{
     _getImageUrl();
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         backgroundColor: Constants.dark,
         title: Text(widget.article.title,
           style: const TextStyle(
-            color: Colors.white,
               fontSize: Constants.headerSize
           ),
         ),

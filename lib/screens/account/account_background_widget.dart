@@ -14,7 +14,7 @@ class AccountBackgroundWidget extends StatelessWidget {
     Size screenSize = MediaQuery.of(context).size;
     return SizedBox(
       width: screenSize.width,
-      height: screenSize.height / 3.5,
+      height: screenSize.height / 3.6,
       child: Material(
         color: Colors.transparent,
         child: Stack(children: [

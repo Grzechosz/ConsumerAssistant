@@ -9,7 +9,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/scan/tesseract_text_recognizer.dart';
 import 'package:flutter/material.dart';
-import '../home/Scanner.dart';
 import '../loading.dart';
 import '../../models/ingredient.dart';
 import '../../services/ingredients_service.dart';
@@ -138,16 +137,16 @@ class ScannerScreenState extends State<ScannerScreen> {
               .uploadProduct(scannedProduct, image);
         }
         else{
-          // _showScanningErrorDialog();
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => DisplayPictureScreen(
-                imagePath: _croppedFile.path,
-                image_discription: stringDesc,
-                // ingredientsList: ingredients,
-              ),
-            ),
-          );
+          _showScanningErrorDialog();
+          // await Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder: (context) => DisplayPictureScreen(
+          //       imagePath: _croppedFile.path,
+          //       image_discription: stringDesc,
+          //       // ingredientsList: ingredients,
+          //     ),
+          //   ),
+          // );
         }
       });
       // await Navigator.of(context).push(

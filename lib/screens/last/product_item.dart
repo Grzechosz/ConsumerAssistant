@@ -199,9 +199,9 @@ class _ProductItemState extends State<ProductItem> {
                     : IngredientItem(ingredients![index], true));
               },
             )
-          : const Loading(isReversedColor: false);
+          : const Loading(isReversedColor: true);
     }else{
-      return const Loading(isReversedColor: false);
+      return const Loading(isReversedColor: true);
     }
   }
 
