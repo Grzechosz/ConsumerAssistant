@@ -41,6 +41,9 @@ dependencies:
   fluttertoast: ^8.2.4
   rxdart: ^0.27.7
   flutter_html: ^3.0.0-beta.2
+  native_opencv:
+    path: native_opencv
+  ffi: ^2.1.0
 
 dev_dependencies:
   flutter_test:

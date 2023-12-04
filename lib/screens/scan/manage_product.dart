@@ -15,7 +15,9 @@ class ManageProductWidgetState extends State<ManageProductWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(  children: <Widget>[
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
         const Text('Manage Product Card'),
         TextField(
           controller: widget.textEditingController,
