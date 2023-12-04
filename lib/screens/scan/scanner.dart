@@ -3,6 +3,8 @@ import 'package:consciousconsumer/models/product.dart';
 import 'package:consciousconsumer/screens/scan/create_%20ingredients.dart';
 import 'package:consciousconsumer/screens/scan/manage_product.dart';
 import 'package:consciousconsumer/screens/scan/process_image.dart';
+import 'package:consciousconsumer/screens/scan/product_grading_algorithm.dart';
+import 'package:consciousconsumer/screens/scan/tricks_searcher.dart';
 import 'package:consciousconsumer/services/products_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -69,7 +71,9 @@ class ScannerScreenState extends State<ScannerScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _takePicture,
         backgroundColor: Constants.sea,
-        child: const Icon(Icons.camera_alt,),
+        child: const Icon(
+          Icons.camera_alt,
+        ),
       ),
     );
     // return
@@ -84,14 +88,11 @@ class ScannerScreenState extends State<ScannerScreen> {
       final image = await _controller.takePicture();
       await _cropImage(image);
       bool isNeeded = isInvertNeeded(_croppedFile.path);
-      if(isNeeded){
+      if (isNeeded) {
         invertImage(_croppedFile.path, _croppedFile.path);
       }
-      // await ProcessImage.invertIfNeeded(_croppedFile.path);
       await ProcessImage.processImage(_croppedFile.path);
 
-// processImage(_croppedFile.path, _croppedFile.path);
-//      ingredients = [];
       String stringDesc = "";
       await _tesseractTextRecognizer
           .processImage(_croppedFile.path)
@@ -100,65 +101,57 @@ class ScannerScreenState extends State<ScannerScreen> {
         stringDesc = value;
         return ingredients;
       }).then((ingredients) async {
-        if(ingredients.isNotEmpty){
+        if (ingredients.isNotEmpty) {
           List<Future<Ingredient>> ingredientsList = [];
           IngredientsService service = IngredientsService();
           RegExp pattern2 = RegExp(r'.*?\(|\)');
           for (String name in ingredients) {
             name = name.replaceAll(pattern2, '').trim();
             Ingredient? futureIngredient =
-            await service.getIngredientByName(name.toLowerCase());
+                await service.getIngredientByName(name.toLowerCase());
             if (futureIngredient != null) {
               ingredientsList.add(Future.value(futureIngredient));
             }
           }
 
-          if (IngredientsService.isLoaded) {
-            productIngredients = CreateProductIngredientsList.ingredientsFilter(
-                ingredients, ingredientsList)
-                .toList();
-          }
-          DateTime now = DateTime.now();
-          String productId =
-              now.toString() + FirebaseAuth.instance.currentUser!.uid;
+          _navigateToProductManagementScreen(context).then((result) async {
+            if (result) {
+              DateTime now = DateTime.now();
+              String productId =
+                  now.toString() + FirebaseAuth.instance.currentUser!.uid;
 
-          await ProcessImage.resizeImage(image);
+              String remarks = TricksSearcher.checkSugarAndSweeteners(ingredientsList);
 
-          await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ManageProductWidget(
-                textEditingController: _textContoller,
-                cameraController: _controller,
-              )));
+              await ProcessImage.resizeImage(image);
 
+              double productGrade =
+                  ProductGradingAlgorithm.gradeProduct(ingredientsList);
+              Product scannedProduct = Product(
+                  _textContoller.text,
+                  productGrade,
+                  image.name,
+                  ingredientsList,
+                  now,
+                  remarks,
+                  productId);
 
-          Product scannedProduct = Product(_textContoller.text, 4, image.name,
-              ingredientsList, now, "none", productId);
-
-          ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
-              .uploadProduct(scannedProduct, image);
-        }
-        else{
-          // _showScanningErrorDialog();
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => DisplayPictureScreen(
-                imagePath: _croppedFile.path,
-                image_discription: stringDesc,
-                // ingredientsList: ingredients,
-              ),
-            ),
-          );
+              ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
+                  .uploadProduct(scannedProduct, image);
+            }
+          });
+        } else {
+          _showScanningErrorDialog();
+          // await Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder: (context) => DisplayPictureScreen(
+          //       imagePath: _croppedFile.path,
+          //       image_discription: stringDesc,
+          //       // ingredientsList: ingredients,
+          //     ),
+          //   ),
+          // );
         }
       });
-      // await Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => DisplayPictureScreen(
-      //       imagePath: _croppedFile.path,
-      //       image_discription: stringDesc,
-      //       ingredientsList: ingredients,
-      //     ),
-      //   ),
-      // );
     }
   }
 
@@ -192,23 +185,61 @@ class ScannerScreenState extends State<ScannerScreen> {
     RegExp pattern4 = RegExp(r'Sk?ładniki?:|Sk?ład');
     RegExp pattern5 = RegExp(r'\n');
     int startIndex = desc.indexOf(pattern4);
-    int endIndex = 0;
+    int endIndex = desc.length;
     // List<String> result2 = [];
 
     if (startIndex >= 0) {
       for (int i = startIndex; i < desc.length; i++) {
         var char = desc[i];
-        if (char == "." && endIndex == 0) {
+        if (char == ".") {
           endIndex = i;
+          break;
         }
       }
       desc = desc.substring(startIndex + 10, endIndex);
       desc = desc.replaceAll(pattern, '');
       desc = desc.replaceAll(pattern5, '');
       // return [];
-      return  desc.split(",");
+      return desc.split(",");
     }
     return [];
+  }
+
+  Future<bool> _navigateToProductManagementScreen(BuildContext context) async {
+    return await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ManageProductWidget(
+                  textEditingController: _textContoller,
+              cameraController : _controller,
+                )));
+  }
+
+  Future<void> _makeProductPhotoDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Dodaj zdjęcie produktu'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Zrób zdjęcie produktu'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok', style: TextStyle(color: Constants.sea)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _showScanningErrorDialog() async {
@@ -232,7 +263,6 @@ class ScannerScreenState extends State<ScannerScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-
             ),
           ],
         );
