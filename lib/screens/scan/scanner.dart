@@ -9,9 +9,11 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/scan/tesseract_text_recognizer.dart';
 import 'package:flutter/material.dart';
+import '../home/Scanner.dart';
 import '../loading.dart';
 import '../../models/ingredient.dart';
 import '../../services/ingredients_service.dart';
+import '../../native_opencv.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({
@@ -81,53 +83,73 @@ class ScannerScreenState extends State<ScannerScreen> {
       await _controller.setFlashMode(FlashMode.off);
       final image = await _controller.takePicture();
       await _cropImage(image);
-      await ProcessImage.invertIfNeeded(_croppedFile.path);
+      bool isNeeded = isInvertNeeded(_croppedFile.path);
+      if(isNeeded){
+        invertImage(_croppedFile.path, _croppedFile.path);
+      }
+      // await ProcessImage.invertIfNeeded(_croppedFile.path);
       await ProcessImage.processImage(_croppedFile.path);
 
-      List<String> ingredients = [];
+// processImage(_croppedFile.path, _croppedFile.path);
+//      ingredients = [];
       String stringDesc = "";
       await _tesseractTextRecognizer
           .processImage(_croppedFile.path)
           .then((value) async {
-        ingredients = splitDescription(value); //["sól"]; //
+        List<String> ingredients = splitDescription(value); //["sól"]; //
         stringDesc = value;
-      }).then((value) async {
-        List<Future<Ingredient>> ingredientsList = [];
-        IngredientsService service = IngredientsService();
-        for (String name in ingredients) {
-          Ingredient? futureIngredient =
-              await service.getIngredientByName(name.toLowerCase());
-          if (futureIngredient != null) {
-            ingredientsList.add(Future.value(futureIngredient));
+        return ingredients;
+      }).then((ingredients) async {
+        if(ingredients.isNotEmpty){
+          List<Future<Ingredient>> ingredientsList = [];
+          IngredientsService service = IngredientsService();
+          RegExp pattern2 = RegExp(r'.*?\(|\)');
+          for (String name in ingredients) {
+            name = name.replaceAll(pattern2, '').trim();
+            Ingredient? futureIngredient =
+            await service.getIngredientByName(name.toLowerCase());
+            if (futureIngredient != null) {
+              ingredientsList.add(Future.value(futureIngredient));
+            }
           }
+
+          if (IngredientsService.isLoaded) {
+            productIngredients = CreateProductIngredientsList.ingredientsFilter(
+                ingredients, ingredientsList)
+                .toList();
+          }
+          DateTime now = DateTime.now();
+          String productId =
+              now.toString() + FirebaseAuth.instance.currentUser!.uid;
+
+          await ProcessImage.resizeImage(image);
+
+          await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ManageProductWidget(
+                textEditingController: _textContoller,
+                cameraController: _controller,
+              )));
+
+
+          Product scannedProduct = Product(_textContoller.text, 4, image.name,
+              ingredientsList, now, "none", productId);
+
+          ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
+              .uploadProduct(scannedProduct, image);
         }
-
-        if (IngredientsService.isLoaded) {
-          productIngredients = CreateProductIngredientsList.ingredientsFilter(
-                  ingredients, ingredientsList)
-              .toList();
+        else{
+          // _showScanningErrorDialog();
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DisplayPictureScreen(
+                imagePath: _croppedFile.path,
+                image_discription: stringDesc,
+                // ingredientsList: ingredients,
+              ),
+            ),
+          );
         }
-        DateTime now = DateTime.now();
-        String productId =
-            now.toString() + FirebaseAuth.instance.currentUser!.uid;
-
-        await ProcessImage.resizeImage(image);
-
-        await Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ManageProductWidget(
-                  textEditingController: _textContoller,
-                  cameraController: _controller,
-                )));
-
-
-        Product scannedProduct = Product(_textContoller.text, 4, image.name,
-            ingredientsList, now, "none", productId);
-
-        ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
-            .uploadProduct(scannedProduct, image);
       });
-
-
       // await Navigator.of(context).push(
       //   MaterialPageRoute(
       //     builder: (context) => DisplayPictureScreen(
@@ -167,10 +189,12 @@ class ScannerScreenState extends State<ScannerScreen> {
     RegExp pattern = RegExp(r'\d+,\d+%');
     RegExp pattern2 = RegExp(r'.*?\(');
     RegExp pattern3 = RegExp(r'\)');
-    RegExp pattern4 = RegExp(r'Sk?ładniki?:');
+    RegExp pattern4 = RegExp(r'Sk?ładniki?:|Sk?ład');
     RegExp pattern5 = RegExp(r'\n');
     int startIndex = desc.indexOf(pattern4);
     int endIndex = 0;
+    // List<String> result2 = [];
+
     if (startIndex >= 0) {
       for (int i = startIndex; i < desc.length; i++) {
         var char = desc[i];
@@ -178,21 +202,41 @@ class ScannerScreenState extends State<ScannerScreen> {
           endIndex = i;
         }
       }
-    } else {
-      print("oops");
+      desc = desc.substring(startIndex + 10, endIndex);
+      desc = desc.replaceAll(pattern, '');
+      desc = desc.replaceAll(pattern5, '');
+      // return [];
+      return  desc.split(",");
     }
+    return [];
+  }
 
-    desc = desc.substring(startIndex + 10, endIndex);
-    desc = desc.replaceAll(pattern, '');
-    desc = desc.replaceAll(pattern5, '');
-    List<String> result = desc.split(",");
-    List<String> result2 = [];
-    for (int i = 0; i < result.length; i++) {
-      String modified = result.elementAt(i).replaceAll(pattern2, '');
-      modified = modified.replaceAll(pattern3, '');
-      result2.insert(i, modified.trim());
-    }
+  Future<void> _showScanningErrorDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Błąd skanowania'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Nie udało się odczytać składników.'),
+                Text('Spróbuj ponownie zeskanować etykietę.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok', style: TextStyle(color: Constants.sea)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
 
-    return result2;
+            ),
+          ],
+        );
+      },
+    );
   }
 }
