@@ -194,17 +194,17 @@ class NicknameFieldContainer extends StatelessWidget{
                 nickname = value;
                 formKeyNickname.currentState!.validate();
               },
-              validator: (val)=> val!.isEmpty ? "Wprowadź Nickname" : null,
+              validator: (val)=> val!.isEmpty ? "Wprowadź nazwę użytkownika" : null,
               decoration: const InputDecoration(
                   icon: Icon(
-                    Icons.supervised_user_circle,
+                    Icons.account_box,
                     size: 30,
                     color: Constants.dark50,),
                   hintStyle: TextStyle(
                       color: Constants.dark50,
                       fontSize: Constants.headerSize
                   ),
-                  hintText: 'Nickname',
+                  hintText: 'Nazwa użytkownika',
                   border: InputBorder.none
               )
           ),
@@ -258,7 +258,7 @@ class PasswordFieldContainer extends StatelessWidget{
                       color: Constants.dark50,
                       fontSize: Constants.headerSize
                   ),
-                  hintText: 'Password',
+                  hintText: 'Hasło',
                   border: InputBorder.none
               )
           ),
@@ -312,7 +312,7 @@ class ConfirmPasswordFieldContainer extends StatelessWidget{
                       color: Constants.dark50,
                       fontSize: Constants.headerSize
                   ),
-                  hintText: 'Confirm Password',
+                  hintText: 'Potwierdź hasło',
                   border: InputBorder.none
               )
           ),

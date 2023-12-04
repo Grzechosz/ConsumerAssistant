@@ -18,19 +18,34 @@ class _AccountScreenState extends State<AccountScreen> {
   static final AuthenticationService _authService = AuthenticationService();
 
   late EditableEmailFieldContainer emailFieldContainer;
+  late EditableNicknameFieldContainer editableNicknameFieldContainer;
   late String error = '';
 
-  final _formKeyEmail = GlobalKey<FormState>();
+  final _formKeyEmail = GlobalKey<FormState>(),
+      _formKeyNickname = GlobalKey<FormState>();
 
   AppUser? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     currentUser = Provider.of<AppUser>(context);
     emailFieldContainer = EditableEmailFieldContainer(
-        currentUser!.email, formKeyEmail: _formKeyEmail, onChangeEmail: onChangeEmail,);
+      currentUser!.email,
+      formKeyEmail: _formKeyEmail,
+      onChangeEmail: onChangeEmail,
+    );
+    editableNicknameFieldContainer = EditableNicknameFieldContainer(
+        currentUser!.name,
+        formKeyNickname: _formKeyNickname,
+        onChangeNickname: onChangeNickname);
     emailFieldContainer.changeEnable();
+    editableNicknameFieldContainer.changeEnable();
     int timeToDeleteAccount =
         7 - currentUser!.createdAccountData.difference(DateTime.now()).inDays;
     emailFieldContainer.email = currentUser!.email;
@@ -53,20 +68,14 @@ class _AccountScreenState extends State<AccountScreen> {
             style: const TextStyle(
                 color: Colors.red, fontSize: Constants.titleSize),
           ),
-          Material(
-            color: Colors.transparent,
-            child: _builtScreenElements(context),
-          ),
           const Spacer(),
-          SizedBox(
-            height: MediaQuery.of(context).size.width / 10,
-          )
+          _builtScreenElements(screenSize),
         ],
       ),
     );
   }
 
-  void onChangeEmail(String newEmail){
+  void onChangeEmail(String newEmail) {
     AuthenticationService service = AuthenticationService();
     service.updateEmail(newEmail);
   }
@@ -82,20 +91,20 @@ class _AccountScreenState extends State<AccountScreen> {
         },
         child: const Text(
           "Wyloguj",
-          style: TextStyle(fontSize: 25, color: Colors.red),
+          style: TextStyle(fontSize: Constants.headerSize, color: Colors.red),
         ),
       ),
     );
   }
 
-  Widget _builtScreenElements(BuildContext context) {
+  Widget _builtScreenElements(Size screenSize) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Column(
+      child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            editableNicknameFieldContainer,
+            SizedBox(height: screenSize.height/100,),
             emailFieldContainer,
             Text(
               error,
@@ -105,7 +114,11 @@ class _AccountScreenState extends State<AccountScreen> {
             _buildLogOutButton(),
           ],
         ),
-      ),
     );
+  }
+
+  void onChangeNickname(String nickname) {
+    AuthenticationService service = AuthenticationService();
+    service.updateName(nickname);
   }
 }

@@ -78,7 +78,7 @@ class _EditableEmailFieldContainerState extends State<EditableEmailFieldContaine
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text("Na pewno chcesz edytować e-mail?",
+            title: const Text("Na pewno chcesz edytować email?",
               style: TextStyle(
                   fontSize: Constants.headerSize
               ),),
@@ -139,9 +139,20 @@ class _EditableNicknameFieldContainerState extends State<EditableNicknameFieldCo
 
     return Row(
       children: [
-        ChangeButton(onPressed: () => setState(() {
-          widget.changeEnable();
-        })),
+        TextButton(
+            onPressed: () => setState(() {
+              if(!widget.isEnable) {
+                _showConfirmationDialog();
+              }else{
+                widget.onChangeNickname(widget.nickname);
+                widget.changeEnable();
+              }
+            }),
+            child: const Text(
+              "zmień",
+              style: TextStyle(color: Constants.sea,
+                  fontSize: Constants.titleSize),
+            )),
         Container(
             width: width * 0.8,
             height: height * 0.075,
@@ -159,11 +170,11 @@ class _EditableNicknameFieldContainerState extends State<EditableNicknameFieldCo
                     widget.nickname = value;
                     widget.formKeyNickname.currentState!.validate();
                   },
-                  validator: (val) => val!.isEmpty ? "Wprowadź nazwę" : null,
+                  validator: (val) => val!.isEmpty ? "Wprowadź nazwę użytkownika" : null,
                   decoration: const InputDecoration(
                       icon: Icon(
-                        Icons.email,
-                        size: 30,
+                        Icons.account_box,
+                        size: 25,
                         color: Constants.dark50,
                       ),
                       hintStyle: TextStyle(
@@ -174,26 +185,46 @@ class _EditableNicknameFieldContainerState extends State<EditableNicknameFieldCo
       ],
     );
   }
-}
 
-class ChangeButton extends StatefulWidget {
-  final Function onPressed;
-
-  ChangeButton({required this.onPressed});
-
-  @override
-  State<StatefulWidget> createState() => _ChangeButtonState();
-
-}
-class _ChangeButtonState extends State<ChangeButton>
-{
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-        onPressed: () => widget.onPressed,
-        child: const Text(
-          "zmień",
-          style: TextStyle(color: Constants.sea, fontSize: Constants.titleSize),
-        ));
+  void _showConfirmationDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Na pewno chcesz edytować nazwę użytkownika?",
+              style: TextStyle(
+                  fontSize: Constants.headerSize
+              ),),
+            actions: [
+              TextButton(
+                child: const Text(
+                  Constants.cancelText,
+                  style: TextStyle(
+                      color: Constants.dark,
+                      fontSize: Constants.titleSize
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  Constants.editText,
+                  style: TextStyle(
+                      color: Constants.sea,
+                      fontSize: Constants.titleSize
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    widget.changeEnable();
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 }
