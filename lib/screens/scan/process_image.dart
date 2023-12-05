@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart';
 import 'package:opencv_4/factory/pathfrom.dart';
 import 'package:opencv_4/opencv_4.dart';
+import '../../native_opencv.dart';
 
 class ProcessImage {
   ProcessImage();
@@ -25,8 +26,8 @@ class ProcessImage {
             maxValue: 255,
             adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
             thresholdType: Cv2.THRESH_BINARY,
-            blockSize: 29,
-            constantValue: 12,
+            blockSize: 35,
+            constantValue: 5,
           ).then((byte) {
             Image? binarizedImage = decodeJpg(byte);
             encodeImageFile(path, binarizedImage!);
@@ -38,6 +39,7 @@ class ProcessImage {
 
   static Future invertIfNeeded(String path) async {
     File file = File(path);
+
     // List<int> bytes =
     await file.readAsBytes().then((bytes) async {
       Image image = decodeImage(Uint8List.fromList(bytes))!;
