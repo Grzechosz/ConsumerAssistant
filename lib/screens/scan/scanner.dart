@@ -119,7 +119,7 @@ class ScannerScreenState extends State<ScannerScreen> {
           }
           DateTime now = DateTime.now();
           String productId =
-              now.toString() + FirebaseAuth.instance.currentUser!.uid;
+              now.toString();
 
           await ProcessImage.resizeImage(image);
 
