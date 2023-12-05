@@ -21,7 +21,7 @@ class ManageProductWidgetState extends State<ManageProductWidget> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Text('Dodaj nazwę i zdjęcie'),
+          const Text('Dodaj nazwę'),   //    i zdjęcie
           TextField(
             controller: widget.textEditingController,
           ),

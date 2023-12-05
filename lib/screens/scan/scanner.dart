@@ -126,14 +126,8 @@ class ScannerScreenState extends State<ScannerScreen> {
 
               double productGrade =
                   ProductGradingAlgorithm.gradeProduct(ingredientsList);
-              Product scannedProduct = Product(
-                  _textContoller.text,
-                  productGrade,
-                  image.name,
-                  ingredientsList,
-                  now,
-                  remarks,
-                  productId);
+              Product scannedProduct = Product( _textContoller.text, productGrade, image.name,
+                  ingredientsList, now, remarks, productId);
 
               ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
                   .uploadProduct(scannedProduct, image);
