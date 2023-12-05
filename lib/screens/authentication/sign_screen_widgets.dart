@@ -94,7 +94,6 @@ class RemindPasswordButton extends StatelessWidget{
     double height = MediaQuery.of(context).size.height;
 
     return Container(
-      margin: EdgeInsets.only(bottom: height*0.01),
       child: TextButton(
         style: TextButton.styleFrom(
           foregroundColor: Constants.dark

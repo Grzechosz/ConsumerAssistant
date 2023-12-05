@@ -10,7 +10,7 @@ class ProductsService{
 
   ProductsService({required userId}){
     productCollection = productCollection = FirebaseFirestore
-        .instance.collection(userId);
+        .instance.collection('users_data').doc(userId).collection('products');
   }
 
   Stream<List<Product>> get products{

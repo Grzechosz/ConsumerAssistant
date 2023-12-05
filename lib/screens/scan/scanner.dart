@@ -11,7 +11,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/scan/tesseract_text_recognizer.dart';
 import 'package:flutter/material.dart';
-import '../home/Scanner.dart';
 import '../loading.dart';
 import '../../models/ingredient.dart';
 import '../../services/ingredients_service.dart';
@@ -114,11 +113,13 @@ class ScannerScreenState extends State<ScannerScreen> {
             }
           }
 
+
           _navigateToProductManagementScreen(context).then((result) async {
             if (result) {
               DateTime now = DateTime.now();
               String productId =
                   now.toString() + FirebaseAuth.instance.currentUser!.uid;
+
 
               String remarks = TricksSearcher.checkSugarAndSweeteners(ingredientsList);
 
@@ -129,11 +130,13 @@ class ScannerScreenState extends State<ScannerScreen> {
               Product scannedProduct = Product( _textContoller.text, productGrade, image.name,
                   ingredientsList, now, remarks, productId);
 
+
               ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
                   .uploadProduct(scannedProduct, image);
             }
           });
         } else {
+
           _showScanningErrorDialog();
           // await Navigator.of(context).push(
           //   MaterialPageRoute(

@@ -9,6 +9,20 @@ class IngredientDescription extends StatefulWidget {
   final Ingredient ingredient;
   const IngredientDescription({required this.ingredient, super.key});
 
+
+  static String harmfulnessToString(Harmfulness harmfulness) {
+    switch (harmfulness) {
+      case Harmfulness.good:
+        return 'zdrowy';
+      case Harmfulness.dangerous:
+        return 'niebezpieczny';
+      case Harmfulness.harmful:
+        return 'szkodliwy';
+      case Harmfulness.uncharted:
+        return 'wpływ nieznany';
+    }
+  }
+
   @override
   State<IngredientDescription> createState() => _IngredientDescriptionState();
 }
@@ -26,11 +40,12 @@ class _IngredientDescriptionState extends State<IngredientDescription> {
     final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
+          foregroundColor: Colors.white,
           backgroundColor: Constants.dark,
           title: Text(
             IngredientItem.getNameToDisplay(widget.ingredient),
             style: const TextStyle(
-                color: Colors.white, fontSize: Constants.headerSize),
+                fontSize: Constants.headerSize),
           ),
         ),
         body: SingleChildScrollView(
@@ -55,7 +70,7 @@ class _IngredientDescriptionState extends State<IngredientDescription> {
                         screenSize, widget.ingredient),
                     const Spacer(),
                     Text(
-                      harmfulnessToString(widget.ingredient.harmfulness),
+                      IngredientDescription.harmfulnessToString(widget.ingredient.harmfulness),
                       style: const TextStyle(fontSize: Constants.headerSize),
                     )
                   ],
@@ -115,18 +130,6 @@ class _IngredientDescriptionState extends State<IngredientDescription> {
     );
   }
 
-  static String harmfulnessToString(Harmfulness harmfulness) {
-    switch (harmfulness) {
-      case Harmfulness.good:
-        return 'zdrowy';
-      case Harmfulness.dangerous:
-        return 'niebezpieczny!';
-      case Harmfulness.harmful:
-        return 'szkodliwy';
-      case Harmfulness.uncharted:
-        return 'wpływ nieznany';
-    }
-  }
 
   Widget _buildFooter(Size screenSize) {
     return Container(

@@ -10,7 +10,7 @@ enum NotificationType{
 class NotificationsService{
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final _messageStreamController = BehaviorSubject<RemoteMessage>();
-  final _tokensCollection = FirebaseFirestore.instance.collection('tokens');
+  final _tokensCollection = FirebaseFirestore.instance.collection('users_data');
   final String _uid;
   String? token;
 
