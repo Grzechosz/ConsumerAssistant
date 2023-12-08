@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:consciousconsumer/native_opencv.dart';
 import 'package:consciousconsumer/screens/scan/process_image.dart';
 import 'package:consciousconsumer/screens/scan/product_grading_algorithm.dart';
 import 'package:consciousconsumer/text_recognition/tesseract_text_recognizer.dart';
@@ -86,6 +87,11 @@ class ScannerScreenState extends State<ScannerScreen> {
       await getImageFromCamera().then((value) async {
         await _cropImage(_image!).then((value) async {
           _showLoadingIndicator();
+          bool invertNeeded = isInvertNeeded(_croppedFile.path);
+          if(invertNeeded){
+            invertImage(_croppedFile.path, _croppedFile.path);
+          }
+          processImage(_croppedFile.path, _croppedFile.path);
           await scanTextAndAddProduct();
         });
       });
