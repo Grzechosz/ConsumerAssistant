@@ -6,9 +6,8 @@ import '../../config/constants.dart';
 import '../loading.dart';
 
 class ProductPhotoWidget extends StatefulWidget{
-  const ProductPhotoWidget({super.key, required this.cameraController});
+  const ProductPhotoWidget({super.key});
 
-  final CameraController cameraController;
 
   @override
   State<StatefulWidget> createState() => ProductPhotoWidgetState();
@@ -41,13 +40,6 @@ class ProductPhotoWidgetState extends State<ProductPhotoWidget> {
     );
   }
 
-void _takePicture() async {
-    await widget.cameraController.setFocusMode(FocusMode.auto);
-    await widget.cameraController.setExposureMode(ExposureMode.auto);
-    await widget.cameraController.setFlashMode(FlashMode.off);
-    final image = await widget.cameraController.takePicture();
 
-    Navigator.pop(context);
-}
 
 }

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../config/constants.dart';
 import 'articles/articles_screen.dart';
-import 'scan/scanner.dart';
+import 'scan/scanner_screen.dart';
 
 class ConsciousConsumer extends StatefulWidget{
   final CameraDescription camera;
@@ -35,7 +35,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   final List<Widget> _widgets = [
     const ProductsScreen(),
     const IngredientsScreen(),
-    const Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
+    const ScannerScreen(),                                   // Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
     const ArticlesScreen(),
     const AccountScreen(),
 ];
@@ -57,8 +57,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _selectedIndex == 2
-        ? ScannerScreen(camera: widget.camera) : _widgets[_selectedIndex],
+        child:  _widgets[_selectedIndex],        //_selectedIndex == 2? ScannerScreen(camera: widget.camera) :
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [

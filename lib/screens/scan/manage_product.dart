@@ -3,10 +3,9 @@ import 'package:consciousconsumer/screens/scan/product_photo_widget.dart';
 import 'package:flutter/material.dart';
 
 class ManageProductWidget extends StatefulWidget {
-  const ManageProductWidget({super.key, required this.textEditingController, required this.cameraController});
+  const ManageProductWidget({super.key, required this.textEditingController});
 
   final TextEditingController textEditingController;
-  final CameraController cameraController;
 
   @override
   State<StatefulWidget> createState() => ManageProductWidgetState();
@@ -53,7 +52,7 @@ class ManageProductWidgetState extends State<ManageProductWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => ProductPhotoWidget(
-              cameraController : widget.cameraController,
+
             )));
   }
 

@@ -118,7 +118,7 @@ class ScannerScreenState extends State<ScannerScreen> {
             if (result) {
               DateTime now = DateTime.now();
               String productId =
-                  now.toString() + FirebaseAuth.instance.currentUser!.uid;
+                  now.toString();
 
 
               String remarks = TricksSearcher.checkSugarAndSweeteners(ingredientsList);
@@ -181,25 +181,25 @@ class ScannerScreenState extends State<ScannerScreen> {
     RegExp pattern3 = RegExp(r'\)');
     RegExp pattern4 = RegExp(r'Sk?ładniki?:|Sk?ład');
     RegExp pattern5 = RegExp(r'\n');
-    int startIndex = desc.indexOf(pattern4);
-    int endIndex = desc.length;
+    // int startIndex = desc.indexOf(pattern4);
+    // int endIndex = desc.length;
     // List<String> result2 = [];
 
-    if (startIndex >= 0) {
-      for (int i = startIndex; i < desc.length; i++) {
-        var char = desc[i];
-        if (char == ".") {
-          endIndex = i;
-          break;
-        }
-      }
-      desc = desc.substring(startIndex + 10, endIndex);
+    // if (startIndex >= 0) {
+    //   for (int i = startIndex; i < desc.length; i++) {
+    //     var char = desc[i];
+    //     if (char == ".") {
+    //       endIndex = i;
+    //       break;
+    //     }
+    //   }
+    //   desc = desc.substring(startIndex + 10, endIndex);
       desc = desc.replaceAll(pattern, '');
       desc = desc.replaceAll(pattern5, '');
       // return [];
       return desc.split(",");
-    }
-    return [];
+    // }
+    // return [];
   }
 
   Future<bool> _navigateToProductManagementScreen(BuildContext context) async {
@@ -208,7 +208,7 @@ class ScannerScreenState extends State<ScannerScreen> {
         MaterialPageRoute(
             builder: (context) => ManageProductWidget(
                   textEditingController: _textContoller,
-              cameraController : _controller,
+              // cameraController : _controller,
                 )));
   }
 
