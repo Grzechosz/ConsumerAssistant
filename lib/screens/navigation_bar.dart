@@ -4,23 +4,20 @@ import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/last/products_screen.dart';
 import 'package:consciousconsumer/services/notifications_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../config/constants.dart';
 import 'articles/articles_screen.dart';
-import 'scan/scanner.dart';
+import 'scan/scanner_screen.dart';
 
-class ConsciousConsumer extends StatefulWidget{
+class ConsciousConsumer extends StatefulWidget {
   final CameraDescription camera;
 
   const ConsciousConsumer({super.key, required this.camera});
 
   @override
-  State<ConsciousConsumer> createState()=>
-      _ConsciousConsumerState();
+  State<ConsciousConsumer> createState() => _ConsciousConsumerState();
 }
-
 
 class _ConsciousConsumerState extends State<ConsciousConsumer> {
   int _selectedIndex = 0;
@@ -35,10 +32,10 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   final List<Widget> _widgets = [
     const ProductsScreen(),
     const IngredientsScreen(),
-    const Text("Scanner", style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black ),),
+    const ScannerScreen(),
     const ArticlesScreen(),
     const AccountScreen(),
-];
+  ];
 
   @override
   void initState() {
@@ -57,8 +54,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _selectedIndex == 2
-        ? ScannerScreen(camera: widget.camera) : _widgets[_selectedIndex],
+        child: _widgets[_selectedIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
@@ -85,19 +81,14 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Constants.sea,
-        selectedIconTheme: const IconThemeData(
-          color: Constants.sea
-        ),
-        unselectedIconTheme: const IconThemeData(
-          color: Constants.dark50
-        ),
+        selectedIconTheme: const IconThemeData(color: Constants.sea),
+        unselectedIconTheme: const IconThemeData(color: Constants.dark50),
         onTap: _onItemTapped,
-
       ),
     );
   }
 
-  void navigateToLast(){
+  void navigateToLast() {
     setState(() {
       _selectedIndex = 0;
     });
