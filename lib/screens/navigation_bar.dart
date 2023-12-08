@@ -59,12 +59,11 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
 
   @override
   Widget build(BuildContext context) {
-    ScannerScreen scanner = ScannerScreen(camera: widget.camera);
-    scanner.addListener(() {
-      setState(() {
-       _selectedIndex = 0;
-      });
-    });
+    // scanner.addListener(() {
+    //   setState(() {
+    //    _selectedIndex = 0;
+    //   });
+    // });
     return Scaffold(
       body: Center(
         child: _widgets[_selectedIndex],
