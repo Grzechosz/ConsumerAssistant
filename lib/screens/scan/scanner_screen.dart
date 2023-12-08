@@ -88,7 +88,7 @@ class ScannerScreenState extends State<ScannerScreen> {
         await _cropImage(_image!).then((value) async {
           _showLoadingIndicator();
           bool invertNeeded = isInvertNeeded(_croppedFile.path);
-          if(invertNeeded){
+          if (invertNeeded) {
             invertImage(_croppedFile.path, _croppedFile.path);
           }
           processImage(_croppedFile.path, _croppedFile.path);

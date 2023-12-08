@@ -15,7 +15,6 @@ class ManageProductWidget extends StatefulWidget {
 class ManageProductWidgetState extends State<ManageProductWidget> {
   XFile? image;
 
-
   @override
   void initState() {
     super.initState();
@@ -35,15 +34,15 @@ class ManageProductWidgetState extends State<ManageProductWidget> {
           TextButton(
             child: const Text('Anuluj'),
             onPressed: () {
-               Navigator.pop(context, false);
+              Navigator.pop(context, false);
             },
           ),
           TextButton(
             child: const Text('Gotowe'),
             onPressed: () {
-              if(widget.textEditingController.text.isNotEmpty){
+              if (widget.textEditingController.text.isNotEmpty) {
                 Navigator.pop(context, true);
-              }else{
+              } else {
                 _showEmptyNameDialog();
               }
             },
@@ -63,7 +62,8 @@ class ManageProductWidgetState extends State<ManageProductWidget> {
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Nie wpisano nazwy produktu. Uzupełnij nazwę aby móc zapisać produkt'),
+                Text(
+                    'Nie wpisano nazwy produktu. Uzupełnij nazwę aby móc zapisać produkt'),
               ],
             ),
           ),
