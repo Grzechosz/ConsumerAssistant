@@ -1,3 +1,6 @@
+import 'package:consciousconsumer/services/authentication_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -6,10 +9,11 @@ import '../../config/constants.dart';
 class EditableEmailFieldContainer extends StatefulWidget {
   final GlobalKey<FormState> formKeyEmail;
   final Function onChangeEmail;
+  final AuthenticationService authService;
   String email;
   bool isEnable = true;
 
-  EditableEmailFieldContainer(this.email, {required this.formKeyEmail, required this.onChangeEmail});
+  EditableEmailFieldContainer(this.email, {super.key, required this.formKeyEmail, required this.onChangeEmail, required this.authService});
   void changeEnable() {
     isEnable = !isEnable;
   }
@@ -19,11 +23,21 @@ class EditableEmailFieldContainer extends StatefulWidget {
 }
 
 class _EditableEmailFieldContainerState extends State<EditableEmailFieldContainer> {
+  var txt = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    txt.text = widget.email;
 
+    widget.authService.addListener(() {
+      if(mounted) {
+        setState(() {
+        widget.email = FirebaseAuth.instance.currentUser!.email!;
+      });
+      }
+    });
     return Row(
       children: [
         TextButton(
@@ -32,6 +46,9 @@ class _EditableEmailFieldContainerState extends State<EditableEmailFieldContaine
               _showConfirmationDialog();
             }else{
               widget.onChangeEmail(widget.email);
+              setState(() {
+                widget.email = FirebaseAuth.instance.currentUser!.email!;
+              });
               widget.changeEnable();
             }
           }),
@@ -51,7 +68,7 @@ class _EditableEmailFieldContainerState extends State<EditableEmailFieldContaine
             child: Form(
               key: widget.formKeyEmail,
               child: TextFormField(
-                  initialValue: widget.email,
+                  controller: txt,
                   enabled: widget.isEnable,
                   onChanged: (value) {
                     widget.email = value;
@@ -119,10 +136,11 @@ class _EditableEmailFieldContainerState extends State<EditableEmailFieldContaine
 class EditableNicknameFieldContainer extends StatefulWidget {
   final GlobalKey<FormState> formKeyNickname;
   final Function onChangeNickname;
+  final AuthenticationService authService;
   String nickname;
   bool isEnable = true;
 
-  EditableNicknameFieldContainer(this.nickname, {required this.formKeyNickname, required this.onChangeNickname});
+  EditableNicknameFieldContainer(this.nickname, {required this.formKeyNickname, required this.onChangeNickname, required this.authService});
   void changeEnable() {
     isEnable = !isEnable;
   }
@@ -132,11 +150,16 @@ class EditableNicknameFieldContainer extends StatefulWidget {
 }
 
 class _EditableNicknameFieldContainerState extends State<EditableNicknameFieldContainer> {
+  var txt = TextEditingController();
+  @override
+  void initState() {
+    txt.text = widget.nickname;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
     return Row(
       children: [
         TextButton(
@@ -145,6 +168,9 @@ class _EditableNicknameFieldContainerState extends State<EditableNicknameFieldCo
                 _showConfirmationDialog();
               }else{
                 widget.onChangeNickname(widget.nickname);
+                setState(() {
+                  widget.nickname = FirebaseAuth.instance.currentUser!.displayName!;
+                });
                 widget.changeEnable();
               }
             }),
@@ -164,7 +190,7 @@ class _EditableNicknameFieldContainerState extends State<EditableNicknameFieldCo
             child: Form(
               key: widget.formKeyNickname,
               child: TextFormField(
-                  initialValue: widget.nickname,
+                  controller: txt,
                   enabled: widget.isEnable,
                   onChanged: (value) {
                     widget.nickname = value;
@@ -179,7 +205,7 @@ class _EditableNicknameFieldContainerState extends State<EditableNicknameFieldCo
                       ),
                       hintStyle: TextStyle(
                           color: Constants.dark50, fontSize: Constants.headerSize),
-                      hintText: 'Email',
+                      hintText: 'Nazwa użytkownika',
                       border: InputBorder.none)),
             ))
       ],
