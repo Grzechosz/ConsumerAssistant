@@ -26,8 +26,8 @@ class _AccountScreenState extends State<AccountScreen> {
     color: Constants.dark50,
   );
 
-  late EditableEmailFieldContainer emailFieldContainer;
-  late EditableNicknameFieldContainer editableNicknameFieldContainer;
+  late EditableFieldContainer emailFieldContainer;
+  late EditableFieldContainer editableNicknameFieldContainer;
   late String error = '';
 
   final _formKeyEmail = GlobalKey<FormState>(),
@@ -39,20 +39,20 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     currentUser = Provider.of<AppUser>(context);
-    emailFieldContainer = EditableEmailFieldContainer(
-      currentUser!.email,
-      formKeyEmail: _formKeyEmail,
-      onChangeEmail: onChangeEmail,
+    emailFieldContainer = EditableFieldContainer(
+      value: currentUser!.email,
+      valueName: 'email',
+      icon: Icons.email,
+      formKey: _formKeyEmail, onChange: onChangeEmail,
     );
-    editableNicknameFieldContainer = EditableNicknameFieldContainer(
-        currentUser!.name,
-        formKeyNickname: _formKeyNickname,
-        onChangeNickname: onChangeNickname);
-    emailFieldContainer.changeEnable();
-    editableNicknameFieldContainer.changeEnable();
+    editableNicknameFieldContainer = EditableFieldContainer(
+        value: currentUser!.name,
+        formKey: _formKeyNickname,
+        onChange: onChangeNickname,
+      valueName: 'nazwa użytkownika',
+      icon: Icons.account_circle,);
     int timeToDeleteAccount =
-        7 - currentUser!.createdAccountData.difference(DateTime.now()).inDays;
-    emailFieldContainer.email = currentUser!.email;
+        currentUser!.createdAccountData.difference(DateTime.now()).inDays - 7;
     return SingleChildScrollView(
       child:
       Container(
