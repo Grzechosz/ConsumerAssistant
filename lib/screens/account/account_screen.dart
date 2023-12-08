@@ -1,4 +1,3 @@
-import 'package:consciousconsumer/models/enums.dart';
 import 'package:consciousconsumer/screens/account/account_background_widget.dart';
 import 'package:consciousconsumer/screens/authentication/sign_screen_widgets.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredient_description.dart';
@@ -6,8 +5,8 @@ import 'package:consciousconsumer/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../config/constants.dart';
-import '../../models/app_user.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/models/models.dart';
 import 'account_screen_widgets.dart';
 
 class AccountScreen extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:consciousconsumer/models/ingredient.dart';
+import 'package:consciousconsumer/models/models.dart';
 
 class ProductGradingAlgorithm {
   ProductGradingAlgorithm();

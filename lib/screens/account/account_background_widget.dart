@@ -1,10 +1,6 @@
-import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
+import 'package:consciousconsumer/config/constants.dart';
 
 class AccountBackgroundWidget extends StatelessWidget {
   const AccountBackgroundWidget({super.key});

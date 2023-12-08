@@ -1,11 +1,10 @@
 import 'package:consciousconsumer/screens/ingredients/sorting_and_filtering.dart';
 import 'package:consciousconsumer/services/ingredients_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../config/constants.dart';
-import '../loading.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/screens/loading.dart';
 import '../../models/ingredient.dart';
 import '../../models/enums.dart' as enums;
 import 'ingredient_item.dart';

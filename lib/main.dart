@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
 import 'config/firebase_options.dart';
 import 'models/app_user.dart';
 import 'services/authentication_service.dart';

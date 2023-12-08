@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
+import 'package:consciousconsumer/config/constants.dart';
 
 class EditableEmailFieldContainer extends StatefulWidget {
   final GlobalKey<FormState> formKeyEmail;
@@ -9,7 +7,7 @@ class EditableEmailFieldContainer extends StatefulWidget {
   String email;
   bool isEnable = true;
 
-  EditableEmailFieldContainer(this.email, {required this.formKeyEmail, required this.onChangeEmail});
+  EditableEmailFieldContainer(this.email, {super.key, required this.formKeyEmail, required this.onChangeEmail});
   void changeEnable() {
     isEnable = !isEnable;
   }
@@ -122,7 +120,7 @@ class EditableNicknameFieldContainer extends StatefulWidget {
   String nickname;
   bool isEnable = true;
 
-  EditableNicknameFieldContainer(this.nickname, {required this.formKeyNickname, required this.onChangeNickname});
+  EditableNicknameFieldContainer(this.nickname, {super.key, required this.formKeyNickname, required this.onChangeNickname});
   void changeEnable() {
     isEnable = !isEnable;
   }

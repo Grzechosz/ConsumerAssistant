@@ -1,14 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:consciousconsumer/screens/loading.dart';
-import 'package:consciousconsumer/models/product.dart';
-import 'package:consciousconsumer/services/products_service.dart';
-import 'package:consciousconsumer/services/storage_service.dart';
+import 'package:consciousconsumer/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
-import '../../models/ingredient.dart';
-import '../ingredients/ingredient_item.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/models/models.dart';
+import 'package:consciousconsumer/screens/ingredients/ingredient_item.dart';
 
 class ProductItem extends StatefulWidget {
   final Product item;

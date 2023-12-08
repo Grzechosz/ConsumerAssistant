@@ -1,7 +1,5 @@
 import 'dart:core';
-
-import 'package:consciousconsumer/models/enums.dart';
-import 'package:consciousconsumer/models/ingredient.dart';
+import 'package:consciousconsumer/models/models.dart';
 
 class SortingAndFiltering{
   static Iterable ingredientsFilter(String pattern, List<dynamic> all){

@@ -1,8 +1,6 @@
-import 'package:consciousconsumer/services/products_service.dart';
+import 'package:consciousconsumer/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../models/app_user.dart';
-import 'notifications_service.dart';
+import 'package:consciousconsumer/models/models.dart';
 
 class AuthenticationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
