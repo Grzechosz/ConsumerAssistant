@@ -1,12 +1,10 @@
 import 'package:consciousconsumer/screens/articles/article_item.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../config/constants.dart';
-import '../../models/article.dart';
-import '../../services/articles_service.dart';
-import '../loading.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/models/models.dart';
+import 'package:consciousconsumer/services/services.dart';
+import 'package:consciousconsumer/screens/loading.dart';
 
 class ArticlesScreen extends StatefulWidget{
   const ArticlesScreen({super.key});
@@ -50,7 +48,7 @@ class _ArticlesScreenState extends State<ArticlesScreen>{
       articles.sort((art1, art2){
         return art1.date.isBefore(art2.date)? 1 : -1;
       });
-      return Container(
+      return SizedBox(
         height: screenSize.height/4.5,
           child: articles.isEmpty ?
               const Center(

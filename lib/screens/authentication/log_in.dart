@@ -1,10 +1,9 @@
-import 'package:consciousconsumer/models/app_user.dart';
+import 'package:consciousconsumer/models/models.dart';
 import 'package:consciousconsumer/screens/authentication/menu_background_widget.dart';
-import 'package:consciousconsumer/services/authentication_service.dart';
+import 'package:consciousconsumer/services/services.dart';
 import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
-import '../loading.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/screens/loading.dart';
 import 'sign_screen_widgets.dart';
 
 class LogIn extends StatefulWidget {

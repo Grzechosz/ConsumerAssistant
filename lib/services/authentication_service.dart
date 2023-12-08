@@ -1,3 +1,6 @@
+import 'package:consciousconsumer/services/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:consciousconsumer/models/models.dart';
 import 'package:consciousconsumer/screens/authentication/log_in.dart';
 import 'package:consciousconsumer/services/products_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';

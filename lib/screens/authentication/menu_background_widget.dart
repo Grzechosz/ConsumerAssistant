@@ -1,9 +1,6 @@
 import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
+import 'package:consciousconsumer/config/constants.dart';
 
 class MenuBackgroundWidget extends StatelessWidget {
   final String screenName;

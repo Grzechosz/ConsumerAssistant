@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../models/article.dart';
+import 'package:consciousconsumer/models/models.dart';
 
 class ArticlesService{
   final CollectionReference ingredientCollection = FirebaseFirestore

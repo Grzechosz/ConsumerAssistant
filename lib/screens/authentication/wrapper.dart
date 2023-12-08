@@ -1,11 +1,12 @@
 import 'package:camera/camera.dart';
+import 'package:consciousconsumer/models/models.dart';
+=======
 import 'package:consciousconsumer/models/app_user.dart';
 import 'package:consciousconsumer/services/notifications_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'authentication.dart';
-import '../navigation_bar.dart';
+import 'package:consciousconsumer/screens/navigation_bar.dart';
 
 class Wrapper extends StatelessWidget {
   final CameraDescription firstCamera;

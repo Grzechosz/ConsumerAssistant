@@ -1,12 +1,12 @@
-import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:flutter/material.dart';
+import 'package:consciousconsumer/config/constants.dart';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
 import '../../services/authentication_service.dart';
+
 
 class AccountBackgroundWidget extends StatefulWidget {
   String? name;

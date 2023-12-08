@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
+import 'package:consciousconsumer/config/constants.dart';
 
 class FirstButton extends StatelessWidget{
   final Function function;
@@ -110,7 +108,7 @@ class RemindPasswordButton extends StatelessWidget{
 class EmailFieldContainer extends StatelessWidget{
   final GlobalKey<FormState> formKeyEmail;
   String email = '';
-  EmailFieldContainer(this.formKeyEmail);
+  EmailFieldContainer(this.formKeyEmail, {super.key});
 
   @override
   Widget build(BuildContext context) {

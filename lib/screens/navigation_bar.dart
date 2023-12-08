@@ -2,11 +2,10 @@ import 'package:consciousconsumer/screens/account/account_screen.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredients_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/last/products_screen.dart';
-import 'package:consciousconsumer/services/notifications_service.dart';
+import 'package:consciousconsumer/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../config/constants.dart';
+import 'package:consciousconsumer/config/constants.dart';
 import 'articles/articles_screen.dart';
 import 'scan/scanner_screen.dart';
 

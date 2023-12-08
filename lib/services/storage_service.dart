@@ -1,12 +1,8 @@
-
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
-import '../models/article.dart';
-import '../models/product.dart';
+import 'package:consciousconsumer/models/models.dart';
 
 class StorageService{
 

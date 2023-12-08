@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../config/constants.dart';
-import '../../models/enums.dart';
-import '../../models/ingredient.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/models/models.dart';
 import 'ingredient_item.dart';
 
 class IngredientDescription extends StatefulWidget {

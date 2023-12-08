@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:consciousconsumer/native_opencv.dart';
 import 'package:consciousconsumer/screens/scan/process_image.dart';
 import 'package:consciousconsumer/screens/scan/product_grading_algorithm.dart';
 import 'package:consciousconsumer/text_recognition/tesseract_text_recognizer.dart';
@@ -8,10 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:consciousconsumer/config/constants.dart';
-import 'package:consciousconsumer/models/ingredient.dart';
-import 'package:consciousconsumer/models/product.dart';
-import 'package:consciousconsumer/services/ingredients_service.dart';
-import 'package:consciousconsumer/services/products_service.dart';
+import 'package:consciousconsumer/models/models.dart';
+import 'package:consciousconsumer/services/services.dart';
 import 'package:consciousconsumer/screens/loading_panel.dart';
 import 'manage_product.dart';
 
@@ -60,23 +59,23 @@ class ScannerScreenState extends State<ScannerScreen> {
                 onPressed: () async {
                   await useButton(true);
                 },
-                child: const Text("Zrób zdjęcie"),
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text("Zrób zdjęcie"),
               ),
               TextButton(
                 onPressed: () async {
                   await useButton(false);
                 },
-                child: const Text("Wybierz z galerii"),
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.white)),
+                child: const Text("Wybierz z galerii"),
               )
             ]),
           ),
           Container(
               child: _isLoading
-                  ? LoaderPanel(isReversedColor: false)
+                  ? const LoaderPanel(isReversedColor: false)
                   : Container())
         ],
       ),
@@ -88,6 +87,11 @@ class ScannerScreenState extends State<ScannerScreen> {
       await getImageFromCamera().then((value) async {
         await _cropImage(_image!).then((value) async {
           _showLoadingIndicator();
+          bool invertNeeded = isInvertNeeded(_croppedFile.path);
+          if (invertNeeded) {
+            invertImage(_croppedFile.path, _croppedFile.path);
+          }
+          processImage(_croppedFile.path, _croppedFile.path);
           await scanTextAndAddProduct();
         });
       });

@@ -1,10 +1,10 @@
-import 'package:consciousconsumer/services/products_service.dart';
+import 'package:consciousconsumer/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:consciousconsumer/config/constants.dart';
 import 'package:consciousconsumer/screens/loading.dart';
-import 'package:consciousconsumer/models/product.dart';
+import 'package:consciousconsumer/models/models.dart';
 import 'package:consciousconsumer/screens/ingredients/sorting_and_filtering.dart';
 import 'product_item.dart';
 

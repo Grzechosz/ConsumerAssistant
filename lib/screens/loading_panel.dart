@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
-import '../config/constants.dart';
+import 'package:consciousconsumer/config/constants.dart';
 
 class LoaderPanel extends StatelessWidget {
   final bool isReversedColor;
 
-  LoaderPanel(
+  const LoaderPanel(
       {super.key,
       this.opacity = 0.5,
       this.dismissibles = false,

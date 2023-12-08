@@ -1,8 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consciousconsumer/services/storage_service.dart';
-
-import '../models/product.dart';
+import 'package:consciousconsumer/services/services.dart';
+import 'package:consciousconsumer/models/models.dart';
 
 class ProductsService{
   CollectionReference? productCollection;

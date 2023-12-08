@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-
-import '../../config/constants.dart';
-import '../../models/article.dart';
-import '../../services/storage_service.dart';
-import '../loading.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/models/models.dart';
+import 'package:consciousconsumer/services/services.dart';
+import 'package:consciousconsumer/screens/loading.dart';
 
 class ArticleBody extends StatefulWidget{
   final Article article;
