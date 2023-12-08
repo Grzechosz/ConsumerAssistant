@@ -191,12 +191,12 @@ class ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
-  Future<bool> _navigateToProductManagementScreen(BuildContext context) async {
+  Future<String> _navigateToProductManagementScreen(BuildContext context) async {
     return await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ManageProductWidget(
-                  textEditingController: _textContoller,
+                  // textEditingController: _textContoller,
                 )));
   }
 
@@ -248,7 +248,7 @@ class ScannerScreenState extends State<ScannerScreen> {
         }
 
         _navigateToProductManagementScreen(context).then((result) async {
-          if (result) {
+          if (result.isNotEmpty) {
             DateTime now = DateTime.now();
             String productId = now.toString();
 
@@ -261,7 +261,7 @@ class ScannerScreenState extends State<ScannerScreen> {
 
             double productGrade =
                 ProductGradingAlgorithm.gradeProduct(ingredientsList);
-            Product scannedProduct = Product(_textContoller.text, productGrade,
+            Product scannedProduct = Product(result, productGrade,
                 file.name, ingredientsList, now, remarks, productId);
 
             ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)

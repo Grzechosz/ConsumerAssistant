@@ -1,49 +1,36 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
 import 'package:consciousconsumer/config/constants.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class ManageProductWidget extends StatefulWidget {
-  const ManageProductWidget({super.key, required this.textEditingController});
-
-  final TextEditingController textEditingController;
-
-  @override
-  State<StatefulWidget> createState() => ManageProductWidgetState();
-}
-
-class ManageProductWidgetState extends State<ManageProductWidget> {
-  XFile? image;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.textEditingController.clear();
-  }
+class ManageProductWidget extends HookWidget {
+  const ManageProductWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final textEditController = useTextEditingController();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           const Text('Dodaj nazwę'), //    i zdjęcie
           TextField(
-            controller: widget.textEditingController,
+            controller: textEditController,
           ),
           TextButton(
             child: const Text('Anuluj'),
             onPressed: () {
-              Navigator.pop(context, false);
+              Navigator.pop(context, textEditController.text);
             },
           ),
           TextButton(
             child: const Text('Gotowe'),
             onPressed: () {
-              if (widget.textEditingController.text.isNotEmpty) {
-                Navigator.pop(context, true);
+              if (textEditController.text.isNotEmpty) {
+                Navigator.pop(context, textEditController.text);
               } else {
-                _showEmptyNameDialog();
+                _showEmptyNameDialog(context);
               }
             },
           ),
@@ -52,7 +39,7 @@ class ManageProductWidgetState extends State<ManageProductWidget> {
     );
   }
 
-  Future<void> _showEmptyNameDialog() async {
+  Future<void> _showEmptyNameDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
