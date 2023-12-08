@@ -1,5 +1,5 @@
+import 'package:consciousconsumer/text_recognition/text_recognizer.dart';
 import 'package:flutter_tesseract_ocr/android_ios.dart';
-import 'package:consciousconsumer/screens/scan/text_recognizer.dart';
 
 class TesseractTextRecognizer extends ITextRecognizer {
   @override

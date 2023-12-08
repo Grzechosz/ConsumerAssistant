@@ -5,20 +5,18 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart';
 import 'package:opencv_4/factory/pathfrom.dart';
 import 'package:opencv_4/opencv_4.dart';
-import '../../native_opencv.dart';
 
 class ProcessImage {
   ProcessImage();
 
-   static Future processImage(String path) async {
+  static Future processImage(String path) async {
     await Cv2.medianBlur(
       pathFrom: CVPathFrom.GALLERY_CAMERA,
       pathString: path,
       kernelSize: 5,
     ).then((byte2) async {
       Image? decodedImage = decodeJpg(byte2!);
-      await encodeImageFile(path, decodedImage!)
-          .then((result) async {
+      await encodeImageFile(path, decodedImage!).then((result) async {
         if (result) {
           await Cv2.adaptiveThreshold(
             pathFrom: CVPathFrom.GALLERY_CAMERA,
@@ -40,7 +38,6 @@ class ProcessImage {
   static Future invertIfNeeded(String path) async {
     File file = File(path);
 
-    // List<int> bytes =
     await file.readAsBytes().then((bytes) async {
       Image image = decodeImage(Uint8List.fromList(bytes))!;
 
@@ -59,7 +56,7 @@ class ProcessImage {
       if (histogram[0] > histogram[255]) {
         await invertColors(image2).then((value) => image2);
         dev.log("image need inversion of colors");
-      } else  {
+      } else {
         dev.log("image do not need inversion of colors");
       }
 
@@ -93,6 +90,4 @@ class ProcessImage {
       await encodeImageFile(image.path, resizedImage);
     });
   }
-
-
 }

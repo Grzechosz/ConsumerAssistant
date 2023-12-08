@@ -1,21 +1,18 @@
-
 import 'dart:io';
 import 'package:consciousconsumer/screens/scan/process_image.dart';
 import 'package:consciousconsumer/screens/scan/product_grading_algorithm.dart';
-import 'package:consciousconsumer/screens/scan/tesseract_text_recognizer.dart';
+import 'package:consciousconsumer/text_recognition/tesseract_text_recognizer.dart';
 import 'package:consciousconsumer/screens/scan/tricks_searcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../config/constants.dart';
-import '../../models/ingredient.dart';
-import '../../models/product.dart';
-import '../../services/ingredients_service.dart';
-import '../../services/products_service.dart';
-import '../loading.dart';
-import '../loading_panel.dart';
+import 'package:consciousconsumer/config/constants.dart';
+import 'package:consciousconsumer/models/ingredient.dart';
+import 'package:consciousconsumer/models/product.dart';
+import 'package:consciousconsumer/services/ingredients_service.dart';
+import 'package:consciousconsumer/services/products_service.dart';
+import 'package:consciousconsumer/screens/loading_panel.dart';
 import 'manage_product.dart';
 
 class ScannerScreen extends StatefulWidget {
@@ -34,7 +31,7 @@ class ScannerScreenState extends State<ScannerScreen> {
   bool _isLoading = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _textContoller = TextEditingController();
     _tesseractTextRecognizer = TesseractTextRecognizer();
@@ -53,57 +50,49 @@ class ScannerScreenState extends State<ScannerScreen> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-      Container(
-      width: screenSize.width,
-        height: screenSize.height,
-        color: Constants.sea80,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          TextButton(
-            onPressed: () async {
-              await useButton(true);
-              // _isLoading = false;
-              // getImageFromCamera();
-              // await _cropImage(_image!);
-              // await ProcessImage.processImage(_croppedFile.path);
-              // debugPrint("take photo");
-            },
-            child: const Text("Zrób zdjęcie"),
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.white)),
-          ),
-          TextButton(
-            onPressed: () async {
-              await useButton(false);
-              // _isLoading = false;
-            },
-            //   getImageFromGallery();
-            //   await _cropImage(_image!);
-            //   debugPrint("choose photo");
-            // },
-            child: const Text("Wybierz z galerii"),
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.white)),)
-        ]),
-      ),
           Container(
-            child: _isLoading ? LoaderPanel(isReversedColor: false) : Container()
-          )
+            width: screenSize.width,
+            height: screenSize.height,
+            color: Constants.sea80,
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              TextButton(
+                onPressed: () async {
+                  await useButton(true);
+                },
+                child: const Text("Zrób zdjęcie"),
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.white)),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await useButton(false);
+                },
+                child: const Text("Wybierz z galerii"),
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.white)),
+              )
+            ]),
+          ),
+          Container(
+              child: _isLoading
+                  ? LoaderPanel(isReversedColor: false)
+                  : Container())
         ],
       ),
     );
-
   }
 
   Future useButton(bool takePhoto) async {
-    if(takePhoto){
-      await getImageFromCamera().then((value) async{
+    if (takePhoto) {
+      await getImageFromCamera().then((value) async {
         await _cropImage(_image!).then((value) async {
           _showLoadingIndicator();
           await scanTextAndAddProduct();
         });
       });
     } else {
-      await getImageFromGallery().then((value) async{
+      await getImageFromGallery().then((value) async {
         await _cropImage(_image!).then((value) async {
           _showLoadingIndicator();
           await scanTextAndAddProduct();
@@ -203,8 +192,8 @@ class ScannerScreenState extends State<ScannerScreen> {
         context,
         MaterialPageRoute(
             builder: (context) => ManageProductWidget(
-              textEditingController: _textContoller,
-            )));
+                  textEditingController: _textContoller,
+                )));
   }
 
   List<String> splitDescription(String desc) {
@@ -235,12 +224,10 @@ class ScannerScreenState extends State<ScannerScreen> {
   }
 
   Future<void> scanTextAndAddProduct() async {
-    String stringDesc = "";
     await _tesseractTextRecognizer
         .processImage(_croppedFile.path)
         .then((value) async {
       List<String> ingredients = splitDescription(value); //["sól"]; //
-      stringDesc = value;
       return ingredients;
     }).then((ingredients) async {
       if (ingredients.isNotEmpty) {
@@ -250,51 +237,36 @@ class ScannerScreenState extends State<ScannerScreen> {
         for (String name in ingredients) {
           name = name.replaceAll(pattern2, '').trim();
           Ingredient? futureIngredient =
-          await service.getIngredientByName(name.toLowerCase());
+              await service.getIngredientByName(name.toLowerCase());
           if (futureIngredient != null) {
             ingredientsList.add(Future.value(futureIngredient));
           }
         }
 
-
         _navigateToProductManagementScreen(context).then((result) async {
           if (result) {
             DateTime now = DateTime.now();
-            String productId =
-            now.toString();
+            String productId = now.toString();
 
-
-            String remarks = TricksSearcher.checkSugarAndSweeteners(ingredientsList);
+            String remarks =
+                TricksSearcher.checkSugarAndSweeteners(ingredientsList);
 
             XFile file = XFile(_image!.path);
 
             await ProcessImage.resizeImage(file);
 
-
             double productGrade =
-            ProductGradingAlgorithm.gradeProduct(ingredientsList);
-            Product scannedProduct = Product( _textContoller.text, productGrade, file.name,
-                ingredientsList, now, remarks, productId);
-
+                ProductGradingAlgorithm.gradeProduct(ingredientsList);
+            Product scannedProduct = Product(_textContoller.text, productGrade,
+                file.name, ingredientsList, now, remarks, productId);
 
             ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
                 .uploadProduct(scannedProduct, file);
           }
         });
       } else {
-
         _showScanningErrorDialog();
-        // await Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => DisplayPictureScreen(
-        //       imagePath: _croppedFile.path,
-        //       image_discription: stringDesc,
-        //       // ingredientsList: ingredients,
-        //     ),
-        //   ),
-        // );
       }
     });
   }
-
 }

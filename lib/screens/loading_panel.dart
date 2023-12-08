@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -7,9 +6,12 @@ import '../config/constants.dart';
 class LoaderPanel extends StatelessWidget {
   final bool isReversedColor;
 
-  LoaderPanel({super.key, this.opacity = 0.5,
-    this.dismissibles = false, this.color = Colors.black, required this.isReversedColor
-  });
+  LoaderPanel(
+      {super.key,
+      this.opacity = 0.5,
+      this.dismissibles = false,
+      this.color = Colors.black,
+      required this.isReversedColor});
 
   final double opacity;
   final bool dismissibles;
@@ -23,10 +25,11 @@ class LoaderPanel extends StatelessWidget {
           opacity: opacity,
           child: const ModalBarrier(dismissible: false, color: Colors.black),
         ),
-        Center(child: SpinKitChasingDots(
-          color: isReversedColor? Constants.sea : Constants.light,
-          size: MediaQuery.of(context).size.width/5,
-        ),
+        Center(
+          child: SpinKitChasingDots(
+            color: isReversedColor ? Constants.sea : Constants.light,
+            size: MediaQuery.of(context).size.width / 5,
+          ),
         ),
       ],
     );
