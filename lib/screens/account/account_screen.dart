@@ -2,11 +2,15 @@ import 'package:consciousconsumer/screens/account/account_background_widget.dart
 import 'package:consciousconsumer/screens/authentication/sign_screen_widgets.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredient_description.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:consciousconsumer/config/constants.dart';
 import 'package:consciousconsumer/models/models.dart';
+
+import '../authentication/log_in.dart';
+
 import 'account_screen_widgets.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -18,6 +22,7 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   static final AuthenticationService _authService = AuthenticationService();
+  String _password = '';
 
   final Container spacer = Container(
     margin: const EdgeInsets.symmetric(vertical: 10),
@@ -34,11 +39,16 @@ class _AccountScreenState extends State<AccountScreen> {
       _formKeyNickname = GlobalKey<FormState>();
 
   AppUser? currentUser;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     currentUser = Provider.of<AppUser>(context);
+
     emailFieldContainer = EditableFieldContainer(
       value: currentUser!.email,
       valueName: 'email',
@@ -51,15 +61,17 @@ class _AccountScreenState extends State<AccountScreen> {
         onChange: onChangeNickname,
       valueName: 'nazwa użytkownika',
       icon: Icons.account_circle,);
+
     int timeToDeleteAccount =
         currentUser!.createdAccountData.difference(DateTime.now()).inDays - 7;
     return SingleChildScrollView(
-      child:
-      Container(
+      child: Container(
         color: Constants.light,
         child: Column(
           children: [
-            const AccountBackgroundWidget(),
+            AccountBackgroundWidget(
+              authService: _authService,
+            ),
             Text(
               currentUser!.isEmailVerified
                   ? ''
@@ -82,8 +94,13 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   void onChangeEmail(String newEmail) {
-    AuthenticationService service = AuthenticationService();
-    service.updateEmail(newEmail);
+    try {
+      _authService.updateEmail(newEmail);
+    } catch (ex) {
+      _showChangesOnAccountsNeedsAuthenticationDialog(context).then((value) {
+        _authService.updateEmail(newEmail);
+      });
+    }
   }
 
   static Widget _buildLogOutButton() {
@@ -109,10 +126,10 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  static Widget _buildDeleteAccountButton() {
+  Widget _buildDeleteAccountButton(BuildContext context) {
     return TextButton(
       onPressed: () async {
-        await _authService.logOut();
+        _showDeleteAccountConfirmationDialog(context);
       },
       child: const Row(
         children: [
@@ -132,55 +149,157 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  void _showDeleteAccountConfirmationDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              "Na pewno chcesz usunąć konto? Ta czynność jest nieodwracalna!",
+              style:
+                  TextStyle(fontSize: Constants.headerSize, color: Colors.red),
+            ),
+            actions: [
+              TextButton(
+                child: const Text(
+                  Constants.cancelText,
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  Constants.deleteText,
+                  style: TextStyle(
+                      color: Constants.sea, fontSize: Constants.titleSize),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  try{
+                    _authService.deleteAccount(context);
+                  }catch(e){
+                    await _showChangesOnAccountsNeedsAuthenticationDialog(context)
+                        .then((value) {
+                      _authService.deleteAccount(context);
+                    });
+                  }
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future _showChangesOnAccountsNeedsAuthenticationDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Wprowadź hasło'),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _password = value;
+                });
+              },
+              obscureText: true,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration: InputDecoration(hintText: "hasło"),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  Constants.cancelText,
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  throw Exception();
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  'Dalej',
+                  style: TextStyle(
+                      color: Constants.sea, fontSize: Constants.titleSize),
+                ),
+                onPressed: () async {
+                  dynamic result = await _authService.reAuthorization(
+                      currentUser!.email, _password);
+                  if (result == AppUser.emptyUser) {
+                    Navigator.pop(context);
+                    _showBadPasswordDialog(context);
+                  } else if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future _showBadPasswordDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(content: Text('Nieprawidłowe hasło!'));
+        });
+  }
+
   Widget _builtScreenElements(Size screenSize) {
     return Align(
-        alignment: Alignment.bottomCenter,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            editableNicknameFieldContainer,
-            SizedBox(
-              height: screenSize.height / 100,
-            ),
-            emailFieldContainer,
-            RemindPasswordButton(function: ()=>{}),
-            Text(
-              error,
-              style: const TextStyle(
-                  fontSize: Constants.subTitleSize, color: Colors.red),
-            ),
-            spacer,
-            _buildEmoticonsLegend(screenSize),
-            spacer,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildDeleteAccountButton(),
-                _buildLogOutButton(),
-              ],
-            )
-          ],
-        ),
-    );
-  }
-
-  Container _buildEmoticonsLegend(Size screenSize){
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: screenSize.width/20),
+      alignment: Alignment.bottomCenter,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          _harmfulnessLegendRow(Harmfulness.good, screenSize.width/8),
-          _harmfulnessLegendRow(Harmfulness.harmful, screenSize.width/8),
-          _harmfulnessLegendRow(Harmfulness.dangerous, screenSize.width/8),
-          _harmfulnessLegendRow(Harmfulness.uncharted, screenSize.width/8),
+          editableNicknameFieldContainer,
+          SizedBox(
+            height: screenSize.height / 100,
+          ),
+          emailFieldContainer,
+          RemindPasswordButton(function: () => {}),
+          Text(
+            error,
+            style: const TextStyle(
+                fontSize: Constants.subTitleSize, color: Colors.red),
+          ),
+          spacer,
+          _buildEmoticonsLegend(screenSize),
+          spacer,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildDeleteAccountButton(context),
+              _buildLogOutButton(),
+            ],
+          )
         ],
-      )
+      ),
     );
   }
 
-  Container _harmfulnessLegendRow(Harmfulness harmfulness, double iconSize){
+  Container _buildEmoticonsLegend(Size screenSize) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: iconSize/10),
+        margin: EdgeInsets.symmetric(horizontal: screenSize.width / 20),
+        child: Column(
+          children: [
+            _harmfulnessLegendRow(Harmfulness.good, screenSize.width / 8),
+            _harmfulnessLegendRow(Harmfulness.harmful, screenSize.width / 8),
+            _harmfulnessLegendRow(Harmfulness.dangerous, screenSize.width / 8),
+            _harmfulnessLegendRow(Harmfulness.uncharted, screenSize.width / 8),
+          ],
+        ));
+  }
+
+  Container _harmfulnessLegendRow(Harmfulness harmfulness, double iconSize) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: iconSize / 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -188,18 +307,16 @@ class _AccountScreenState extends State<AccountScreen> {
           getHarmfulnessImage(harmfulness, iconSize),
           Text(
             IngredientDescription.harmfulnessToString(harmfulness),
-            style: const TextStyle(
-                fontSize: Constants.headerSize
-            ),
-          )],
+            style: const TextStyle(fontSize: Constants.headerSize),
+          )
+        ],
       ),
     );
-
   }
 
-  static Image getHarmfulnessImage(Harmfulness harmfulness, double size){
+  static Image getHarmfulnessImage(Harmfulness harmfulness, double size) {
     String icon;
-    switch(harmfulness){
+    switch (harmfulness) {
       case Harmfulness.good:
         icon = Constants.assetsHarmfulnessIcons + Constants.goodIcon;
         break;
@@ -213,11 +330,19 @@ class _AccountScreenState extends State<AccountScreen> {
         icon = Constants.assetsHarmfulnessIcons + Constants.unchartedIcon;
         break;
     }
-    return Image.asset(icon, height: size,);
+    return Image.asset(
+      icon,
+      height: size,
+    );
   }
 
   void onChangeNickname(String nickname) {
-    AuthenticationService service = AuthenticationService();
-    service.updateName(nickname);
+    try{
+      _authService.updateName(nickname);
+    }catch(e){
+      _showChangesOnAccountsNeedsAuthenticationDialog(context).then((value) {
+        _authService.updateName(nickname);
+      });
+    }
   }
 }

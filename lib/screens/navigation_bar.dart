@@ -38,8 +38,15 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
 
   @override
   void initState() {
-    NotificationsService(uid: FirebaseAuth.instance.currentUser!.uid)
-        .initNotifications();
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    NotificationsService service = NotificationsService(uid: uid);
+    service.initNotifications();
+    service.addListener(() {
+      setState(() {
+        _selectedIndex = 4;
+      });
+    });
+    service.initForegroundNotifications(context);
     super.initState();
   }
 
@@ -51,6 +58,11 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
 
   @override
   Widget build(BuildContext context) {
+    // scanner.addListener(() {
+    //   setState(() {
+    //    _selectedIndex = 0;
+    //   });
+    // });
     return Scaffold(
       body: Center(
         child: _widgets[_selectedIndex],

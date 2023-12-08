@@ -1,3 +1,9 @@
+
+import 'package:consciousconsumer/services/authentication_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:consciousconsumer/config/constants.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -10,6 +16,7 @@ class EditableFieldContainer extends HookWidget {
   final IconData icon;
   final bool isEnable = true;
 
+
   const EditableFieldContainer({
     required this.value,
     super.key,
@@ -19,13 +26,22 @@ class EditableFieldContainer extends HookWidget {
     required this.onChange,
   });
 
+
   @override
   Widget build(BuildContext context) {
     final isEnable = useState(false);
     final value = useState("");
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    txt.text = widget.email;
 
+    widget.authService.addListener(() {
+      if(mounted) {
+        setState(() {
+        widget.email = FirebaseAuth.instance.currentUser!.email!;
+      });
+      }
+    });
     return Row(
       children: [
         TextButton(

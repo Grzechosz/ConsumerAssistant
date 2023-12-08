@@ -111,7 +111,7 @@ class LogInState extends State<LogIn> {
                   fontSize: Constants.subTitleSize, color: Colors.red),
             ),
             logInButton,
-            RemindPasswordButton(function: widget.changeRegisterView),
+            RemindPasswordButton(function: () => _authentication.forgetPassword('')), //email
           ],
         ),
       ),

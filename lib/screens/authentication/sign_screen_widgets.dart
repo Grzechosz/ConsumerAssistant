@@ -89,20 +89,18 @@ class RemindPasswordButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
 
-    return Container(
-      child: TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: Constants.dark
-        ),
-        child: const Text("Nie pamiętasz hasła?",
-        style: TextStyle(
-          fontSize: Constants.subTitleSize
-        ),),
-        onPressed: () {
-        },
+    return TextButton(
+      style: TextButton.styleFrom(
+        foregroundColor: Constants.dark
       ),
+      child: const Text("Nie pamiętasz hasła?",
+      style: TextStyle(
+        fontSize: Constants.subTitleSize
+      ),),
+      onPressed: () {
+        function();
+      },
     );
   }
 }

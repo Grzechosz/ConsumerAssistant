@@ -51,12 +51,12 @@ class ProductsService{
   Future clearProducts(String userId) async {
     StorageService storageService = StorageService();
     storageService.deleteUserFolder(userId);
-    List<List<Product>> tmp = await products.toList();
-    for(List<Product> list in tmp){
-      for(Product product in list){
-        deleteProduct(product);
-      }
+    var snapshots = await productCollection!.get();
+    for (var doc in snapshots.docs) {
+      await doc.reference.delete();
     }
+    FirebaseFirestore
+        .instance.collection('users_data').doc(userId).delete();
   }
 
   // update product in firebase
