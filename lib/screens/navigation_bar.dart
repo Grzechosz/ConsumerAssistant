@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/last/products_screen.dart';
 import 'package:consciousconsumer/services/notifications_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../config/constants.dart';
@@ -42,8 +41,15 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
 
   @override
   void initState() {
-    NotificationsService(uid: FirebaseAuth.instance.currentUser!.uid)
-        .initNotifications();
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    NotificationsService service = NotificationsService(uid: uid);
+    service.initNotifications();
+    service.addListener(() {
+      setState(() {
+        _selectedIndex = 4;
+      });
+    });
+    service.initForegroundNotifications(context);
     super.initState();
   }
 
@@ -55,10 +61,16 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
 
   @override
   Widget build(BuildContext context) {
+    ScannerScreen scanner = ScannerScreen(camera: widget.camera);
+    scanner.addListener(() {
+      setState(() {
+       _selectedIndex = 0;
+      });
+    });
     return Scaffold(
       body: Center(
         child: _selectedIndex == 2
-        ? ScannerScreen(camera: widget.camera) : _widgets[_selectedIndex],
+        ? scanner : _widgets[_selectedIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [

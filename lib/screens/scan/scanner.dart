@@ -16,8 +16,9 @@ import '../../models/ingredient.dart';
 import '../../services/ingredients_service.dart';
 import '../../native_opencv.dart';
 
-class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({
+class ScannerScreen extends StatefulWidget with ChangeNotifier{
+
+  ScannerScreen({
     super.key,
     required this.camera,
   });
@@ -117,8 +118,7 @@ class ScannerScreenState extends State<ScannerScreen> {
           _navigateToProductManagementScreen(context).then((result) async {
             if (result) {
               DateTime now = DateTime.now();
-              String productId =
-                  now.toString() + FirebaseAuth.instance.currentUser!.uid;
+              String productId = now.toString();
 
 
               String remarks = TricksSearcher.checkSugarAndSweeteners(ingredientsList);
@@ -133,6 +133,7 @@ class ScannerScreenState extends State<ScannerScreen> {
 
               ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
                   .uploadProduct(scannedProduct, image);
+              widget.notifyListeners();
             }
           });
         } else {

@@ -1,16 +1,38 @@
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/constants.dart';
+import '../../services/authentication_service.dart';
 
-class AccountBackgroundWidget extends StatelessWidget {
-  const AccountBackgroundWidget({super.key});
+class AccountBackgroundWidget extends StatefulWidget {
+  String? name;
+  final AuthenticationService authService;
+
+  AccountBackgroundWidget({super.key, required this.authService});
+
+  @override
+  State<StatefulWidget> createState() => _AccountBackgroundWidgetState();
+}
+
+class _AccountBackgroundWidgetState extends State<AccountBackgroundWidget>
+{
 
   @override
   Widget build(BuildContext context) {
+    User user = FirebaseAuth.instance.currentUser!;
+    widget.name = user.displayName??'';
+    widget.authService.addListener(() {
+      if(mounted) {
+        setState(() {
+          widget.name = user.displayName;
+      });
+      }
+    });
+
     Size screenSize = MediaQuery.of(context).size;
     return SizedBox(
       width: screenSize.width,
@@ -32,13 +54,11 @@ class AccountBackgroundWidget extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    User user = FirebaseAuth.instance.currentUser!;
-    String? name = user.displayName;
     return Container(
         width: screenWidth * 0.9,
         margin: EdgeInsets.only(top: screenHeight / 7),
         child: Text(
-          "Witaj, ${name ?? 'null'}!",
+          "Witaj, ${widget.name ?? 'null'}!",
           style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: Constants.bigHeaderSize,
