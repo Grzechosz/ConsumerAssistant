@@ -1,6 +1,7 @@
 import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'package:ffi/ffi.dart';
+// ignore_for_file: camel_case_types
 
 // C function signatures
 typedef _version_func = ffi.Pointer<Utf8> Function();

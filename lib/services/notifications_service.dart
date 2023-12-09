@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -91,7 +90,7 @@ class NotificationsService extends ChangeNotifier {
                   Navigator.pop(context);
                   notifyListeners();
                 },
-                child: Text('Aktywuj email'),
+                child: const Text('Aktywuj email'),
               ),
             ],
           );
@@ -110,7 +109,7 @@ class NotificationsService extends ChangeNotifier {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
 
             ],

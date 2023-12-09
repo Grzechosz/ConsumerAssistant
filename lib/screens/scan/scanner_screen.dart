@@ -6,6 +6,7 @@ import 'package:consciousconsumer/text_recognition/tesseract_text_recognizer.dar
 import 'package:consciousconsumer/screens/scan/tricks_searcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:consciousconsumer/config/constants.dart';
@@ -14,38 +15,17 @@ import 'package:consciousconsumer/services/services.dart';
 import 'package:consciousconsumer/screens/loading_panel.dart';
 import 'manage_product.dart';
 
-class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({super.key});
-
-  @override
-  State<StatefulWidget> createState() => ScannerScreenState();
-}
-
-class ScannerScreenState extends State<ScannerScreen> {
-  File? _image;
-  final picker = ImagePicker();
-  late CroppedFile _croppedFile;
-  late TextEditingController _textContoller;
-  late TesseractTextRecognizer _tesseractTextRecognizer;
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _textContoller = TextEditingController();
-    _tesseractTextRecognizer = TesseractTextRecognizer();
-  }
-
-  @override
-  void dispose() {
-    _textContoller.dispose();
-    super.dispose();
-  }
+class ScannerScreen extends HookWidget with ChangeNotifier {
+  ScannerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-
+    final isLoading = useState(false);
+    final image = useState<File?>(null);
+    final croppedFile = useState<CroppedFile?>(null);
+    final tesseractTextRecognizer = useState(TesseractTextRecognizer());
+    final picker = useState(ImagePicker());
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -57,24 +37,36 @@ class ScannerScreenState extends State<ScannerScreen> {
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               TextButton(
                 onPressed: () async {
-                  await useButton(true);
+                  await useButton(context, true, () {
+                    isLoading.value = !isLoading.value;
+                  }, image, croppedFile, tesseractTextRecognizer, picker);
                 },
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                child: const Text("Zrób zdjęcie"),
+                child: const Text(
+                  "Zrób zdjęcie",
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
               ),
               TextButton(
                 onPressed: () async {
-                  await useButton(false);
+                  await useButton(context, false, () {
+                    isLoading.value = !isLoading.value;
+                  }, image, croppedFile, tesseractTextRecognizer, picker);
                 },
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                child: const Text("Wybierz z galerii"),
+                child: const Text(
+                  "Wybierz z galerii",
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
               )
             ]),
           ),
           Container(
-              child: _isLoading
+              child: isLoading.value
                   ? const LoaderPanel(isReversedColor: false)
                   : Container())
         ],
@@ -82,67 +74,64 @@ class ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
-  Future useButton(bool takePhoto) async {
+  Future useButton(
+      BuildContext context,
+      bool takePhoto,
+      VoidCallback function,
+      ValueNotifier<File?> image,
+      ValueNotifier<CroppedFile?> croppedFile,
+      ValueNotifier<TesseractTextRecognizer> tesseractTextRecognizer,
+      ValueNotifier<ImagePicker> picker) async {
     if (takePhoto) {
-      await getImageFromCamera().then((value) async {
-        await _cropImage(_image!).then((value) async {
-          _showLoadingIndicator();
-          bool invertNeeded = isInvertNeeded(_croppedFile.path);
+      await getImageFromCamera(image, picker).then((value) async {
+        await _cropImage(image.value, croppedFile).then((value) async {
+          function();
+          bool invertNeeded = isInvertNeeded(croppedFile.value!.path);
           if (invertNeeded) {
-            invertImage(_croppedFile.path, _croppedFile.path);
+            invertImage(croppedFile.value!.path, croppedFile.value!.path);
           }
-          processImage(_croppedFile.path, _croppedFile.path);
-          await scanTextAndAddProduct();
+          processImage(croppedFile.value!.path, croppedFile.value!.path);
+          await scanTextAndAddProduct(context, image.value,
+              croppedFile.value!.path, tesseractTextRecognizer);
         });
       });
     } else {
-      await getImageFromGallery().then((value) async {
-        await _cropImage(_image!).then((value) async {
-          _showLoadingIndicator();
-          await scanTextAndAddProduct();
+      await getImageFromGallery(image, picker).then((value) async {
+        await _cropImage(image.value, croppedFile).then((value) async {
+          function();
+          bool invertNeeded = isInvertNeeded(croppedFile.value!.path);
+          if (invertNeeded) {
+            invertImage(croppedFile.value!.path, croppedFile.value!.path);
+          }
+          processImage(croppedFile.value!.path, croppedFile.value!.path);
+          await scanTextAndAddProduct(context, image.value,
+              croppedFile.value!.path, tesseractTextRecognizer);
         });
       });
     }
-    _hideLoadingIndicator();
+    function();
   }
 
-  void _showLoadingIndicator() {
-    print('isloading');
-    setState(() {
-      _isLoading = true;
-    });
+  Future getImageFromGallery(
+      ValueNotifier<File?> image, ValueNotifier<ImagePicker> picker) async {
+    final pickedFile = await picker.value.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      image.value = File(pickedFile.path);
+    }
   }
 
-  void _hideLoadingIndicator() {
-    print('isNotloading');
-    setState(() {
-      _isLoading = false;
-    });
+  Future getImageFromCamera(
+      ValueNotifier<File?> image, ValueNotifier<ImagePicker> picker) async {
+    final pickedFile = await picker.value.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      image.value = File(pickedFile.path);
+    }
   }
 
-  Future getImageFromGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      }
-    });
-  }
-
-  Future getImageFromCamera() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      }
-    });
-  }
-
-  Future<CroppedFile> _cropImage(File image) async {
+  Future<CroppedFile?> _cropImage(
+      File? image, ValueNotifier<CroppedFile?> cropped) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: image.path,
+      sourcePath: image!.path,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 100,
       uiSettings: [
@@ -156,14 +145,12 @@ class ScannerScreenState extends State<ScannerScreen> {
       ],
     );
     if (croppedFile != null) {
-      setState(() {
-        _croppedFile = croppedFile;
-      });
+      cropped.value = croppedFile;
     }
-    return croppedFile!;
+    return cropped.value;
   }
 
-  Future<void> _showScanningErrorDialog() async {
+  Future<void> _showScanningErrorDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -191,13 +178,10 @@ class ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
-  Future<bool> _navigateToProductManagementScreen(BuildContext context) async {
-    return await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ManageProductWidget(
-                  textEditingController: _textContoller,
-                )));
+  Future<String> _navigateToProductManagementScreen(
+      BuildContext context) async {
+    return await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const ManageProductWidget()));
   }
 
   List<String> splitDescription(String desc) {
@@ -209,7 +193,6 @@ class ScannerScreenState extends State<ScannerScreen> {
     // int startIndex = desc.indexOf(pattern4);
     // int endIndex = desc.length;
     // List<String> result2 = [];
-
     // if (startIndex >= 0) {
     //   for (int i = startIndex; i < desc.length; i++) {
     //     var char = desc[i];
@@ -227,10 +210,12 @@ class ScannerScreenState extends State<ScannerScreen> {
     // return [];
   }
 
-  Future<void> scanTextAndAddProduct() async {
-    await _tesseractTextRecognizer
-        .processImage(_croppedFile.path)
-        .then((value) async {
+  Future<void> scanTextAndAddProduct(
+      BuildContext context,
+      File? image,
+      String path,
+      ValueNotifier<TesseractTextRecognizer> tesseractTextRecognizer) async {
+    await tesseractTextRecognizer.value.processImage(path).then((value) async {
       List<String> ingredients = splitDescription(value); //["sól"]; //
       return ingredients;
     }).then((ingredients) async {
@@ -248,28 +233,36 @@ class ScannerScreenState extends State<ScannerScreen> {
         }
 
         _navigateToProductManagementScreen(context).then((result) async {
-          if (result) {
+          if (result.isNotEmpty) {
             DateTime now = DateTime.now();
             String productId = now.toString();
 
             String remarks =
                 TricksSearcher.checkSugarAndSweeteners(ingredientsList);
 
-            XFile file = XFile(_image!.path);
+            XFile file = XFile(image!.path);
 
             await ProcessImage.resizeImage(file);
 
             double productGrade =
                 ProductGradingAlgorithm.gradeProduct(ingredientsList);
-            Product scannedProduct = Product(_textContoller.text, productGrade,
-                file.name, ingredientsList, now, remarks, productId);
+            final scannedProduct = Product(
+              result,
+              productGrade,
+              file.name,
+              ingredientsList,
+              now,
+              remarks,
+              productId,
+            );
 
             ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
                 .uploadProduct(scannedProduct, file);
+            notifyListeners();
           }
         });
       } else {
-        _showScanningErrorDialog();
+        _showScanningErrorDialog(context);
       }
     });
   }

@@ -1,58 +1,68 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
 import 'package:consciousconsumer/config/constants.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class ManageProductWidget extends StatefulWidget {
-  const ManageProductWidget({super.key, required this.textEditingController});
-
-  final TextEditingController textEditingController;
-
-  @override
-  State<StatefulWidget> createState() => ManageProductWidgetState();
-}
-
-class ManageProductWidgetState extends State<ManageProductWidget> {
-  XFile? image;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.textEditingController.clear();
-  }
+class ManageProductWidget extends HookWidget {
+  const ManageProductWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final textEditController = useTextEditingController();
+    Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text('Dodaj nazwę'), //    i zdjęcie
-          TextField(
-            controller: widget.textEditingController,
-          ),
-          TextButton(
-            child: const Text('Anuluj'),
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-          ),
-          TextButton(
-            child: const Text('Gotowe'),
-            onPressed: () {
-              if (widget.textEditingController.text.isNotEmpty) {
-                Navigator.pop(context, true);
-              } else {
-                _showEmptyNameDialog();
-              }
-            },
-          ),
-        ],
+      body: Container(
+        width: screenSize.width,
+        height: screenSize.height,
+        color: Constants.sea80,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Dodaj nazwę',
+              style: TextStyle(
+                  color: Constants.dark, fontSize: Constants.headerSize),
+            ),
+            //    i zdjęcie
+            TextField(
+              controller: textEditController,
+              style: const TextStyle(
+                  color: Constants.dark, fontSize: Constants.headerSize),
+              textAlign: TextAlign.center,
+              cursorColor: Colors.white, //<-- SEE HERE
+            ),
+            TextButton(
+              child: const Text(
+                'Anuluj',
+                style: TextStyle(
+                    color: Constants.dark, fontSize: Constants.titleSize),
+              ),
+              onPressed: () {
+                Navigator.pop(context, textEditController.text);
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'Gotowe',
+                style: TextStyle(
+                    color: Constants.dark, fontSize: Constants.titleSize),
+              ),
+              onPressed: () {
+                if (textEditController.text.isNotEmpty) {
+                  Navigator.pop(context, textEditController.text);
+                } else {
+                  _showEmptyNameDialog(context);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> _showEmptyNameDialog() async {
+  Future<void> _showEmptyNameDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!

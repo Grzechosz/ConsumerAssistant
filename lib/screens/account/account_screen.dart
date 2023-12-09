@@ -2,15 +2,10 @@ import 'package:consciousconsumer/screens/account/account_background_widget.dart
 import 'package:consciousconsumer/screens/authentication/sign_screen_widgets.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredient_description.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:consciousconsumer/config/constants.dart';
 import 'package:consciousconsumer/models/models.dart';
-
-import '../authentication/log_in.dart';
-
 import 'account_screen_widgets.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -63,7 +58,7 @@ class _AccountScreenState extends State<AccountScreen> {
       icon: Icons.account_circle,);
 
     int timeToDeleteAccount =
-        currentUser!.createdAccountData.difference(DateTime.now()).inDays - 7;
+        7+currentUser!.createdAccountDate.difference(DateTime.now()).inDays;
     return SingleChildScrollView(
       child: Container(
         color: Constants.light,
@@ -198,7 +193,7 @@ class _AccountScreenState extends State<AccountScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Wprowadź hasło'),
+            title: const Text('Wprowadź hasło'),
             content: TextField(
               onChanged: (value) {
                 setState(() {
@@ -208,7 +203,7 @@ class _AccountScreenState extends State<AccountScreen> {
               obscureText: true,
               enableSuggestions: false,
               autocorrect: false,
-              decoration: InputDecoration(hintText: "hasło"),
+              decoration: const InputDecoration(hintText: "hasło"),
             ),
             actions: <Widget>[
               TextButton(

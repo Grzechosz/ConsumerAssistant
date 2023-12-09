@@ -1,14 +1,7 @@
 import 'package:consciousconsumer/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:consciousconsumer/models/models.dart';
-import 'package:consciousconsumer/screens/authentication/log_in.dart';
-import 'package:consciousconsumer/services/products_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../models/app_user.dart';
-import 'notifications_service.dart';
-
 class AuthenticationService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -69,7 +62,7 @@ class AuthenticationService extends ChangeNotifier {
   Future reAuthorization(String email, String password) async {
     try {
       User user = FirebaseAuth.instance.currentUser!;
-      UserCredential userCredential = await user!.reauthenticateWithCredential(
+      UserCredential userCredential = await user.reauthenticateWithCredential(
           EmailAuthProvider.credential(email: email, password: password));
       AppUser appUser = AppUser.fromFirebase(userCredential.user!);
       return appUser;

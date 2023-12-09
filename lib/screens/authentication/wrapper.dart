@@ -1,8 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:consciousconsumer/models/models.dart';
-=======
 import 'package:consciousconsumer/models/app_user.dart';
-import 'package:consciousconsumer/services/notifications_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'authentication.dart';
@@ -19,7 +17,7 @@ class Wrapper extends StatelessWidget {
     if(user == AppUser.emptyUser){
       return const Authentication();
     }
-    return ConsciousConsumer(camera: firstCamera);
+    return const ConsciousConsumer();
   }
 
 }
