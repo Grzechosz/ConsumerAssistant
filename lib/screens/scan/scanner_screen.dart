@@ -15,8 +15,10 @@ import 'package:consciousconsumer/services/services.dart';
 import 'package:consciousconsumer/screens/loading_panel.dart';
 import 'manage_product.dart';
 
-class ScannerScreen extends HookWidget with ChangeNotifier {
-  ScannerScreen({super.key});
+class ScannerScreen extends HookWidget {
+  const ScannerScreen({super.key, required this.backToProducts});
+
+  final VoidCallback backToProducts;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +116,8 @@ class ScannerScreen extends HookWidget with ChangeNotifier {
 
   Future getImageFromGallery(
       ValueNotifier<File?> image, ValueNotifier<ImagePicker> picker) async {
-    final pickedFile = await picker.value.pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await picker.value.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image.value = File(pickedFile.path);
     }
@@ -216,6 +219,7 @@ class ScannerScreen extends HookWidget with ChangeNotifier {
       String path,
       ValueNotifier<TesseractTextRecognizer> tesseractTextRecognizer) async {
     await tesseractTextRecognizer.value.processImage(path).then((value) async {
+      var ing = value;
       List<String> ingredients = splitDescription(value); //["sól"]; //
       return ingredients;
     }).then((ingredients) async {
@@ -258,7 +262,7 @@ class ScannerScreen extends HookWidget with ChangeNotifier {
 
             ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
                 .uploadProduct(scannedProduct, file);
-            notifyListeners();
+            backToProducts();
           }
         });
       } else {
