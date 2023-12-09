@@ -25,14 +25,16 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
     const Icon(Icons.article),
     const Icon(Icons.account_circle_rounded)
   ];
-
-  final List<Widget> _widgets = [
-    const ProductsScreen(),
-    const IngredientsScreen(),
-    ScannerScreen(),
-    const ArticlesScreen(),
-    const AccountScreen(),
-  ];
+  Widget getWidget(int index) {
+    final List<Widget> widgets = [
+      const ProductsScreen(),
+      const IngredientsScreen(),
+      ScannerScreen(backToProducts: backToProducts),
+      const ArticlesScreen(),
+      const AccountScreen(),
+    ];
+    return widgets[index];
+  }
 
   @override
   void initState() {
@@ -54,16 +56,18 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
     });
   }
 
+  void backToProducts() => _onItemTapped(0);
+
   @override
   Widget build(BuildContext context) {
-    (_widgets[2] as ScannerScreen).addListener(() {
-      setState(() {
-       _selectedIndex = 0;
-      });
-    });
+    // (_widgets[2] as ScannerScreen).addListener(() {
+    //   setState(() {
+    //    _selectedIndex = 0;
+    //   });
+    // });
     return Scaffold(
       body: Center(
-        child: _widgets[_selectedIndex],
+        child: getWidget(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
