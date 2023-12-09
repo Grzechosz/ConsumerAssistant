@@ -17,7 +17,7 @@ class Wrapper extends StatelessWidget {
     if(user == AppUser.emptyUser){
       return const Authentication();
     }
-    return ConsciousConsumer(camera: firstCamera);
+    return const ConsciousConsumer();
   }
 
 }

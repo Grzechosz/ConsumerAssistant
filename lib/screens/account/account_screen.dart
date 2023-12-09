@@ -193,7 +193,7 @@ class _AccountScreenState extends State<AccountScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Wprowadź hasło'),
+            title: const Text('Wprowadź hasło'),
             content: TextField(
               onChanged: (value) {
                 setState(() {
@@ -203,7 +203,7 @@ class _AccountScreenState extends State<AccountScreen> {
               obscureText: true,
               enableSuggestions: false,
               autocorrect: false,
-              decoration: InputDecoration(hintText: "hasło"),
+              decoration: const InputDecoration(hintText: "hasło"),
             ),
             actions: <Widget>[
               TextButton(

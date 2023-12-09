@@ -1,6 +1,5 @@
 import 'package:consciousconsumer/screens/account/account_screen.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredients_screen.dart';
-import 'package:camera/camera.dart';
 import 'package:consciousconsumer/screens/last/products_screen.dart';
 import 'package:consciousconsumer/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,9 +9,8 @@ import 'articles/articles_screen.dart';
 import 'scan/scanner_screen.dart';
 
 class ConsciousConsumer extends StatefulWidget {
-  final CameraDescription camera;
 
-  const ConsciousConsumer({super.key, required this.camera});
+  const ConsciousConsumer({super.key});
 
   @override
   State<ConsciousConsumer> createState() => _ConsciousConsumerState();
@@ -31,7 +29,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   final List<Widget> _widgets = [
     const ProductsScreen(),
     const IngredientsScreen(),
-    const ScannerScreen(),
+    ScannerScreen(),
     const ArticlesScreen(),
     const AccountScreen(),
   ];
@@ -58,11 +56,11 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
 
   @override
   Widget build(BuildContext context) {
-    // scanner.addListener(() {
-    //   setState(() {
-    //    _selectedIndex = 0;
-    //   });
-    // });
+    (_widgets[2] as ScannerScreen).addListener(() {
+      setState(() {
+       _selectedIndex = 0;
+      });
+    });
     return Scaffold(
       body: Center(
         child: _widgets[_selectedIndex],
