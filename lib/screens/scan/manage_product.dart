@@ -10,31 +10,54 @@ class ManageProductWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final textEditController = useTextEditingController();
+    Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text('Dodaj nazwę'), //    i zdjęcie
-          TextField(
-            controller: textEditController,
-          ),
-          TextButton(
-            child: const Text('Anuluj'),
-            onPressed: () {
-              Navigator.pop(context, textEditController.text);
-            },
-          ),
-          TextButton(
-            child: const Text('Gotowe'),
-            onPressed: () {
-              if (textEditController.text.isNotEmpty) {
+      body: Container(
+        width: screenSize.width,
+        height: screenSize.height,
+        color: Constants.sea80,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Dodaj nazwę',
+              style: TextStyle(
+                  color: Constants.dark, fontSize: Constants.headerSize),
+            ),
+            //    i zdjęcie
+            TextField(
+              controller: textEditController,
+              style: const TextStyle(
+                  color: Constants.dark, fontSize: Constants.headerSize),
+              textAlign: TextAlign.center,
+              cursorColor: Colors.white, //<-- SEE HERE
+            ),
+            TextButton(
+              child: const Text(
+                'Anuluj',
+                style: TextStyle(
+                    color: Constants.dark, fontSize: Constants.titleSize),
+              ),
+              onPressed: () {
                 Navigator.pop(context, textEditController.text);
-              } else {
-                _showEmptyNameDialog(context);
-              }
-            },
-          ),
-        ],
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'Gotowe',
+                style: TextStyle(
+                    color: Constants.dark, fontSize: Constants.titleSize),
+              ),
+              onPressed: () {
+                if (textEditController.text.isNotEmpty) {
+                  Navigator.pop(context, textEditController.text);
+                } else {
+                  _showEmptyNameDialog(context);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

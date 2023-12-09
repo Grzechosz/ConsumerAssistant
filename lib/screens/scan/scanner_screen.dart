@@ -61,7 +61,8 @@ class ScannerScreenState extends State<ScannerScreen> {
                 },
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                child: const Text("Zrób zdjęcie"),
+                child: const Text("Zrób zdjęcie",  style: TextStyle(
+                    color: Constants.dark, fontSize: Constants.titleSize),),
               ),
               TextButton(
                 onPressed: () async {
@@ -69,7 +70,8 @@ class ScannerScreenState extends State<ScannerScreen> {
                 },
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                child: const Text("Wybierz z galerii"),
+                child: const Text("Wybierz z galerii", style: TextStyle(
+                    color: Constants.dark, fontSize: Constants.titleSize),),
               )
             ]),
           ),
