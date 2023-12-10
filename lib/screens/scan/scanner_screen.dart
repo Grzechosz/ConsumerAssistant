@@ -143,7 +143,8 @@ class ScannerScreen extends HookWidget {
             toolbarColor: Colors.blueAccent,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
-            hideBottomControls: true,
+            // hideBottomControls: true,
+            activeControlsWidgetColor: Colors.blueAccent,
             lockAspectRatio: false),
       ],
     );
@@ -189,10 +190,11 @@ class ScannerScreen extends HookWidget {
 
   List<String> splitDescription(String desc) {
     RegExp pattern = RegExp(r'\d+,\d+%');
-    RegExp pattern2 = RegExp(r'.*?\(');
+    RegExp pattern2 = RegExp(r'.*?\(|.*?\[');
     RegExp pattern3 = RegExp(r'\)');
     RegExp pattern4 = RegExp(r'Sk?ładniki?:|Sk?ład');
     RegExp pattern5 = RegExp(r'\n');
+    RegExp delimiters = RegExp(r';|:|\.|\*|\si\s|\]');
     // int startIndex = desc.indexOf(pattern4);
     // int endIndex = desc.length;
     // List<String> result2 = [];
@@ -205,8 +207,9 @@ class ScannerScreen extends HookWidget {
     //     }
     //   }
     //   desc = desc.substring(startIndex + 10, endIndex);
-    desc = desc.replaceAll(pattern, '');
-    desc = desc.replaceAll(pattern5, '');
+    desc = desc.replaceAll(delimiters, ",");
+    desc = desc.replaceAll(pattern, ',');
+    desc = desc.replaceAll(pattern5, ' ');
     // return [];
     return desc.split(",");
     // }
@@ -224,16 +227,37 @@ class ScannerScreen extends HookWidget {
       return ingredients;
     }).then((ingredients) async {
       if (ingredients.isNotEmpty) {
-        List<Future<Ingredient>> ingredientsList = [];
+        List<Ingredient> ingredientsList = [];
+        List<Future<Ingredient>> futureIngredientsList = [];
         IngredientsService service = IngredientsService();
-        RegExp pattern2 = RegExp(r'.*?\(|\)');
+        RegExp pattern2 = RegExp(r'.*?\(|\)|.*?\[');
         for (String name in ingredients) {
           name = name.replaceAll(pattern2, '').trim();
-          Ingredient? futureIngredient =
+          Ingredient? ingredientFromFirebase =
               await service.getIngredientByName(name.toLowerCase());
-          if (futureIngredient != null) {
-            ingredientsList.add(Future.value(futureIngredient));
+          if (ingredientFromFirebase != null) {
+            ingredientsList.add(ingredientFromFirebase);
           }
+        }
+        List toDelete = [];
+        List ingredientsToSave = [];
+        ingredientsList.forEach((element) => ingredientsToSave.add(element));
+        ingredientsList.sort((ing1, ing2){
+          return ing1.names[0].compareTo(ing2.names[0]);
+        });
+        Ingredient prev = ingredientsList[0];
+        for(int i=1; i<ingredientsList.length; i++){
+          if(ingredientsList[i].names[0].compareTo(prev.names[0])==0){
+            toDelete.add(ingredientsList[i]);
+          }
+          prev = ingredientsList[i];
+        }
+        for(Ingredient delete in toDelete){
+          ingredientsToSave.remove(delete);
+        }
+
+        for(Ingredient ing in ingredientsToSave){
+          futureIngredientsList.add(Future.value(ing));
         }
 
         _navigateToProductManagementScreen(context).then((result) async {
@@ -242,19 +266,19 @@ class ScannerScreen extends HookWidget {
             String productId = now.toString();
 
             String remarks =
-                TricksSearcher.checkSugarAndSweeteners(ingredientsList);
+                await TricksSearcher.checkSugarAndSweeteners(futureIngredientsList);
 
             XFile file = XFile(image!.path);
 
             await ProcessImage.resizeImage(file);
 
             double productGrade =
-                ProductGradingAlgorithm.gradeProduct(ingredientsList);
+                ProductGradingAlgorithm.gradeProduct(futureIngredientsList);
             final scannedProduct = Product(
               result,
               productGrade,
               file.name,
-              ingredientsList,
+              futureIngredientsList,
               now,
               remarks,
               productId,

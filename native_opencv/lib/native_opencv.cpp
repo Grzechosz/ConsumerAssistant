@@ -12,20 +12,30 @@ extern "C" {
     }
 
     __attribute__((visibility("default"))) __attribute__((used))
-    void process_image(char* inputImagePath, char* outputImagePath) {
-        Mat input = imread(inputImagePath, IMREAD_GRAYSCALE);
-        Mat threshed, withContours;
+    void process_image(char* inputPath, char* outputPath) {
+       Mat image;
+       Mat blured_image;
+       Mat threshed;
+       int addingParameter = 2;
+       int blockSize = 39;
 
-        vector<vector<Point>> contours;
-        vector<Vec4i> hierarchy;
+        image = imread(inputPath);
 
-        adaptiveThreshold(input, threshed, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 77, 6);
-        findContours(threshed, contours, hierarchy, RETR_TREE, CHAIN_APPROX_TC89_L1);
+        cvtColor(image, image, COLOR_RGBA2GRAY, 0);
 
-        cvtColor(threshed, withContours, COLOR_GRAY2BGR);
-        drawContours(withContours, contours, -1, Scalar(0, 255, 0), 4);
+        medianBlur(image, blured_image, 7);
 
-        imwrite(outputImagePath, withContours);
+        adaptiveThreshold(blured_image, threshed, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize, addingParameter);
+
+        bitwise_not(threshed, threshed);
+
+        cv::Mat eroded;
+
+        cv::erode(threshed, eroded, getStructuringElement(MORPH_RECT, Size(5, 5)));
+
+        bitwise_not(eroded, eroded);
+
+        imwrite(outputPath, eroded);
     }
 
     __attribute__((visibility("default"))) __attribute__((used))
