@@ -143,7 +143,8 @@ class ScannerScreen extends HookWidget {
             toolbarColor: Colors.blueAccent,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
-            hideBottomControls: true,
+            // hideBottomControls: true,
+            activeControlsWidgetColor: Colors.blueAccent,
             lockAspectRatio: false),
       ],
     );
@@ -193,6 +194,7 @@ class ScannerScreen extends HookWidget {
     RegExp pattern3 = RegExp(r'\)');
     RegExp pattern4 = RegExp(r'Sk?ładniki?:|Sk?ład');
     RegExp pattern5 = RegExp(r'\n');
+    RegExp delimiters = RegExp(r';|:|\.|\*');
     // int startIndex = desc.indexOf(pattern4);
     // int endIndex = desc.length;
     // List<String> result2 = [];
@@ -205,8 +207,9 @@ class ScannerScreen extends HookWidget {
     //     }
     //   }
     //   desc = desc.substring(startIndex + 10, endIndex);
-    desc = desc.replaceAll(pattern, '');
-    desc = desc.replaceAll(pattern5, '');
+    desc = desc.replaceAll(delimiters, ",");
+    desc = desc.replaceAll(pattern, ',');
+    desc = desc.replaceAll(pattern5, ' ');
     // return [];
     return desc.split(",");
     // }
