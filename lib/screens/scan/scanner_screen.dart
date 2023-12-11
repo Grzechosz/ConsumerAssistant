@@ -239,30 +239,12 @@ class ScannerScreen extends HookWidget {
 
   List<String> splitDescription(String desc) {
     RegExp pattern = RegExp(r'\d+,\d+%');
-    RegExp pattern2 = RegExp(r'.*?\(|.*?\[');
-    RegExp pattern3 = RegExp(r'\)');
-    RegExp pattern4 = RegExp(r'Sk?ładniki?:|Sk?ład');
     RegExp pattern5 = RegExp(r'\n');
     RegExp delimiters = RegExp(r';|:|\.|\*|\si\s|\]');
-    // int startIndex = desc.indexOf(pattern4);
-    // int endIndex = desc.length;
-    // List<String> result2 = [];
-    // if (startIndex >= 0) {
-    //   for (int i = startIndex; i < desc.length; i++) {
-    //     var char = desc[i];
-    //     if (char == ".") {
-    //       endIndex = i;
-    //       break;
-    //     }
-    //   }
-    //   desc = desc.substring(startIndex + 10, endIndex);
     desc = desc.replaceAll(delimiters, ",");
     desc = desc.replaceAll(pattern, ',');
     desc = desc.replaceAll(pattern5, ' ');
-    // return [];
     return desc.split(",");
-    // }
-    // return [];
   }
 
   Future<void> scanTextAndAddProduct(
@@ -271,7 +253,6 @@ class ScannerScreen extends HookWidget {
       String path,
       ValueNotifier<TesseractTextRecognizer> tesseractTextRecognizer) async {
     await tesseractTextRecognizer.value.processImage(path).then((value) async {
-      var ing = value;
       List<String> ingredients = splitDescription(value); //["sól"]; //
       return ingredients;
     }).then((ingredients) async {
@@ -321,7 +302,7 @@ class ScannerScreen extends HookWidget {
 
             await ProcessImage.resizeImage(file);
 
-            double productGrade =
+            double productGrade = await
                 ProductGradingAlgorithm.gradeProduct(futureIngredientsList);
             final scannedProduct = Product(
               result,
