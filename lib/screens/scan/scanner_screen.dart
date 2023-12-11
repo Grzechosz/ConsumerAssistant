@@ -28,6 +28,7 @@ class ScannerScreen extends HookWidget {
     final croppedFile = useState<CroppedFile?>(null);
     final tesseractTextRecognizer = useState(TesseractTextRecognizer());
     final picker = useState(ImagePicker());
+    bool isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -37,34 +38,82 @@ class ScannerScreen extends HookWidget {
             color: Constants.sea80,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              TextButton(
-                onPressed: () async {
-                  await useButton(context, true, () {
-                    isLoading.value = !isLoading.value;
-                  }, image, croppedFile, tesseractTextRecognizer, picker);
-                },
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                child: const Text(
-                  "Zrób zdjęcie",
-                  style: TextStyle(
-                      color: Constants.dark, fontSize: Constants.titleSize),
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  await useButton(context, false, () {
-                    isLoading.value = !isLoading.value;
-                  }, image, croppedFile, tesseractTextRecognizer, picker);
-                },
-                style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.white)),
-                child: const Text(
-                  "Wybierz z galerii",
-                  style: TextStyle(
-                      color: Constants.dark, fontSize: Constants.titleSize),
-                ),
-              )
+              isEmailVerified
+                  ? const Text('')
+                  : Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.transparent),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(30))),
+                      child: const Text(
+                        'Zweryfikuj email aby korzystać z aplikacji!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: Constants.titleSize,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+              isEmailVerified
+                  ? TextButton(
+                      onPressed: () async {
+                        await useButton(context, true, () {
+                          isLoading.value = !isLoading.value;
+                        }, image, croppedFile, tesseractTextRecognizer, picker);
+                      },
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: const Text(
+                        "Zrób zdjęcie",
+                        style: TextStyle(
+                            color: Constants.dark,
+                            fontSize: Constants.titleSize),
+                      ),
+                    )
+                  : const TextButton(
+                      onPressed: null,
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: Text(
+                        "Zrób zdjęcie",
+                        style: TextStyle(
+                            color: Constants.dark50,
+                            fontSize: Constants.titleSize),
+                      ),
+                    ),
+              isEmailVerified
+                  ? TextButton(
+                      onPressed: () async {
+                        await useButton(context, false, () {
+                          isLoading.value = !isLoading.value;
+                        }, image, croppedFile, tesseractTextRecognizer, picker);
+                      },
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: const Text(
+                        "Wybierz z galerii",
+                        style: TextStyle(
+                            color: Constants.dark,
+                            fontSize: Constants.titleSize),
+                      ),
+                    )
+                  : const TextButton(
+                      onPressed: null,
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.white)),
+                      child: Text(
+                        "Wybierz z galerii",
+                        style: TextStyle(
+                            color: Constants.dark50,
+                            fontSize: Constants.titleSize),
+                      ),
+                    )
             ]),
           ),
           Container(
@@ -242,21 +291,21 @@ class ScannerScreen extends HookWidget {
         List toDelete = [];
         List ingredientsToSave = [];
         ingredientsList.forEach((element) => ingredientsToSave.add(element));
-        ingredientsList.sort((ing1, ing2){
+        ingredientsList.sort((ing1, ing2) {
           return ing1.names[0].compareTo(ing2.names[0]);
         });
         Ingredient prev = ingredientsList[0];
-        for(int i=1; i<ingredientsList.length; i++){
-          if(ingredientsList[i].names[0].compareTo(prev.names[0])==0){
+        for (int i = 1; i < ingredientsList.length; i++) {
+          if (ingredientsList[i].names[0].compareTo(prev.names[0]) == 0) {
             toDelete.add(ingredientsList[i]);
           }
           prev = ingredientsList[i];
         }
-        for(Ingredient delete in toDelete){
+        for (Ingredient delete in toDelete) {
           ingredientsToSave.remove(delete);
         }
 
-        for(Ingredient ing in ingredientsToSave){
+        for (Ingredient ing in ingredientsToSave) {
           futureIngredientsList.add(Future.value(ing));
         }
 
@@ -265,8 +314,8 @@ class ScannerScreen extends HookWidget {
             DateTime now = DateTime.now();
             String productId = now.toString();
 
-            String remarks =
-                await TricksSearcher.checkSugarAndSweeteners(futureIngredientsList);
+            String remarks = await TricksSearcher.checkSugarAndSweeteners(
+                futureIngredientsList);
 
             XFile file = XFile(image!.path);
 

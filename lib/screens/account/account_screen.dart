@@ -2,6 +2,7 @@ import 'package:consciousconsumer/screens/account/account_background_widget.dart
 import 'package:consciousconsumer/screens/authentication/sign_screen_widgets.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredient_description.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:consciousconsumer/config/constants.dart';
@@ -30,10 +31,9 @@ class _AccountScreenState extends State<AccountScreen> {
   late EditableFieldContainer editableNicknameFieldContainer;
   late String error = '';
 
-  final _formKeyEmail = GlobalKey<FormState>(),
-      _formKeyNickname = GlobalKey<FormState>();
+  final _formKeyEmail = GlobalKey<FormState>();
+  final _formKeyNickname = GlobalKey<FormState>();
 
-  AppUser? currentUser;
   @override
   void initState() {
     super.initState();
@@ -42,23 +42,23 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    currentUser = Provider.of<AppUser>(context);
+    final currentUser = Provider.of<AppUser>(context);
 
     emailFieldContainer = EditableFieldContainer(
-      value: currentUser!.email,
-      valueName: 'email',
-      icon: Icons.email,
-      formKey: _formKeyEmail, onChange: onChangeEmail,
-    );
+        value: FirebaseAuth.instance.currentUser!.email!,
+        valueName: 'email',
+        icon: Icons.email,
+        formKey: _formKeyEmail,
+        onChange: onChangeEmail);
     editableNicknameFieldContainer = EditableFieldContainer(
-        value: currentUser!.name,
+        value: FirebaseAuth.instance.currentUser!.displayName!,
         formKey: _formKeyNickname,
         onChange: onChangeNickname,
-      valueName: 'nazwa użytkownika',
-      icon: Icons.account_circle,);
+        valueName: 'nazwa użytkownika',
+        icon: Icons.account_circle);
 
-    int timeToDeleteAccount =
-        7+currentUser!.createdAccountDate.difference(DateTime.now()).inDays;
+    // int timeToDeleteAccount =
+    //     7 + currentUser.createdAccountDate.difference(DateTime.now()).inDays;
     return SingleChildScrollView(
       child: Container(
         color: Constants.light,
@@ -67,20 +67,23 @@ class _AccountScreenState extends State<AccountScreen> {
             AccountBackgroundWidget(
               authService: _authService,
             ),
-            Text(
-              currentUser!.isEmailVerified
-                  ? ''
-                  : 'Twój email nie został potwierdzony!',
-              style: const TextStyle(
-                  color: Colors.red, fontSize: Constants.titleSize),
+            Container(
+              margin: const EdgeInsets.only(bottom: 5),
+              child: Text(
+                currentUser.isEmailVerified
+                    ? ''
+                    : 'Twój email nie został potwierdzony!',
+                style: const TextStyle(
+                    color: Colors.red, fontSize: Constants.titleSize),
+              ),
             ),
-            Text(
-              currentUser!.isEmailVerified
-                  ? ''
-                  : 'Po upływie czasu konto zostanie usunięte: $timeToDeleteAccount dni',
-              style: const TextStyle(
-                  color: Colors.red, fontSize: Constants.titleSize),
-            ),
+            // Text(
+            //   currentUser.isEmailVerified
+            //       ? ''
+            //       : 'Po upływie czasu konto zostanie usunięte: $timeToDeleteAccount dni',
+            //   style: const TextStyle(
+            //       color: Colors.red, fontSize: Constants.titleSize),
+            // ),
             _builtScreenElements(screenSize),
           ],
         ),
@@ -91,9 +94,11 @@ class _AccountScreenState extends State<AccountScreen> {
   void onChangeEmail(String newEmail) {
     try {
       _authService.updateEmail(newEmail);
+      _showEmailChangeDialog(context);
     } catch (ex) {
       _showChangesOnAccountsNeedsAuthenticationDialog(context).then((value) {
         _authService.updateEmail(newEmail);
+        _showEmailChangeDialog(context);
       });
     }
   }
@@ -173,14 +178,66 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 onPressed: () async {
                   Navigator.pop(context);
-                  try{
+                  try {
                     _authService.deleteAccount(context);
-                  }catch(e){
-                    await _showChangesOnAccountsNeedsAuthenticationDialog(context)
+                  } catch (e) {
+                    await _showChangesOnAccountsNeedsAuthenticationDialog(
+                            context)
                         .then((value) {
                       _authService.deleteAccount(context);
                     });
                   }
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+
+  Future _showRemindPasswordDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Instrukcje zostały wysłane na emaila!',
+            style: TextStyle(
+              fontSize: Constants.headerSize,
+            ),),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  'Ok',
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future _showEmailChangeDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Potwierdź nowy email!',
+              style: TextStyle(
+                fontSize: Constants.headerSize,
+              ),),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  'Ok',
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
             ],
@@ -225,7 +282,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 onPressed: () async {
                   dynamic result = await _authService.reAuthorization(
-                      currentUser!.email, _password);
+                      FirebaseAuth.instance.currentUser!.email!, _password);
                   if (result == AppUser.emptyUser) {
                     Navigator.pop(context);
                     _showBadPasswordDialog(context);
@@ -258,7 +315,10 @@ class _AccountScreenState extends State<AccountScreen> {
             height: screenSize.height / 100,
           ),
           emailFieldContainer,
-          RemindPasswordButton(function: () => {}),
+          RemindPasswordButton(function: () {
+            _authService.forgetPassword(FirebaseAuth.instance.currentUser!.email!);
+            _showRemindPasswordDialog(context);
+          }),
           Text(
             error,
             style: const TextStyle(
@@ -332,9 +392,9 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   void onChangeNickname(String nickname) {
-    try{
+    try {
       _authService.updateName(nickname);
-    }catch(e){
+    } catch (e) {
       _showChangesOnAccountsNeedsAuthenticationDialog(context).then((value) {
         _authService.updateName(nickname);
       });

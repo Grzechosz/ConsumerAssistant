@@ -11,8 +11,8 @@ class EditableFieldContainer extends HookWidget {
 
 
   const EditableFieldContainer({
-    required this.value,
     super.key,
+    required this.value,
     required this.valueName,
     required this.icon,
     required this.formKey,
@@ -23,7 +23,7 @@ class EditableFieldContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isEnable = useState(false);
-    final value = useState("");
+    final value = useState(this.value);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
@@ -72,7 +72,7 @@ class EditableFieldContainer extends HookWidget {
                       hintStyle: const TextStyle(
                           color: Constants.dark50,
                           fontSize: Constants.headerSize),
-                      hintText: valueName[0] + valueName.substring(1),
+                      hintText: valueName[0].toUpperCase() + valueName.substring(1),
                       border: InputBorder.none)),
             ))
       ],
@@ -85,7 +85,7 @@ class EditableFieldContainer extends HookWidget {
         builder: (context) {
           return AlertDialog(
             title: Text(
-              "Na pewno chcesz edytować $valueName?",
+              "Na pewno chcesz edytować pole $valueName?",
               style: const TextStyle(fontSize: Constants.headerSize),
             ),
             actions: [

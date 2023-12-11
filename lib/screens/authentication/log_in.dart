@@ -17,6 +17,7 @@ class LogIn extends StatefulWidget {
 
 class LogInState extends State<LogIn> {
   bool loading = false;
+  String _email = '';
 
   final AuthenticationService _authentication = AuthenticationService();
   late FirstButton logInButton = FirstButton(
@@ -33,7 +34,7 @@ class LogInState extends State<LogIn> {
             error = "Nieprawidłowe dane";
             loading = false;
           });
-        }else if(Navigator.canPop(context)){
+        } else if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
       }
@@ -111,10 +112,82 @@ class LogInState extends State<LogIn> {
                   fontSize: Constants.subTitleSize, color: Colors.red),
             ),
             logInButton,
-            RemindPasswordButton(function: () => _authentication.forgetPassword('')), //email
+            RemindPasswordButton(function: () {
+              _showChangesOnAccountsNeedsAuthenticationDialog(context)
+                  .then((value) => _authentication.forgetPassword(_email));
+            }), //email
           ],
         ),
       ),
     );
+  }
+
+  Future _showChangesOnAccountsNeedsAuthenticationDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Wprowadź email'),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _email = value;
+                });
+              },
+              decoration: const InputDecoration(hintText: "Email"),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  Constants.cancelText,
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  throw Exception();
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  'Dalej',
+                  style: TextStyle(
+                      color: Constants.sea, fontSize: Constants.titleSize),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  _showRemindPasswordDialog(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future _showRemindPasswordDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              'Instrukcje zostały wysłane na emaila!',
+              style: TextStyle(
+                fontSize: Constants.headerSize,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  'Ok',
+                  style: TextStyle(
+                      color: Constants.dark, fontSize: Constants.titleSize),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 }

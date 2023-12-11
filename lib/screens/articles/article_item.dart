@@ -66,9 +66,11 @@ class _ArticleItemState extends State<ArticleItem>{
     StorageService service = StorageService();
     String url = await service.getArticleImage(item);
     if(imageUrl == null) {
-      setState(() {
+      if(mounted) {
+        setState(() {
         imageUrl = url;
       });
+      }
     }
   }
 

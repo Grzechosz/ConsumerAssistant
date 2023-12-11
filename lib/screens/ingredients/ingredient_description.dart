@@ -127,23 +127,4 @@ class _IngredientDescriptionState extends State<IngredientDescription> {
       ),
     );
   }
-
-
-  Widget _buildFooter(Size screenSize) {
-    return Container(
-        padding: EdgeInsets.only(
-            right: screenSize.width / 20,
-            top: screenSize.width / 20,
-            bottom: screenSize.width / 20),
-        color: Constants.sea20,
-        child: Align(
-          alignment: Alignment.bottomRight,
-          child: Text(
-            widget.ingredient.category.toString(),
-            style: const TextStyle(
-              fontSize: Constants.subTitleSize,
-            ),
-          ),
-        ));
-  }
 }

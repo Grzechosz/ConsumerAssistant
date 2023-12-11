@@ -6,30 +6,27 @@ import 'package:flutter/material.dart';
 import 'package:consciousconsumer/config/constants.dart';
 import 'package:consciousconsumer/models/models.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredient_item.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class ProductItem extends StatefulWidget {
+class ProductItem extends HookWidget {
+  const ProductItem({super.key, required this.item, required this.listLength});
+
+  static int imageReadingAttempts = 0;
+  static int ingredientsReadingAttempts = 0;
   final Product item;
-
-  const ProductItem({super.key, required this.item});
-
-  @override
-  State<StatefulWidget> createState() => _ProductItemState();
-}
-
-class _ProductItemState extends State<ProductItem> {
-  _ProductItemState();
-  String? imageUrl;
-  List<Ingredient>? ingredients;
+  final int listLength;
 
   @override
   Widget build(BuildContext context) {
-    _getIngredientsList();
-    _getImageUrl();
+    final imageUrl = useState<String?>(null);
+    final ingredients = useState<List<Ingredient>?>(null);
+    _getIngredientsList(ingredients);
+    _getImageUrl(imageUrl);
     Size screenSize = MediaQuery.of(context).size;
     return Card(
         color: Colors.white,
         child: GestureDetector(
-          onLongPress: () => {_showOptionsDialog()},
+          onLongPress: () => {_showOptionsDialog(context)},
           child: ExpansionTile(
             textColor: Constants.sea,
             title: Column(
@@ -41,7 +38,8 @@ class _ProductItemState extends State<ProductItem> {
                     Expanded(child: _getNameToDisplay(screenSize))
                   ],
                 ),
-                _getImage(screenSize)
+                _getRemarks(screenSize),
+                _getImage(screenSize, imageUrl)
               ],
             ),
             subtitle: Container(
@@ -49,13 +47,13 @@ class _ProductItemState extends State<ProductItem> {
               child: _getDateTime(),
             ),
             children: [
-              _getIngredients(),
+              _getIngredients(ingredients),
             ],
           ),
         ));
   }
 
-  void _showOptionsDialog() {
+  void _showOptionsDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -90,7 +88,7 @@ class _ProductItemState extends State<ProductItem> {
                 },
               ),
               TextButton(
-                onPressed: _deleteProduct,
+                onPressed: () => _deleteProduct(context),
                 child: const Text(
                   Constants.deleteText,
                   style: TextStyle(
@@ -108,8 +106,8 @@ class _ProductItemState extends State<ProductItem> {
     return Container(
       padding: EdgeInsets.all(screenSize.width / 50),
       child: Text(
-        widget.item.productName[0].toUpperCase() +
-            widget.item.productName.substring(1),
+        item.productName[0].toUpperCase() +
+            item.productName.substring(1),
         textAlign: TextAlign.center,
         maxLines: 2,
         style: const TextStyle(
@@ -121,18 +119,15 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
-  void _getImageUrl() async {
-    StorageService service = StorageService();
-    String url = await service.getProductImage(widget.item);
-    if (imageUrl == null && mounted) {
-      setState(() {
-        imageUrl = url;
-      });
+  void _getImageUrl(ValueNotifier<String?> imageUrl) async {
+    if(imageUrl.value == null && imageReadingAttempts<3) {
+      await StorageService().getProductImage(item);
+      imageReadingAttempts++;
     }
   }
 
   Widget _getDateTime() {
-    String createdDate = widget.item.createdDate.toString();
+    String createdDate = item.createdDate.toString();
     return Align(
       alignment: Alignment.topRight,
       child: Text(
@@ -145,14 +140,15 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
-  Widget _getImage(Size screenSize) {
+  Widget _getImage(Size screenSize, ValueNotifier<dynamic> imageUrl) {
+    imageReadingAttempts-=2;
     return Center(
-      child: imageUrl != null
+      child: imageUrl.value != null
           ? CachedNetworkImage(
               width: screenSize.width / 2.5,
               progressIndicatorBuilder: (_, __, ___) =>
                   const Center(child: Loading(isReversedColor: true)),
-              imageUrl: imageUrl!,
+              imageUrl: imageUrl.value,
             )
           : const Loading(isReversedColor: true),
     );
@@ -160,9 +156,9 @@ class _ProductItemState extends State<ProductItem> {
 
   Widget _getIconImage(Size screenSize) {
     String icon;
-    if (widget.item.rating < 0.33) {
+    if (item.rating < 0.33) {
       icon = Constants.assetsHarmfulnessIcons + Constants.dangerousIcon;
-    } else if (widget.item.rating < 0.66) {
+    } else if (item.rating < 0.66) {
       icon = Constants.assetsHarmfulnessIcons + Constants.harmfulIcon;
     } else {
       icon = Constants.assetsHarmfulnessIcons + Constants.goodIcon;
@@ -173,17 +169,18 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
-  Widget _getIngredients() {
-    if (ingredients != null) {
-      return ingredients!.isNotEmpty
+  Widget _getIngredients(ValueNotifier<List<Ingredient>?> ingredientsNotifier) {
+    ingredientsReadingAttempts-=2;
+    List ingredients = ingredientsNotifier.value??[];
+      return ingredients.isNotEmpty
           ? ListView.builder(
               padding: const EdgeInsets.only(top: 0),
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: ingredients!.length,
+              itemCount: ingredients.length,
               itemBuilder: (context, index) {
-                return (ingredients!.isEmpty
+                return (ingredients.isEmpty
                     ? const Center(
                         child: Text(
                           "Brak składników",
@@ -193,33 +190,38 @@ class _ProductItemState extends State<ProductItem> {
                               fontWeight: FontWeight.w400),
                         ),
                       )
-                    : IngredientItem(ingredients![index], true));
+                    : IngredientItem(ingredients[index], true));
               },
             )
           : const Loading(isReversedColor: true);
-    }else{
-      return const Loading(isReversedColor: true);
+  }
+
+  void _getIngredientsList(ValueNotifier<List<Ingredient>?> ingredientsToReturn) async {
+    if(ingredientsToReturn.value == null && ingredientsReadingAttempts <= listLength){
+      List<Ingredient> ingredients = [];
+      for (Future<Ingredient> ingredient in item.ingredients) {
+        ingredients.add(await ingredient);
+      }
+      ingredientsToReturn.value = ingredients;
+      ingredientsReadingAttempts++;
     }
   }
 
-  Future _getIngredientsList() async {
-    List<Ingredient> ingredients = [];
-    for (Future<Ingredient> ingredient in widget.item.ingredients) {
-      ingredients.add(await ingredient);
-    }
-    if (this.ingredients == null) {
-      setState(() {
-        this.ingredients = ingredients;
-      });
-    }
-  }
-
-  void _deleteProduct() {
-    setState(() {
+  void _deleteProduct(BuildContext context) {
       ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
-          .deleteProduct(widget.item);
-      _getImageUrl();
-    });
+          .deleteProduct(item);
     Navigator.pop(context);
+  }
+
+  Widget _getRemarks(Size screenSize) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(item.remarks+(item.remarks.length>0?'!':''),
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: Colors.red,
+        fontSize: Constants.subTitleSize
+      ),),
+    );
   }
 }
