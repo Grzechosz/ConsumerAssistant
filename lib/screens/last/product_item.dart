@@ -160,12 +160,14 @@ class _ProductItemState extends State<ProductItem> {
 
   Widget _getIconImage(Size screenSize) {
     String icon;
-    if (widget.item.rating < 0.33) {
-      icon = Constants.assetsHarmfulnessIcons + Constants.dangerousIcon;
-    } else if (widget.item.rating < 0.66) {
-      icon = Constants.assetsHarmfulnessIcons + Constants.harmfulIcon;
-    } else {
+    if (widget.item.rating ==1) {
       icon = Constants.assetsHarmfulnessIcons + Constants.goodIcon;
+    } else if (widget.item.rating == 2) {
+      icon = Constants.assetsHarmfulnessIcons + Constants.harmfulIcon;
+    } else if(widget.item.rating == 3) {
+      icon = Constants.assetsHarmfulnessIcons + Constants.dangerousIcon;
+    } else  {  // rating 4
+      icon = Constants.assetsHarmfulnessIcons + Constants.unchartedIcon;
     }
     return Container(
       margin: EdgeInsets.all(screenSize.width / 100),

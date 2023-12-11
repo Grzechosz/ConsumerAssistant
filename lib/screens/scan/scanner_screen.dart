@@ -272,7 +272,7 @@ class ScannerScreen extends HookWidget {
 
             await ProcessImage.resizeImage(file);
 
-            double productGrade =
+            double productGrade = await
                 ProductGradingAlgorithm.gradeProduct(futureIngredientsList);
             final scannedProduct = Product(
               result,

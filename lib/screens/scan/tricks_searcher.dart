@@ -14,6 +14,6 @@ class TricksSearcher {
     if (countOfSweetIngredients > 1) {
       return "Producent prawdopodobnie chce ukryć ilość słodzików rozbijając je na kilka składników";
     }
-    return "Nie wykryto triku 'rozbicie cukru na składniki'";
+    return "";
   }
 }
