@@ -83,13 +83,16 @@ class ProductsScreenState extends State<ProductsScreen>{
         .toList();
     SortingAndFiltering.productsSorting(products);
 
+    ProductItem.ingredientsReadingAttempts=0;
+    ProductItem.imageReadingAttempts=0;
+
     if(ProductsService.isLoaded){
         return products.isNotEmpty ? ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: products.length,
         itemBuilder:(context, index) =>
-          ProductItem(item: products[index],
+          ProductItem(item: products[index], listLength: products.length
       )) : const Center(
           child: Text("Brak Produktów",
           style: TextStyle(letterSpacing: 0.5,

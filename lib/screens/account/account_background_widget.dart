@@ -3,37 +3,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:consciousconsumer/config/constants.dart';
 import 'package:consciousconsumer/services/authentication_service.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-
-class AccountBackgroundWidget extends StatefulWidget {
-  String? name;
+class AccountBackgroundWidget extends HookWidget {
   final AuthenticationService authService;
 
-  AccountBackgroundWidget({super.key, required this.authService});
-
-  @override
-  State<StatefulWidget> createState() => _AccountBackgroundWidgetState();
-}
-
-class _AccountBackgroundWidgetState extends State<AccountBackgroundWidget>
-{
+  const AccountBackgroundWidget({super.key, required this.authService});
 
   @override
   Widget build(BuildContext context) {
     User user = FirebaseAuth.instance.currentUser!;
-    widget.name = user.displayName??'';
-    widget.authService.addListener(() {
-      if(mounted) {
-        setState(() {
-          widget.name = user.displayName;
-      });
-      }
+    final ValueNotifier<String> name = useState(user.displayName ?? '');
+    authService.addListener(() {
+      name.value = FirebaseAuth.instance.currentUser!.displayName!;
     });
 
-    Size screenSize = MediaQuery.of(context).size;
     return SizedBox(
-      width: screenSize.width,
-      height: screenSize.height / 3.6,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 3.6,
       child: Material(
         color: Colors.transparent,
         child: Stack(children: [
@@ -41,21 +28,22 @@ class _AccountBackgroundWidgetState extends State<AccountBackgroundWidget>
               clipper: MyClipperPath(MediaQuery.of(context).size),
               child: Container(color: Constants.sea80)),
           Positioned.fill(child: _builtScreenName(context)),
-          Positioned.fill(child: _builtWelcome(context)),
+          Positioned.fill(
+            child: _builtWelcome(context, name),
+          ),
         ]),
       ),
     );
   }
 
-  Container _builtWelcome(BuildContext context) {
+  Container _builtWelcome(BuildContext context, ValueNotifier<String> name) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
     return Container(
         width: screenWidth * 0.9,
         margin: EdgeInsets.only(top: screenHeight / 7),
         child: Text(
-          "Witaj, ${widget.name ?? 'null'}!",
+          "Witaj, ${name.value}!",
           style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: Constants.bigHeaderSize,

@@ -2,6 +2,7 @@ import 'package:consciousconsumer/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:consciousconsumer/models/models.dart';
 import 'package:flutter/material.dart';
+
 class AuthenticationService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -54,7 +55,6 @@ class AuthenticationService extends ChangeNotifier {
       }
       return appUser;
     } catch (e) {
-      print(e);
       return AppUser.emptyUser;
     }
   }
@@ -67,7 +67,6 @@ class AuthenticationService extends ChangeNotifier {
       AppUser appUser = AppUser.fromFirebase(userCredential.user!);
       return appUser;
     } catch (e) {
-      print(e);
       return AppUser.emptyUser;
     }
   }
@@ -75,18 +74,21 @@ class AuthenticationService extends ChangeNotifier {
   void updateName(String name) {
     _auth.currentUser!
         .updateDisplayName(name)
-        .whenComplete(() => print('zakonczone zmienianie nicku'))
-        .onError((error, stackTrace) => error)
+        .onError((error, stackTrace) => throw Exception(error))
         .then((value) => notifyListeners());
   }
 
   void updateEmail(String newEmail) {
-    _auth.currentUser!.verifyBeforeUpdateEmail(newEmail);
+    bool logOut = true;
     _auth.currentUser!
-        .updateEmail(newEmail)
-        .whenComplete(() => print('zakonczono zmiane emaila'))
-        .onError((error, stackTrace) => error)
-        .then((value) => notifyListeners());
+        .verifyBeforeUpdateEmail(newEmail)
+        .onError((error, stackTrace) {
+      logOut = false;
+      throw Exception(error);
+    }).then((value) => notifyListeners());
+    if (logOut) {
+      this.logOut();
+    }
   }
 
   void deleteAccount(BuildContext context) {
@@ -94,20 +96,18 @@ class AuthenticationService extends ChangeNotifier {
     service.clearProducts(_auth.currentUser!.uid).then((value) => _auth
         .currentUser!
         .delete()
-        .whenComplete(() => print('zakonczono usuwanie'))
-        .onError((error, stackTrace) => error));
+        .onError((error, stackTrace) => throw Exception(error)));
   }
 
   void updatePassword(String newPassword) {
     _auth.currentUser!
         .updatePassword(newPassword)
-        .whenComplete(() => print('zakonczono zmienianie hasla'))
         .onError((error, stackTrace) => throw Exception(error));
   }
 
   void forgetPassword(String email) {
-    _auth.sendPasswordResetEmail(email: email)
-        .whenComplete(() => print('zapomniales haslo'))
+    _auth
+        .sendPasswordResetEmail(email: email)
         .onError((error, stackTrace) => throw Exception(error));
   }
 }
