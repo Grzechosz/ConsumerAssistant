@@ -58,18 +58,16 @@ class ProductItem extends HookWidget {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text(Constants.askAboutAction,
-            style: TextStyle(
-              fontSize: Constants.headerSize
-            ),),
+            title: const Text(
+              Constants.askAboutAction,
+              style: TextStyle(fontSize: Constants.headerSize),
+            ),
             actions: [
               TextButton(
                 child: const Text(
                   Constants.cancelText,
                   style: TextStyle(
-                    color: Constants.dark,
-                      fontSize: Constants.titleSize
-                  ),
+                      color: Constants.dark, fontSize: Constants.titleSize),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -79,9 +77,7 @@ class ProductItem extends HookWidget {
                 child: const Text(
                   Constants.editText,
                   style: TextStyle(
-                    color: Constants.sea,
-                      fontSize: Constants.titleSize
-                  ),
+                      color: Constants.sea, fontSize: Constants.titleSize),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -92,9 +88,7 @@ class ProductItem extends HookWidget {
                 child: const Text(
                   Constants.deleteText,
                   style: TextStyle(
-                    color: Colors.red,
-                      fontSize: Constants.titleSize
-                  ),
+                      color: Colors.red, fontSize: Constants.titleSize),
                 ),
               ),
             ],
@@ -106,21 +100,19 @@ class ProductItem extends HookWidget {
     return Container(
       padding: EdgeInsets.all(screenSize.width / 50),
       child: Text(
-        item.productName[0].toUpperCase() +
-            item.productName.substring(1),
+        item.productName[0].toUpperCase() + item.productName.substring(1),
         textAlign: TextAlign.center,
         maxLines: 2,
         style: const TextStyle(
-          overflow: TextOverflow.ellipsis,
-          fontSize: Constants.headerSize,
-          fontWeight: FontWeight.w500
-        ),
+            overflow: TextOverflow.ellipsis,
+            fontSize: Constants.headerSize,
+            fontWeight: FontWeight.w500),
       ),
     );
   }
 
   void _getImageUrl(ValueNotifier<String?> imageUrl) async {
-    if(imageUrl.value == null && imageReadingAttempts<3) {
+    if (imageUrl.value == null && imageReadingAttempts < 3) {
       await StorageService().getProductImage(item);
       imageReadingAttempts++;
     }
@@ -141,7 +133,7 @@ class ProductItem extends HookWidget {
   }
 
   Widget _getImage(Size screenSize, ValueNotifier<dynamic> imageUrl) {
-    imageReadingAttempts-=2;
+    imageReadingAttempts -= 2;
     return Center(
       child: imageUrl.value != null
           ? CachedNetworkImage(
@@ -156,14 +148,14 @@ class ProductItem extends HookWidget {
 
   Widget _getIconImage(Size screenSize) {
     String icon;
-    if (widget.item.rating ==1) {
-
+    if (item.rating == 1) {
       icon = Constants.assetsHarmfulnessIcons + Constants.goodIcon;
-    } else if (widget.item.rating == 2) {
+    } else if (item.rating == 2) {
       icon = Constants.assetsHarmfulnessIcons + Constants.harmfulIcon;
-    } else if(widget.item.rating == 3) {
+    } else if (item.rating == 3) {
       icon = Constants.assetsHarmfulnessIcons + Constants.dangerousIcon;
-    } else  {  // rating 4
+    } else {
+      // rating 4
       icon = Constants.assetsHarmfulnessIcons + Constants.unchartedIcon;
     }
     return Container(
@@ -173,34 +165,36 @@ class ProductItem extends HookWidget {
   }
 
   Widget _getIngredients(ValueNotifier<List<Ingredient>?> ingredientsNotifier) {
-    ingredientsReadingAttempts-=2;
-    List ingredients = ingredientsNotifier.value??[];
-      return ingredients.isNotEmpty
-          ? ListView.builder(
-              padding: const EdgeInsets.only(top: 0),
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: ingredients.length,
-              itemBuilder: (context, index) {
-                return (ingredients.isEmpty
-                    ? const Center(
-                        child: Text(
-                          "Brak składników",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: Constants.theBiggestSize,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      )
-                    : IngredientItem(ingredients[index], true));
-              },
-            )
-          : const Loading(isReversedColor: true);
+    ingredientsReadingAttempts -= 2;
+    List ingredients = ingredientsNotifier.value ?? [];
+    return ingredients.isNotEmpty
+        ? ListView.builder(
+            padding: const EdgeInsets.only(top: 0),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: ingredients.length,
+            itemBuilder: (context, index) {
+              return (ingredients.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "Brak składników",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Constants.theBiggestSize,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    )
+                  : IngredientItem(ingredients[index], true));
+            },
+          )
+        : const Loading(isReversedColor: true);
   }
 
-  void _getIngredientsList(ValueNotifier<List<Ingredient>?> ingredientsToReturn) async {
-    if(ingredientsToReturn.value == null && ingredientsReadingAttempts <= listLength){
+  void _getIngredientsList(
+      ValueNotifier<List<Ingredient>?> ingredientsToReturn) async {
+    if (ingredientsToReturn.value == null &&
+        ingredientsReadingAttempts <= listLength) {
       List<Ingredient> ingredients = [];
       for (Future<Ingredient> ingredient in item.ingredients) {
         ingredients.add(await ingredient);
@@ -211,20 +205,20 @@ class ProductItem extends HookWidget {
   }
 
   void _deleteProduct(BuildContext context) {
-      ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
-          .deleteProduct(item);
+    ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
+        .deleteProduct(item);
     Navigator.pop(context);
   }
 
   Widget _getRemarks(Size screenSize) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Text(item.remarks+(item.remarks.length>0?'!':''),
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        color: Colors.red,
-        fontSize: Constants.subTitleSize
-      ),),
+      child: Text(
+        item.remarks + (item.remarks.length > 0 ? '!' : ''),
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+            color: Colors.red, fontSize: Constants.subTitleSize),
+      ),
     );
   }
 }
