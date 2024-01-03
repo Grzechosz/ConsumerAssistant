@@ -261,10 +261,15 @@ class ScannerScreen extends HookWidget {
         List<Future<Ingredient>> futureIngredientsList = [];
         IngredientsService service = IngredientsService();
         RegExp pattern2 = RegExp(r'.*?\(|\)|.*?\[');
+        RegExp patternEXXX = RegExp(r'E\d{3}');
         for (String name in ingredients) {
           name = name.replaceAll(pattern2, '').trim();
-          Ingredient? ingredientFromFirebase =
-              await service.getIngredientByName(name.toLowerCase());
+          Ingredient? ingredientFromFirebase;
+          if(patternEXXX.hasMatch(name)){
+            ingredientFromFirebase = await service.getIngredientByName(name);
+          }else{
+            ingredientFromFirebase = await service.getIngredientByName(name.toLowerCase());
+          }
           if (ingredientFromFirebase != null) {
             ingredientsList.add(ingredientFromFirebase);
           }

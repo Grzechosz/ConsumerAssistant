@@ -214,7 +214,7 @@ class ProductItem extends HookWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Text(
-        item.remarks + (item.remarks.length > 0 ? '!' : ''),
+        item.remarks + (item.remarks.isNotEmpty ? '!' : ''),
         textAlign: TextAlign.center,
         style: const TextStyle(
             color: Colors.red, fontSize: Constants.subTitleSize),

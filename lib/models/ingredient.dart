@@ -15,23 +15,24 @@ class Ingredient {
     required this.category,
   });
 
-  factory Ingredient.fromFirebase(Map<String, dynamic> map, int uid) {
-    final int id;
-    final List<String> names = [];
-    final String description;
-    final Harmfulness harmfulness;
-    final Category category;
+  factory Ingredient.fromFirebase(Map<String, dynamic> map, int id) {
+    // final int id;
+    // final List<String> names = [];
+    // final String description;
+    // final Harmfulness harmfulness;
+    // final Category category;
 
-    id = uid;
-    for (dynamic name in map['names']) {
-      names.add(name as String);
-    }
-    description = map['description'] as String;
+    // id = uid;
+    // for (dynamic name in map['names']) {
+    //   names.add(name as String);
+    // }
+    final names = List<String>.from(map['names']);
+    final description = map['description'] as String;
     String harmfulnessString = map['harmfulness'] as String;
-    harmfulness = Harmfulness.values.firstWhere(
+    final harmfulness = Harmfulness.values.firstWhere(
         (element) => element.toString() == 'Harmfulness.$harmfulnessString');
     String categoryString = map['category'] as String;
-    category = Category.values.firstWhere(
+    final category = Category.values.firstWhere(
         (element) => element.toString() == 'Category.$categoryString'
             || element == Category.fishesAndSeafood && categoryString=="fishes and seafood"
             || element == Category.herbsAndSpices && categoryString=="herbs and spices");

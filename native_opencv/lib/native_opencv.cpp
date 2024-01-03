@@ -23,19 +23,19 @@ extern "C" {
 
         cvtColor(image, image, COLOR_RGBA2GRAY, 0);
 
-        medianBlur(image, blured_image, 7);
+     //   medianBlur(image, blured_image, 7);
 
-        adaptiveThreshold(blured_image, threshed, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize, addingParameter);
+        adaptiveThreshold(image, threshed, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize, addingParameter);
 
-        bitwise_not(threshed, threshed);
+       // bitwise_not(threshed, threshed);
 
-        cv::Mat eroded;
+      //  cv::Mat eroded;
 
-        cv::erode(threshed, eroded, getStructuringElement(MORPH_RECT, Size(5, 5)));
+     //   cv::erode(threshed, eroded, getStructuringElement(MORPH_RECT, Size(5, 5)));
 
-        bitwise_not(eroded, eroded);
+      //  bitwise_not(eroded, eroded);
 
-        imwrite(outputPath, eroded);
+        imwrite(outputPath, threshed);
     }
 
     __attribute__((visibility("default"))) __attribute__((used))
