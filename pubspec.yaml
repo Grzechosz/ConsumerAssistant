@@ -55,9 +55,9 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: true
-  image_path: "assets/images/logo.png"
-  adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/images/logo_foreground.png"
+  image_path: "assets/images/logo/ic_launcher.png"
+  adaptive_icon_background: "assets/images/logo/ic_launcher_background.png"
+  adaptive_icon_foreground: "assets/images/logo/ic_launcher_foreground.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -79,7 +79,7 @@ flutter:
     - assets/images/harmfulness/
     - assets/images/categories/
     - assets/images/background.jpg
-    - assets/images/full_logo.png
+    - assets/images/logo/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
