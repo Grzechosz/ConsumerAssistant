@@ -112,8 +112,12 @@ class ProductItem extends HookWidget {
   }
 
   void _getImageUrl(ValueNotifier<String?> imageUrl) async {
+    StorageService storageService = StorageService();
+    storageService.addListener(() async {
+      imageUrl.value = await storageService.getProductImage(item);
+    });
     if (imageUrl.value == null && imageReadingAttempts < 3) {
-      imageUrl.value = await StorageService().getProductImage(item);
+      imageUrl.value = await storageService.getProductImage(item);
       imageReadingAttempts++;
     }
   }

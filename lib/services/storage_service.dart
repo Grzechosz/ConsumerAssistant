@@ -3,8 +3,9 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:consciousconsumer/models/models.dart';
+import 'package:flutter/widgets.dart';
 
-class StorageService{
+class StorageService extends ChangeNotifier{
 
   Reference get firebaseStorage => FirebaseStorage.instance.ref();
 
@@ -40,17 +41,14 @@ class StorageService{
           print("Upload is $progress% complete.");
           break;
         case TaskState.paused:
-          print("Upload is paused.");
           break;
         case TaskState.canceled:
-          print("Upload was canceled");
           break;
         case TaskState.error:
         // Handle unsuccessful uploads
           break;
         case TaskState.success:
-        // Handle successful uploads on complete
-        // ...
+          notifyListeners();
           break;
       }
     });
