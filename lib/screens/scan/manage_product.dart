@@ -32,7 +32,9 @@ class ManageProductWidget extends HookWidget {
               textAlign: TextAlign.center,
               cursorColor: Colors.white, //<-- SEE HERE
             ),
-            TextButton(
+            TextButton(style: const ButtonStyle(
+                backgroundColor:
+                MaterialStatePropertyAll(Colors.white)),
               child: const Text(
                 'Anuluj',
                 style: TextStyle(
@@ -42,7 +44,9 @@ class ManageProductWidget extends HookWidget {
                 Navigator.pop(context, textEditController.text);
               },
             ),
-            TextButton(
+            TextButton(style: const ButtonStyle(
+                backgroundColor:
+                MaterialStatePropertyAll(Colors.white)),
               child: const Text(
                 'Gotowe',
                 style: TextStyle(
