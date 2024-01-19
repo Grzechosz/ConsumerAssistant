@@ -325,6 +325,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 fontSize: Constants.subTitleSize, color: Colors.red),
           ),
           spacer,
+          _buildInfoButton(context),
+          spacer,
           _buildEmoticonsLegend(screenSize),
           spacer,
           Row(
@@ -399,5 +401,39 @@ class _AccountScreenState extends State<AccountScreen> {
         _authService.updateName(nickname);
       });
     }
+  }
+
+  Widget _buildInfoButton(BuildContext context) {
+    return TextButton(
+      child: Row(  children: [
+        Icon(
+          Icons.info_outline,
+          color: Constants.sea,
+        ),
+        SizedBox(
+        width: 5,
+        ),
+        Text(
+        "O programie",
+        style: TextStyle(fontSize: Constants.headerSize, color: Constants.sea),
+        ),
+        ]),
+
+        onPressed: () {
+          _showInfoDialog(context);
+        });
+  }
+
+  Future _showInfoDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AboutDialog(
+            applicationName: "Asystent Konsumenta",
+            children: [
+              Text("Aplikacja powstała na Wydziale Informatyki Politechniki Białostockiej")
+            ],
+          );
+        });
   }
 }
