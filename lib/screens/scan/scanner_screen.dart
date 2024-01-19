@@ -269,57 +269,63 @@ class ScannerScreen extends HookWidget {
             ingredientsList.add(ingredientFromFirebase);
           }
         }
-        List toDelete = [];
-        List ingredientsToSave = [];
-        ingredientsList.forEach((element) => ingredientsToSave.add(element));
-        ingredientsList.sort((ing1, ing2) {
-          return ing1.names[0].compareTo(ing2.names[0]);
-        });
-        Ingredient prev = ingredientsList[0];
-        for (int i = 1; i < ingredientsList.length; i++) {
-          if (ingredientsList[i].names[0].compareTo(prev.names[0]) == 0) {
-            toDelete.add(ingredientsList[i]);
+        if (ingredientsList.isNotEmpty){
+          List toDelete = [];
+          List ingredientsToSave = [];
+          ingredientsList.forEach((element) => ingredientsToSave.add(element));
+          ingredientsList.sort((ing1, ing2) {
+            return ing1.names[0].compareTo(ing2.names[0]);
+          });
+          Ingredient prev = ingredientsList[0];
+          for (int i = 1; i < ingredientsList.length; i++) {
+            if (ingredientsList[i].names[0].compareTo(prev.names[0]) == 0) {
+              toDelete.add(ingredientsList[i]);
+            }
+            prev = ingredientsList[i];
           }
-          prev = ingredientsList[i];
-        }
-        for (Ingredient delete in toDelete) {
-          ingredientsToSave.remove(delete);
-        }
-
-        for (Ingredient ing in ingredientsToSave) {
-          futureIngredientsList.add(Future.value(ing));
-        }
-
-        _navigateToProductManagementScreen(context).then((result) async {
-          if (result.isNotEmpty) {
-            DateTime now = DateTime.now();
-            String productId = now.toString();
-
-            String remarks = await TricksSearcher.checkSugarAndSweeteners(
-                futureIngredientsList);
-
-            XFile file = XFile(image!.path);
-
-            await ProcessImage.resizeImage(file);
-
-            double productGrade = await
-                ProductGradingAlgorithm.gradeProduct(futureIngredientsList);
-            final scannedProduct = Product(
-              result,
-              productGrade,
-              file.name,
-              futureIngredientsList,
-              now,
-              remarks,
-              productId,
-            );
-
-            ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
-                .uploadProduct(scannedProduct, file);
-            backToProducts();
+          for (Ingredient delete in toDelete) {
+            ingredientsToSave.remove(delete);
           }
-        });
-      } else {
+
+          for (Ingredient ing in ingredientsToSave) {
+            futureIngredientsList.add(Future.value(ing));
+          }
+
+          _navigateToProductManagementScreen(context).then((result) async {
+            if (result.isNotEmpty) {
+              DateTime now = DateTime.now();
+              String productId = now.toString();
+
+              String remarks = await TricksSearcher.checkSugarAndSweeteners(
+                  futureIngredientsList);
+
+              XFile file = XFile(image!.path);
+
+              await ProcessImage.resizeImage(file);
+
+              double productGrade = await
+              ProductGradingAlgorithm.gradeProduct(futureIngredientsList);
+              final scannedProduct = Product(
+                result,
+                productGrade,
+                file.name,
+                futureIngredientsList,
+                now,
+                remarks,
+                productId,
+              );
+
+              ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
+                  .uploadProduct(scannedProduct, file);
+              backToProducts();
+            }
+          });
+        }
+        else {
+          _showScanningErrorDialog(context);
+        }
+      }
+      else {
         _showScanningErrorDialog(context);
       }
     });
