@@ -261,10 +261,15 @@ class ScannerScreen extends HookWidget {
         List<Future<Ingredient>> futureIngredientsList = [];
         IngredientsService service = IngredientsService();
         RegExp pattern2 = RegExp(r'.*?\(|\)|.*?\[');
+        RegExp patternEXXX = RegExp(r'E\d{3}');
         for (String name in ingredients) {
           name = name.replaceAll(pattern2, '').trim();
-          Ingredient? ingredientFromFirebase =
-              await service.getIngredientByName(name.toLowerCase());
+          Ingredient? ingredientFromFirebase;
+          if(patternEXXX.hasMatch(name)){
+            ingredientFromFirebase = await service.getIngredientByName(name);
+          }else{
+            ingredientFromFirebase = await service.getIngredientByName(name.toLowerCase());
+          }
           if (ingredientFromFirebase != null) {
             ingredientsList.add(ingredientFromFirebase);
           }
@@ -298,6 +303,10 @@ class ScannerScreen extends HookWidget {
 
               String remarks = await TricksSearcher.checkSugarAndSweeteners(
                   futureIngredientsList);
+              await tesseractTextRecognizer.value.processImage(path).then((value) async {
+                remarks = await TricksSearcher.checkButterTrick(value);
+              });
+
 
               XFile file = XFile(image!.path);
 
@@ -330,4 +339,6 @@ class ScannerScreen extends HookWidget {
       }
     });
   }
+
+
 }

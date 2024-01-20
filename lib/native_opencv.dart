@@ -7,6 +7,8 @@ import 'package:ffi/ffi.dart';
 typedef _version_func = ffi.Pointer<Utf8> Function();
 typedef _process_image_func = ffi.Void Function(
     ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
+typedef _process_image_lite_func = ffi.Void Function(
+    ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
 typedef _is_invert_needed_func = ffi.Bool Function(ffi.Pointer<Utf8>);
 typedef _invert_image_func = ffi.Void Function(
     ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
@@ -14,6 +16,7 @@ typedef _invert_image_func = ffi.Void Function(
 // Dart function signatures
 typedef _VersionFunc = ffi.Pointer<Utf8> Function();
 typedef _ProcessImageFunc = void Function(ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
+typedef _ProcessImageLiteFunc = void Function(ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
 typedef _IsInvertNeededFunc = bool Function(ffi.Pointer<Utf8>);
 typedef _InvertImage = void Function(ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
 
@@ -28,6 +31,9 @@ final _VersionFunc _version =
 final _ProcessImageFunc _processImage = _lib
     .lookup<ffi.NativeFunction<_process_image_func>>('process_image')
     .asFunction();
+final _ProcessImageLiteFunc _processImageLite = _lib
+    .lookup<ffi.NativeFunction<_process_image_lite_func>>('process_image_lite')
+    .asFunction();
 final _IsInvertNeededFunc _isInvertNeeded = _lib
     .lookup<ffi.NativeFunction<_is_invert_needed_func>>('is_invert_needed')
     .asFunction();
@@ -41,6 +47,10 @@ String opencvVersion() {
 
 void processImage(String inputPath, String outputPath) {
   _processImage(inputPath.toNativeUtf8(), outputPath.toNativeUtf8());
+}
+
+void processImageLite(String inputPath, String outputPath) {
+  _processImageLite(inputPath.toNativeUtf8(), outputPath.toNativeUtf8());
 }
 
 bool isInvertNeeded(String inputPath) {

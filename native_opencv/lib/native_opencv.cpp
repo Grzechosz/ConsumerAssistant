@@ -39,6 +39,33 @@ extern "C" {
     }
 
     __attribute__((visibility("default"))) __attribute__((used))
+      void process_image_lite(char* inputPath, char* outputPath) {
+           Mat image;
+           Mat blured_image;
+           Mat threshed;
+           int addingParameter = 2;
+           int blockSize = 39;
+
+            image = imread(inputPath);
+
+            cvtColor(image, image, COLOR_RGBA2GRAY, 0);
+
+            //medianBlur(image, blured_image, 7);
+
+            adaptiveThreshold(image, threshed, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize, addingParameter);
+
+           // bitwise_not(threshed, threshed);
+
+          //  cv::Mat eroded;
+
+          //  cv::erode(threshed, eroded, getStructuringElement(MORPH_RECT, Size(5, 5)));
+
+           // bitwise_not(eroded, eroded);
+
+            imwrite(outputPath, threshed);
+        }
+
+    __attribute__((visibility("default"))) __attribute__((used))
     bool is_invert_needed(char* path) {
         Mat in =  imread(path);
         Mat grayscale_image;
