@@ -9,7 +9,8 @@ import 'package:consciousconsumer/screens/ingredients/ingredient_item.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class ProductItem extends HookWidget {
-  const ProductItem({super.key, required this.item, required this.listLength});
+  final Function reload;
+   const ProductItem({super.key, required this.item, required this.listLength, required this.reload});
 
   static int imageReadingAttempts = 0;
   static int ingredientsReadingAttempts = 0;
@@ -74,16 +75,6 @@ class ProductItem extends HookWidget {
                 },
               ),
               TextButton(
-                child: const Text(
-                  Constants.editText,
-                  style: TextStyle(
-                      color: Constants.sea, fontSize: Constants.titleSize),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              TextButton(
                 onPressed: () => _deleteProduct(context),
                 child: const Text(
                   Constants.deleteText,
@@ -117,8 +108,8 @@ class ProductItem extends HookWidget {
       imageUrl.value = await storageService.getProductImage(item);
     });
     if (imageUrl.value == null && imageReadingAttempts < 3) {
-      imageUrl.value = await storageService.getProductImage(item);
-      imageReadingAttempts++;
+        imageUrl.value = await storageService.getProductImage(item);
+        imageReadingAttempts++;
     }
   }
 
@@ -141,7 +132,9 @@ class ProductItem extends HookWidget {
     return Center(
       child: imageUrl.value != null
           ? CachedNetworkImage(
-              width: screenSize.width / 2.5,
+        memCacheWidth: 300,
+        memCacheHeight: 300,
+              width: screenSize.width / 1.5,
               progressIndicatorBuilder: (_, __, ___) =>
                   const Center(child: Loading(isReversedColor: true)),
               imageUrl: imageUrl.value,
@@ -212,6 +205,7 @@ class ProductItem extends HookWidget {
     ProductsService(userId: FirebaseAuth.instance.currentUser!.uid)
         .deleteProduct(item);
     Navigator.pop(context);
+    reload();
   }
 
   Widget _getRemarks(Size screenSize) {

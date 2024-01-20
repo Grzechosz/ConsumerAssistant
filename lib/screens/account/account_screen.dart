@@ -405,7 +405,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget _buildInfoButton(BuildContext context) {
     return TextButton(
-      child: Row(  children: [
+      child: const Row(  children: [
         Icon(
           Icons.info_outline,
           color: Constants.sea,
@@ -428,11 +428,10 @@ class _AccountScreenState extends State<AccountScreen> {
     return showDialog(
         context: context,
         builder: (context) {
-          return AboutDialog(
+          return const AboutDialog(
             applicationName: "Asystent Konsumenta",
-            children: [
-              Text("Aplikacja powstała na Wydziale Informatyki Politechniki Białostockiej")
-            ],
+            applicationVersion: "v1.0",
+            applicationLegalese: "Aplikacja powstała na Wydziale Informatyki Politechniki Białostockiej",
           );
         });
   }

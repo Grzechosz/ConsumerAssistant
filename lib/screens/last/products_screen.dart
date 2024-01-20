@@ -9,7 +9,8 @@ import 'package:consciousconsumer/screens/ingredients/sorting_and_filtering.dart
 import 'product_item.dart';
 
 class ProductsScreen extends StatefulWidget{
-  const ProductsScreen({super.key});
+  final Function reload;
+  const ProductsScreen({super.key, required this.reload});
   @override
   State<StatefulWidget> createState() => ProductsScreenState();
 }
@@ -92,7 +93,7 @@ class ProductsScreenState extends State<ProductsScreen>{
         shrinkWrap: true,
         itemCount: products.length,
         itemBuilder:(context, index) =>
-          ProductItem(item: products[index], listLength: products.length
+          ProductItem(item: products[index], listLength: products.length, reload: widget.reload
       )) : const Center(
           child: Text("Brak Produktów",
           style: TextStyle(letterSpacing: 0.5,
@@ -103,7 +104,7 @@ class ProductsScreenState extends State<ProductsScreen>{
         );
 
     }else{
-      return const Loading(isReversedColor: false,);
+      return const Loading(isReversedColor: false);
     }
   }
 }

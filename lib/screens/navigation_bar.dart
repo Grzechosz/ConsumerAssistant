@@ -27,7 +27,7 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   ];
   Widget getWidget(int index) {
     final List<Widget> widgets = [
-      const ProductsScreen(),
+      ProductsScreen(reload: reload),
       const IngredientsScreen(),
       ScannerScreen(backToProducts: backToProducts),
       const ArticlesScreen(),
@@ -57,6 +57,13 @@ class _ConsciousConsumerState extends State<ConsciousConsumer> {
   }
 
   void backToProducts() => _onItemTapped(0);
+
+  void backToScanner() => _onItemTapped(2);
+
+  void reload(){
+    backToScanner();
+    backToProducts();
+  }
 
   @override
   Widget build(BuildContext context) {

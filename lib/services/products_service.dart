@@ -44,7 +44,7 @@ class ProductsService{
   Future deleteProduct(Product product) async {
     StorageService().deleteProductImage(product);
     await productCollection!.doc(product.id.toString())
-        .delete().then((value) => print("Document deleted"));
+        .delete();
   }
 
   // delete all products of user
