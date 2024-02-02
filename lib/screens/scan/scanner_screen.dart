@@ -308,7 +308,7 @@ class ScannerScreen extends HookWidget {
               await tesseractTextRecognizer.value
                   .processImage(path)
                   .then((value) async {
-                remarks = await TricksSearcher.checkButterTrick(value);
+                remarks += await TricksSearcher.checkButterTrick(value);
               });
 
               image = await changeFileNameOnly(

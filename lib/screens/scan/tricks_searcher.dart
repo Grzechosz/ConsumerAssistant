@@ -23,7 +23,7 @@ class TricksSearcher {
     RegExp pattern2 = RegExp(r'tłuszcz mleczny|tluszcz mleczny|uszcz mleczny');
 
     if (pattern1.hasMatch(ocrText) && pattern2.hasMatch(ocrText)) {
-      return "Producent dodaje do produktu tłuszcze roślinne aby ukryć małą zawartość tłuszczu mlecznego";
+      return "\nProducent dodaje do produktu tłuszcze roślinne aby ukryć małą zawartość tłuszczu mlecznego";
     }
     return "";
   }
