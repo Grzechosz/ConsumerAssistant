@@ -25,6 +25,6 @@ class TricksSearcher {
     if (pattern1.hasMatch(ocrText) && pattern2.hasMatch(ocrText)) {
       return "Producent dodaje do produktu tłuszcze roślinne aby ukryć małą zawartość tłuszczu mlecznego";
     }
-    return "działa";
+    return "";
   }
 }
