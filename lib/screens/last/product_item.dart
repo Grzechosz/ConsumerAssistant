@@ -7,6 +7,7 @@ import 'package:consciousconsumer/config/constants.dart';
 import 'package:consciousconsumer/models/models.dart';
 import 'package:consciousconsumer/screens/ingredients/ingredient_item.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:provider/provider.dart';
 
 class ProductItem extends HookWidget {
   final Function reload;
@@ -19,10 +20,11 @@ class ProductItem extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final StorageService storageService = ProductsService.storageService;
     final imageUrl = useState<String?>(null);
     final ingredients = useState<List<Ingredient>?>(null);
     _getIngredientsList(ingredients);
-    _getImageUrl(imageUrl);
+    _getImageUrl(imageUrl, storageService);
     Size screenSize = MediaQuery.of(context).size;
     return Card(
         color: Colors.white,
@@ -102,8 +104,7 @@ class ProductItem extends HookWidget {
     );
   }
 
-  void _getImageUrl(ValueNotifier<String?> imageUrl) async {
-    StorageService storageService = StorageService();
+  void _getImageUrl(ValueNotifier<String?> imageUrl, StorageService storageService) async {
     storageService.addListener(() async {
       imageUrl.value = await storageService.getProductImage(item);
     });
@@ -131,14 +132,18 @@ class ProductItem extends HookWidget {
     imageReadingAttempts -= 2;
     return Center(
       child: imageUrl.value != null
-          ? CachedNetworkImage(
-        memCacheWidth: 300,
-        memCacheHeight: 300,
-              width: screenSize.width / 1.5,
-              progressIndicatorBuilder: (_, __, ___) =>
-                  const Center(child: Loading(isReversedColor: true)),
-              imageUrl: imageUrl.value,
-            )
+          ? ChangeNotifierProvider(
+        create: (context) => StorageService(),
+        child: CachedNetworkImage(
+          memCacheWidth: 300,
+          memCacheHeight: 300,
+          width: screenSize.width / 1.5,
+          progressIndicatorBuilder: (_, __, ___) =>
+          const Center(child: Loading(isReversedColor: true)),
+          imageUrl: imageUrl.value,
+        ),
+      )
+
           : const Loading(isReversedColor: true),
     );
   }

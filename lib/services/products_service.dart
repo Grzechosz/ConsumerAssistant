@@ -4,6 +4,8 @@ import 'package:consciousconsumer/services/services.dart';
 import 'package:consciousconsumer/models/models.dart';
 
 class ProductsService{
+  static final StorageService storageService = StorageService();
+
   CollectionReference? productCollection;
   static bool isLoaded = false;
 
@@ -36,20 +38,18 @@ class ProductsService{
         .set(await product.toFirebase())
         .onError((error, stackTrace) =>
             print("Error writing document: $error"));
-    final storageService = StorageService();
     storageService.uploadProductImage(image);
   }
 
   // delete product from firebase
   Future deleteProduct(Product product) async {
-    StorageService().deleteProductImage(product);
+    storageService.deleteProductImage(product);
     await productCollection!.doc(product.id.toString())
         .delete();
   }
 
   // delete all products of user
   Future clearProducts(String userId) async {
-    StorageService storageService = StorageService();
     storageService.deleteUserFolder(userId);
     var snapshots = await productCollection!.get();
     for (var doc in snapshots.docs) {

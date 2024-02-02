@@ -81,6 +81,5 @@ class StorageService extends ChangeNotifier{
         .child("products/${FirebaseAuth.instance.currentUser!.uid}")
         .child(product.productImageUrl)
         .delete();
-    notifyListeners();
   }
 }
