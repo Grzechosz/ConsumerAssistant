@@ -41,7 +41,8 @@ class ScannerScreen extends HookWidget {
               isEmailVerified
                   ? const Text('')
                   : Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: Colors.transparent),
@@ -265,16 +266,17 @@ class ScannerScreen extends HookWidget {
         for (String name in ingredients) {
           name = name.replaceAll(pattern2, '').trim();
           Ingredient? ingredientFromFirebase;
-          if(patternEXXX.hasMatch(name)){
+          if (patternEXXX.hasMatch(name)) {
             ingredientFromFirebase = await service.getIngredientByName(name);
-          }else{
-            ingredientFromFirebase = await service.getIngredientByName(name.toLowerCase());
+          } else {
+            ingredientFromFirebase =
+                await service.getIngredientByName(name.toLowerCase());
           }
           if (ingredientFromFirebase != null) {
             ingredientsList.add(ingredientFromFirebase);
           }
         }
-        if (ingredientsList.isNotEmpty){
+        if (ingredientsList.isNotEmpty) {
           List toDelete = [];
           List ingredientsToSave = [];
           ingredientsList.forEach((element) => ingredientsToSave.add(element));
@@ -303,17 +305,19 @@ class ScannerScreen extends HookWidget {
 
               String remarks = await TricksSearcher.checkSugarAndSweeteners(
                   futureIngredientsList);
-              await tesseractTextRecognizer.value.processImage(path).then((value) async {
+              await tesseractTextRecognizer.value
+                  .processImage(path)
+                  .then((value) async {
                 remarks = await TricksSearcher.checkButterTrick(value);
               });
 
-
+              image = await changeFileNameOnly(
+                  image!, DateTime.now().toString());
               XFile file = XFile(image!.path);
-
               await ProcessImage.resizeImage(file);
 
-              double productGrade = await
-              ProductGradingAlgorithm.gradeProduct(futureIngredientsList);
+              double productGrade = await ProductGradingAlgorithm.gradeProduct(
+                  futureIngredientsList);
               final scannedProduct = Product(
                 result,
                 productGrade,
@@ -329,16 +333,19 @@ class ScannerScreen extends HookWidget {
               backToProducts();
             }
           });
-        }
-        else {
+        } else {
           _showScanningErrorDialog(context);
         }
-      }
-      else {
+      } else {
         _showScanningErrorDialog(context);
       }
     });
   }
 
-
+  Future<File> changeFileNameOnly(File file, String newFileName) {
+    var path = file.path;
+    var lastSeparator = path.lastIndexOf(Platform.pathSeparator);
+    var newPath = path.substring(0, lastSeparator + 1) + newFileName;
+    return file.rename(newPath);
+  }
 }
