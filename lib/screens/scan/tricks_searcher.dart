@@ -20,7 +20,7 @@ class TricksSearcher {
 
   static Future<String> checkButterTrick(String ocrText) async {
     RegExp pattern1 = RegExp(r'tłuszcz roślinny|tluszcz roslinny|uszcz roslinny');
-    RegExp pattern2 = RegExp(r'tłuszcz mleczny|tluszcz mleczny|uszcz mleczny');
+    RegExp pattern2 = RegExp(r'tłuszcz mleczny|tluszcz mleczny|uszcz mleczny|mleczny');
 
     if (pattern1.hasMatch(ocrText) && pattern2.hasMatch(ocrText)) {
       return "\nProducent dodaje do produktu tłuszcze roślinne aby ukryć małą zawartość tłuszczu mlecznego";
